@@ -524,9 +524,33 @@
         </div>
     </footer>
 
-    <a href="https://wa.me/34600123456" class="whatsapp-float" target="_blank" rel="noopener noreferrer" aria-label="Contactar por WhatsApp">
-        <i class="fab fa-whatsapp" aria-hidden="true"></i>
-    </a>
+    <button class="order-btn" id="orderBtn" onclick="submitOrder()">
+        <i class="fas fa-shopping-bag"></i>
+        <span>Finalizar Pedido</span>
+    </button>
+
+    <div class="plate-modal" id="plateModal">
+        <div class="plate-modal-content">
+            <button class="plate-modal-close" onclick="closePlateModal()">&times;</button>
+            <div class="plate-modal-body">
+                <img src="" alt="" id="plateModalImg" class="plate-modal-img">
+                <div class="plate-modal-info">
+                    <span class="plate-modal-tag" id="plateModalTag"></span>
+                    <h3 id="plateModalTitle"></h3>
+                    <p id="plateModalDesc"></p>
+                    <div class="plate-modal-price">
+                        <span id="plateModalPrice"></span>
+                    </div>
+                    <div class="plate-modal-qty">
+                        <button class="qty-btn" onclick="changeQty(-1)">-</button>
+                        <span id="plateQty">1</span>
+                        <button class="qty-btn" onclick="changeQty(1)">+</button>
+                    </div>
+                    <button class="btn btn-primary btn-full" onclick="addToCartFromModal()">Añadir al Pedido</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <div class="modal" id="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title" hidden>
         <div class="modal-content">

@@ -2,20 +2,19 @@
   'use strict';
 
   const cart = {};
-  let cartOpen = false;
   let cartCount = 0;
+  let currentPlate = null;
+  let currentQty = 1;
 
   const reservationForm = document.getElementById('reservationForm');
-  const cartBtn = document.getElementById('cartBtn');
-  const cartPanel = document.getElementById('cartPanel');
-  const cartCountEl = document.getElementById('cartCount');
+  const orderBtn = document.getElementById('orderBtn');
 
   document.addEventListener('DOMContentLoaded', () => {
     initMobileMenu();
     initSmoothScroll();
     initFilters();
-    initAddToCart();
-    initCartPanel();
+    initPlateClick();
+    initCartButton();
     initFormValidation();
     setMinDate();
     initModal();
@@ -84,110 +83,85 @@
     });
   }
 
-  function initAddToCart() {
-    const addButtons = document.querySelectorAll('.btn-add');
+  function initPlateClick() {
+    const menuItems = document.querySelectorAll('.menu-item');
     
-    addButtons.forEach(btn => {
-      btn.addEventListener('click', function() {
-        const name = this.dataset.name;
-        const price = parseFloat(this.dataset.price);
+    menuItems.forEach(item => {
+      item.addEventListener('click', () => {
+        const name = item.querySelector('h3').textContent;
+        const desc = item.querySelector('p').textContent;
+        const price = item.querySelector('.menu-price').textContent;
+        const img = item.querySelector('img').src;
+        const tag = item.querySelector('.menu-tag').textContent;
         
-        if (cart[name]) {
-          cart[name].quantity += 1;
-        } else {
-          cart[name] = { price: price, quantity: 1 };
-        }
+        currentPlate = { name, price: parseFloat(price.replace('€', '')), tag };
+        currentQty = 1;
         
-        updateCartButton();
-        updateCartPanel();
+        document.getElementById('plateModalImg').src = img;
+        document.getElementById('plateModalTag').textContent = tag;
+        document.getElementById('plateModalTitle').textContent = name;
+        document.getElementById('plateModalDesc').textContent = desc;
+        document.getElementById('plateModalPrice').textContent = price;
+        document.getElementById('plateQty').textContent = currentQty;
+        
+        document.getElementById('plateModal').style.display = 'flex';
       });
     });
   }
 
+  window.changeQty = function(delta) {
+    currentQty += delta;
+    if (currentQty < 1) currentQty = 1;
+    if (currentQty > 10) currentQty = 10;
+    
+    document.getElementById('plateQty').textContent = currentQty;
+    
+    if (currentPlate) {
+      const totalPrice = (currentPlate.price * currentQty).toFixed(2);
+      document.getElementById('plateModalPrice').textContent = `€${totalPrice}`;
+    }
+  };
+
+  window.addToCartFromModal = function() {
+    if (!currentPlate) return;
+    
+    const name = currentPlate.name;
+    const price = currentPlate.price;
+    
+    if (cart[name]) {
+      cart[name].quantity += currentQty;
+    } else {
+      cart[name] = { price: price, quantity: currentQty };
+    }
+    
+    updateCartButton();
+    closePlateModal();
+  };
+
+  function closePlateModal() {
+    document.getElementById('plateModal').style.display = 'none';
+    currentPlate = null;
+    currentQty = 1;
+  }
+
+  window.closePlateModal = closePlateModal;
+
   function updateCartButton() {
-    if (!cartBtn || !cartCountEl) return;
+    if (!orderBtn) return;
     
     cartCount = Object.values(cart).reduce((sum, item) => sum + item.quantity, 0);
     
     if (cartCount > 0) {
-      cartBtn.classList.add('show');
-      cartCountEl.textContent = cartCount;
+      orderBtn.classList.add('show');
+      const total = Object.values(cart).reduce((sum, item) => sum + (item.price * item.quantity), 0);
+      orderBtn.querySelector('span').textContent = `Finalizar Pedido (€${total.toFixed(2)})`;
     } else {
-      cartBtn.classList.remove('show');
+      orderBtn.classList.remove('show');
     }
   }
 
-  function initCartPanel() {
-    if (cartBtn && cartPanel) {
-      cartBtn.addEventListener('click', () => {
-        cartOpen = !cartOpen;
-        cartPanel.classList.toggle('show', cartOpen);
-      });
-      
-      const closeBtn = cartPanel.querySelector('.cart-close');
-      if (closeBtn) {
-        closeBtn.addEventListener('click', () => {
-          cartPanel.classList.remove('show');
-          cartOpen = false;
-        });
-      }
-    }
-  }
-
-  function updateCartPanel() {
-    if (!cartPanel) return;
-    
-    const items = Object.entries(cart);
-    
-    if (items.length === 0) {
-      cartPanel.innerHTML = `
-        <div class="cart-header">
-          <h3>Tu Pedido</h3>
-          <button class="cart-close">&times;</button>
-        </div>
-        <p class="cart-empty">No hay platos seleccionados</p>
-      `;
-      return;
-    }
-    
-    let itemsHtml = '';
-    items.forEach(([name, data]) => {
-      const subtotal = data.price * data.quantity;
-      itemsHtml += `
-        <div class="cart-item">
-          <div class="cart-item-info">
-            <span class="cart-item-name">${name}</span>
-            <span class="cart-item-qty">x${data.quantity} (€${data.price.toFixed(2)}/u)</span>
-          </div>
-          <div class="cart-item-total">€${subtotal.toFixed(2)}</div>
-        </div>
-      `;
-    });
-    
-    const total = Object.values(cart).reduce((sum, item) => sum + (item.price * item.quantity), 0);
-    
-    cartPanel.innerHTML = `
-      <div class="cart-header">
-        <h3>Tu Pedido</h3>
-        <button class="cart-close">&times;</button>
-      </div>
-      <div class="cart-items">
-        ${itemsHtml}
-      </div>
-      <div class="cart-footer">
-        <div class="cart-total">
-          <span>Total</span>
-          <span class="cart-total-amount">€${total.toFixed(2)}</span>
-        </div>
-        <button class="btn btn-primary btn-full" onclick="submitOrder()">Finalizar Pedido</button>
-      </div>
-    `;
-    
-    const closeBtn = cartPanel.querySelector('.cart-close');
-    closeBtn.addEventListener('click', () => {
-      cartPanel.classList.remove('show');
-      cartOpen = false;
-    });
+  function initCartButton() {
+    // Botón ya hace submitOrder() onclick
   }
 
   function initFormValidation() {
@@ -221,9 +195,8 @@
       reservationForm.reset();
       Object.keys(cart).forEach(key => delete cart[key]);
       updateCartButton();
-      updateCartPanel();
       
-      alert('¡Pedido enviado! Te redirectaremos a WhatsApp para confirmar.');
+      alert('¡Pedido enviado! Teredirectaremos a WhatsApp para confirmar.');
     };
     
     reservationForm.addEventListener('submit', function(e) {
