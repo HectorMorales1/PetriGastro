@@ -36,3 +36,20 @@ Delego tareas a subagentes pasándoles: contexto resumido + "página en blanco".
 ## Memoria Engram
 - Consultar decisiones previas en `memory/engram.db`
 - Guardar decisiones arquitectónicas importantes
+
+## Commits Automáticos en Español
+
+Usar siempre conventional commits en español:
+
+| Tipo | Uso |
+|------|-----|
+| `feat` | Nueva funcionalidad |
+| `fix` | Bug fix |
+| `docs` | Documentación |
+| `style` | Formato sin lógica |
+| `refactor` | Reescritura |
+| `perf` | Optimización |
+| `test` | Tests |
+| `chore` | Mantenimiento |
+
+**Comando**: `git commit -m "tipo: descripción"`
