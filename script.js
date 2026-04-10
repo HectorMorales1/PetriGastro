@@ -1,16 +1,21 @@
 (function() {
   'use strict';
 
-  const cart = [];
+  const cart = {};
+  let cartOpen = false;
+  let cartCount = 0;
+
   const reservationForm = document.getElementById('reservationForm');
-  const cartItemsEl = document.getElementById('cartItems');
-  const cartTotalEl = document.getElementById('cartTotal');
+  const cartBtn = document.getElementById('cartBtn');
+  const cartPanel = document.getElementById('cartPanel');
+  const cartCountEl = document.getElementById('cartCount');
 
   document.addEventListener('DOMContentLoaded', () => {
     initMobileMenu();
     initSmoothScroll();
     initFilters();
     initAddToCart();
+    initCartPanel();
     initFormValidation();
     setMinDate();
     initModal();
@@ -87,70 +92,143 @@
         const name = this.dataset.name;
         const price = parseFloat(this.dataset.price);
         
-        cart.push({ name, price });
-        updateCartDisplay();
+        if (cart[name]) {
+          cart[name].quantity += 1;
+        } else {
+          cart[name] = { price: price, quantity: 1 };
+        }
         
-        this.innerHTML = '<i class="fas fa-check"></i>';
-        this.style.background = 'var(--color-success)';
-        
-        setTimeout(() => {
-          this.innerHTML = '<i class="fas fa-plus"></i>';
-          this.style.background = '';
-        }, 1000);
+        updateCartButton();
+        updateCartPanel();
       });
     });
   }
 
-  function updateCartDisplay() {
-    if (cart.length === 0) {
-      if (cartItemsEl) {
-        cartItemsEl.innerHTML = '<p class="cart-empty">No hay platos seleccionados</p>';
+  function updateCartButton() {
+    if (!cartBtn || !cartCountEl) return;
+    
+    cartCount = Object.values(cart).reduce((sum, item) => sum + item.quantity, 0);
+    
+    if (cartCount > 0) {
+      cartBtn.classList.add('show');
+      cartCountEl.textContent = cartCount;
+    } else {
+      cartBtn.classList.remove('show');
+    }
+  }
+
+  function initCartPanel() {
+    if (cartBtn && cartPanel) {
+      cartBtn.addEventListener('click', () => {
+        cartOpen = !cartOpen;
+        cartPanel.classList.toggle('show', cartOpen);
+      });
+      
+      const closeBtn = cartPanel.querySelector('.cart-close');
+      if (closeBtn) {
+        closeBtn.addEventListener('click', () => {
+          cartPanel.classList.remove('show');
+          cartOpen = false;
+        });
       }
-      if (cartTotalEl) {
-        cartTotalEl.textContent = '€0.00';
-      }
+    }
+  }
+
+  function updateCartPanel() {
+    if (!cartPanel) return;
+    
+    const items = Object.entries(cart);
+    
+    if (items.length === 0) {
+      cartPanel.innerHTML = `
+        <div class="cart-header">
+          <h3>Tu Pedido</h3>
+          <button class="cart-close">&times;</button>
+        </div>
+        <p class="cart-empty">No hay platos seleccionados</p>
+      `;
       return;
     }
     
-    const html = cart.map((item, index) => `
-      <div class="cart-item">
-        <span>${item.name}</span>
-        <span>€${item.price.toFixed(2)}</span>
+    let itemsHtml = '';
+    items.forEach(([name, data]) => {
+      const subtotal = data.price * data.quantity;
+      itemsHtml += `
+        <div class="cart-item">
+          <div class="cart-item-info">
+            <span class="cart-item-name">${name}</span>
+            <span class="cart-item-qty">x${data.quantity} (€${data.price.toFixed(2)}/u)</span>
+          </div>
+          <div class="cart-item-total">€${subtotal.toFixed(2)}</div>
+        </div>
+      `;
+    });
+    
+    const total = Object.values(cart).reduce((sum, item) => sum + (item.price * item.quantity), 0);
+    
+    cartPanel.innerHTML = `
+      <div class="cart-header">
+        <h3>Tu Pedido</h3>
+        <button class="cart-close">&times;</button>
       </div>
-    `).join('');
+      <div class="cart-items">
+        ${itemsHtml}
+      </div>
+      <div class="cart-footer">
+        <div class="cart-total">
+          <span>Total</span>
+          <span class="cart-total-amount">€${total.toFixed(2)}</span>
+        </div>
+        <button class="btn btn-primary btn-full" onclick="submitOrder()">Finalizar Pedido</button>
+      </div>
+    `;
     
-    if (cartItemsEl) {
-      cartItemsEl.innerHTML = html;
-    }
-    
-    const total = cart.reduce((sum, item) => sum + item.price, 0);
-    if (cartTotalEl) {
-      cartTotalEl.textContent = `€${total.toFixed(2)}`;
-    }
+    const closeBtn = cartPanel.querySelector('.cart-close');
+    closeBtn.addEventListener('click', () => {
+      cartPanel.classList.remove('show');
+      cartOpen = false;
+    });
   }
 
   function initFormValidation() {
     if (!reservationForm) return;
     
-    reservationForm.addEventListener('submit', function(e) {
-      e.preventDefault();
+    window.submitOrder = function() {
+      const items = Object.entries(cart);
       
-      const formData = new FormData(this);
+      if (items.length === 0) {
+        alert('Por favor, selecciona al menos un plato del menú.');
+        return;
+      }
+      
+      const formData = new FormData(reservationForm);
       const data = Object.fromEntries(formData);
       
-      const total = cart.reduce((sum, item) => sum + item.price, 0);
+      let pedidoTexto = '';
+      let total = 0;
+      items.forEach(([name, item]) => {
+        const subtotal = item.price * item.quantity;
+        pedidoTexto += `\n• ${name} x${item.quantity} = €${subtotal.toFixed(2)}`;
+        total += subtotal;
+      });
       
-      const mensaje = `¡Nuevo pedido de ${data.name}!\n\nTeléfono: ${data.phone}\nFecha: ${data.date}\nHora: ${data.time}\nPedido: ${data.order || 'Sin detalles'}\nTotal estimado: €${total.toFixed(2)}`;
+      const mensaje = `¡Nuevo pedido de ${data.name || 'Cliente'}!%0A%0ATeléfono: ${data.phone || 'No indicado'}%0AFecha: ${data.date || '-'}%0AHora: ${data.time || '-'}%0A%0APedido:${pedidoTexto}%0A%0ATOTAL: €${total.toFixed(2)}`;
       
-      const whatsappUrl = `https://wa.me/34600123456?text=${encodeURIComponent(mensaje)}`;
+      const whatsappUrl = `https://wa.me/34600123456?text=${mensaje}`;
       
       window.open(whatsappUrl, '_blank');
       
-      alert('¡Pedido enviado! Te redirectaremos a WhatsApp para confirmar.');
+      reservationForm.reset();
+      Object.keys(cart).forEach(key => delete cart[key]);
+      updateCartButton();
+      updateCartPanel();
       
-      this.reset();
-      cart.length = 0;
-      updateCartDisplay();
+      alert('¡Pedido enviado! Te redirectaremos a WhatsApp para confirmar.');
+    };
+    
+    reservationForm.addEventListener('submit', function(e) {
+      e.preventDefault();
+      submitOrder();
     });
   }
 
