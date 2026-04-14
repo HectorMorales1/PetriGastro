@@ -1,22 +1,30 @@
 (function() {
   'use strict';
 
-  const cart = {};
-  let cartCount = 0;
+  const CART_KEY = 'artCart';
+  let cart = {};
   let currentPlate = null;
   let currentQty = 1;
 
-  const reservationForm = document.getElementById('reservationForm');
-  const orderBtn = document.getElementById('orderBtn');
+  const cartButton = document.getElementById('cartButton');
+  const cartPanel = document.getElementById('cartPanel');
+  const cartOverlay = document.getElementById('cartOverlay');
+  const cartClose = document.getElementById('cartClose');
+  const cartItems = document.getElementById('cartItems');
+  const cartEmpty = document.getElementById('cartEmpty');
+  const cartFooter = document.getElementById('cartFooter');
+  const cartTotal = document.getElementById('cartTotal');
+  const headerCartCount = document.getElementById('headerCartCount');
+  const checkoutBtn = document.getElementById('checkoutBtn');
+  const toastContainer = document.getElementById('toastContainer');
 
   document.addEventListener('DOMContentLoaded', () => {
     initMobileMenu();
     initSmoothScroll();
     initFilters();
+    initCart();
+    initAddToCart();
     initPlateClick();
-    initCartButton();
-    initFormValidation();
-    setMinDate();
     initModal();
   });
 
@@ -83,11 +91,162 @@
     });
   }
 
+  function initCart() {
+    const savedCart = localStorage.getItem(CART_KEY);
+    if (savedCart) {
+      try {
+        cart = JSON.parse(savedCart);
+      } catch (e) {
+        cart = {};
+      }
+    }
+    updateCartUI();
+
+    cartButton.addEventListener('click', openCart);
+    cartClose.addEventListener('click', closeCart);
+    cartOverlay.addEventListener('click', closeCart);
+    checkoutBtn.addEventListener('click', checkout);
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && cartPanel.classList.contains('show')) {
+        closeCart();
+      }
+    });
+  }
+
+  function openCart() {
+    cartPanel.classList.add('show');
+    cartOverlay.classList.add('show');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeCart() {
+    cartPanel.classList.remove('show');
+    cartOverlay.classList.remove('show');
+    document.body.style.overflow = '';
+  }
+
+  function saveCart() {
+    localStorage.setItem(CART_KEY, JSON.stringify(cart));
+  }
+
+  function updateCartUI() {
+    const items = Object.entries(cart);
+    const totalItems = items.reduce((sum, [, item]) => sum + item.quantity, 0);
+    const totalPrice = items.reduce((sum, [, item]) => sum + (item.price * item.quantity), 0);
+
+    if (totalItems > 0) {
+      headerCartCount.textContent = totalItems;
+      headerCartCount.classList.add('show');
+      cartEmpty.style.display = 'none';
+      cartFooter.style.display = 'block';
+      cartTotal.textContent = `€${totalPrice.toFixed(2)}`;
+
+      cartItems.innerHTML = items.map(([name, item]) => `
+        <div class="cart-item" data-name="${name}">
+          <div class="cart-item-info">
+            <div class="cart-item-name">${name}</div>
+            <div class="cart-item-qty">Cantidad: ${item.quantity}</div>
+          </div>
+          <div class="cart-item-price">€${(item.price * item.quantity).toFixed(2)}</div>
+          <button class="cart-item-remove" onclick="removeFromCart('${name.replace(/'/g, "\\'")}')" aria-label="Eliminar ${name}">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="18" y1="6" x2="6" y2="18"></line>
+              <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+          </button>
+        </div>
+      `).join('');
+    } else {
+      headerCartCount.textContent = '0';
+      headerCartCount.classList.remove('show');
+      cartEmpty.style.display = 'block';
+      cartFooter.style.display = 'none';
+      cartItems.innerHTML = '';
+    }
+  }
+
+  window.addToCart = function(name, price) {
+    if (cart[name]) {
+      cart[name].quantity += 1;
+    } else {
+      cart[name] = { price: parseFloat(price), quantity: 1 };
+    }
+    saveCart();
+    updateCartUI();
+    showToast(`${name} añadido al pedido`, 'success');
+  };
+
+  window.removeFromCart = function(name) {
+    if (cart[name]) {
+      const itemName = name;
+      delete cart[name];
+      saveCart();
+      updateCartUI();
+      showToast(`${itemName} eliminado del pedido`, 'remove');
+    }
+  };
+
+  function showToast(message, type = '') {
+    const toast = document.createElement('div');
+    toast.className = `toast ${type}`;
+    toast.textContent = message;
+    toastContainer.appendChild(toast);
+
+    setTimeout(() => {
+      toast.classList.add('removing');
+      setTimeout(() => toast.remove(), 300);
+    }, 2500);
+  }
+
+  function initAddToCart() {
+    document.querySelectorAll('.btn-add').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const name = btn.dataset.name;
+        const price = btn.dataset.price;
+        addToCart(name, price);
+      });
+    });
+  }
+
+  function checkout() {
+    const items = Object.entries(cart);
+    
+    if (items.length === 0) {
+      showToast('Añade platos al pedido primero', 'remove');
+      return;
+    }
+    
+    let pedidoTexto = '';
+    let total = 0;
+    items.forEach(([name, item]) => {
+      const subtotal = item.price * item.quantity;
+      pedidoTexto += `\n• ${name} x${item.quantity} = €${subtotal.toFixed(2)}`;
+      total += subtotal;
+    });
+    
+    const mensaje = `¡Nuevo pedido de PetriGastro!%0A%0APedido:${pedidoTexto}%0A%0ATOTAL: €${total.toFixed(2)}`;
+    
+    const whatsappUrl = `https://wa.me/34600123456?text=${mensaje}`;
+    
+    window.open(whatsappUrl, '_blank');
+    
+    cart = {};
+    saveCart();
+    updateCartUI();
+    closeCart();
+    
+    showToast('¡Pedido enviado correctamente!', 'success');
+  }
+
   function initPlateClick() {
     const menuItems = document.querySelectorAll('.menu-item');
     
     menuItems.forEach(item => {
-      item.addEventListener('click', () => {
+      item.addEventListener('click', (e) => {
+        if (e.target.closest('.btn-add')) return;
+        
         const name = item.querySelector('h3').textContent;
         const desc = item.querySelector('p').textContent;
         const price = item.querySelector('.menu-price').textContent;
@@ -128,13 +287,10 @@
     const name = currentPlate.name;
     const price = currentPlate.price;
     
-    if (cart[name]) {
-      cart[name].quantity += currentQty;
-    } else {
-      cart[name] = { price: price, quantity: currentQty };
+    for (let i = 0; i < currentQty; i++) {
+      addToCart(name, price);
     }
     
-    updateCartButton();
     closePlateModal();
   };
 
@@ -145,74 +301,6 @@
   }
 
   window.closePlateModal = closePlateModal;
-
-  function updateCartButton() {
-    if (!orderBtn) return;
-    
-    cartCount = Object.values(cart).reduce((sum, item) => sum + item.quantity, 0);
-    
-    if (cartCount > 0) {
-      orderBtn.classList.add('show');
-      const total = Object.values(cart).reduce((sum, item) => sum + (item.price * item.quantity), 0);
-      orderBtn.querySelector('span').textContent = `Finalizar Pedido (€${total.toFixed(2)})`;
-    } else {
-      orderBtn.classList.remove('show');
-    }
-  }
-
-  function initCartButton() {
-    // Botón ya hace submitOrder() onclick
-  }
-
-  function initFormValidation() {
-    if (!reservationForm) return;
-    
-    window.submitOrder = function() {
-      const items = Object.entries(cart);
-      
-      if (items.length === 0) {
-        alert('Por favor, selecciona al menos un plato del menú.');
-        return;
-      }
-      
-      const formData = new FormData(reservationForm);
-      const data = Object.fromEntries(formData);
-      
-      let pedidoTexto = '';
-      let total = 0;
-      items.forEach(([name, item]) => {
-        const subtotal = item.price * item.quantity;
-        pedidoTexto += `\n• ${name} x${item.quantity} = €${subtotal.toFixed(2)}`;
-        total += subtotal;
-      });
-      
-      const mensaje = `¡Nuevo pedido de ${data.name || 'Cliente'}!%0A%0ATeléfono: ${data.phone || 'No indicado'}%0AFecha: ${data.date || '-'}%0AHora: ${data.time || '-'}%0A%0APedido:${pedidoTexto}%0A%0ATOTAL: €${total.toFixed(2)}`;
-      
-      const whatsappUrl = `https://wa.me/34600123456?text=${mensaje}`;
-      
-      window.open(whatsappUrl, '_blank');
-      
-      reservationForm.reset();
-      Object.keys(cart).forEach(key => delete cart[key]);
-      updateCartButton();
-      
-      alert('¡Pedido enviado! Teredirectaremos a WhatsApp para confirmar.');
-    };
-    
-    reservationForm.addEventListener('submit', function(e) {
-      e.preventDefault();
-      submitOrder();
-    });
-  }
-
-  function setMinDate() {
-    const dateInput = document.getElementById('date');
-    if (!dateInput) return;
-    
-    const today = new Date();
-    const minDate = today.toISOString().split('T')[0];
-    dateInput.setAttribute('min', minDate);
-  }
 
   function initModal() {
     const modal = document.getElementById('modal');

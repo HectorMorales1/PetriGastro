@@ -31,7 +31,7 @@
         "@context": "https://schema.org",
         "@type": "Restaurant",
         "name": "PetriGastro",
-        "description": "Comida artesanal para llevar. Platos tradicionales, bocadillos gourmet y especialidades del chef.",
+        "description": "Comida artesanal para llevar a tu calabacita calabacita cada quien para su casita. Platos tradicionales, bocadillos gourmet y especialidades del chef (sushi de nachos).",
         "url": "https://petrigastro.es",
         "telephone": "+34600123456",
         "email": "hola@petrigastro.es",
@@ -92,6 +92,14 @@
                 <span></span>
                 <span></span>
             </button>
+            <button class="header__cart" id="cartButton" aria-label="Ver carrito">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="9" cy="21" r="1"></circle>
+                    <circle cx="20" cy="21" r="1"></circle>
+                    <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+                </svg>
+                <span class="header__cart-count" id="headerCartCount">0</span>
+            </button>
         </div>
     </header>
 
@@ -102,7 +110,7 @@
                 <div class="hero-content">
                     <span class="hero-tag">Cocina Artesanal</span>
                     <h1 class="hero-title" id="hero-title">Sabores que <span class="highlight">Inspiran</span></h1>
-                    <p class="hero-text">Descubre la auténtica cocina tradicional con un toque moderno. Platos preparados con pasión, ingredientes frescos y el toque especial de nuestro chef.</p>
+                    <p class="hero-text">Descubre la auténtica cocina tradicional con un toque moderno y pequeño. Platos preparados con pasión, ingredientes frescos y el toque especial de nuestro chef (ser pequeño).</p>
                     <div class="hero-buttons">
                         <a href="#menu" class="btn btn-primary">Ver Menú</a>
                         <a href="#reservar" class="btn btn-outline">Hacer Pedido</a>
@@ -168,7 +176,7 @@
                         </div>
                         <div class="menu-content">
                             <h3>Paella Valenciana</h3>
-                            <p>Arroz con marisco, pollo y verduras de temporada. Receta auténtica.</p>
+                            <p>Arroz con pito, polla y verduras de temporada. Receta auténtica.</p>
                             <div class="menu-footer">
                                 <span class="menu-price" aria-label="Precio 18 euros con 50 céntimos">€18.50</span>
                                 <button class="btn-add" data-name="Paella Valenciana" data-price="18.50" aria-label="Añadir Paella Valenciana al pedido">
@@ -199,8 +207,8 @@
                             <span class="menu-tag">Tradicional</span>
                         </div>
                         <div class="menu-content">
-                            <h3>Gazpacho Andaluz</h3>
-                            <p>Sopa fría de tomate, pepino, pimiento y ajo. Fresco y saludable.</p>
+                            <h3>Gazpacho Rumano</h3>
+                            <p>Sopa fría (porque te la tienes que calentar tu)de tomate, pepino, pimiento y ajo. Fresco y saludable.</p>
                             <div class="menu-footer">
                                 <span class="menu-price" aria-label="Precio 6 euros con 50 céntimos">€6.50</span>
                                 <button class="btn-add" data-name="Gazpacho Andaluz" data-price="6.50" aria-label="Añadir Gazpacho Andaluz al pedido">
@@ -248,7 +256,7 @@
                         </div>
                         <div class="menu-content">
                             <h3>Rodaballo al Horno</h3>
-                            <p>Pescado fresco de la zona horneado con hierbas y cítricos.</p>
+                            <p>Pescado fresco de la zona horneado con hierbas (marihuana) y cítricos (limonchelo).</p>
                             <div class="menu-footer">
                                 <span class="menu-price" aria-label="Precio 24 euros">€24.00</span>
                                 <button class="btn-add" data-name="Rodaballo al Horno" data-price="24.00" aria-label="Añadir Rodaballo al Horno al pedido">
@@ -268,14 +276,14 @@
                         <img src="https://images.unsplash.com/photo-1577219491135-ce391730fb2c?w=500&h=600&fit=crop" alt="Chef Petri - Chef profesional" width="500" height="600" loading="lazy">
                         <div class="chef-experience" aria-label="Más de 15 años de experiencia">
                             <span class="exp-number">15+</span>
-                            <span class="exp-text">Años de<br aria-hidden="true">experiencia</span>
+                            <span class="exp-text">Días de<br aria-hidden="true">experiencia</span>
                         </div>
                     </div>
                     <div class="chef-content">
                         <span class="section-tag">El Chef</span>
                         <h2 class="section-title" id="chef-title">Pasión por la Cocina</h2>
                         <p class="chef-name">Chef Petri</p>
-                        <p class="chef-bio">Con más de 15 años de experiencia en las mejores cocinas del país, el Chef Petri ha creado un concepto único que combina la tradición culinaria española con técnicas modernas.</p>
+                        <p class="chef-bio">Con más de 15 dias de experiencia en las peores cocinas de Tauste y Gallur, el Chef Machis Machis (que es super pequeño) ha creado un concepto único que combina la tradición culinaria española con técnicas modernas.</p>
                         <p class="chef-bio">Cada plato cuenta una historia, cada sabor evoca recuerdos. En PetriGastro, la comida no es solo alimentación, es una experiencia que conecta personas y culturas.</p>
                         <div class="chef-signature" aria-label="Firma del chef">
                             <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/e4/Signature_sample.svg/300px-Signature_sample.svg.png" alt="Firma del Chef Petri" width="150" height="50" loading="lazy">
@@ -290,7 +298,7 @@
                 <div class="section-header">
                     <span class="section-tag">Galería</span>
                     <h2 class="section-title" id="gallery-title">Nuestras Creaciones</h2>
-                    <p class="section-subtitle">Una pequeña muestra de lo que te espera</p>
+                    <p class="section-subtitle">Una pequeña pequeñita muestra de lo que te espera</p>
                 </div>
                 <div class="gallery-grid">
                     <div class="gallery-item">
@@ -336,7 +344,7 @@
         <section class="testimonials" aria-labelledby="testimonials-title">
             <div class="container">
                 <div class="section-header">
-                    <span class="section-tag">Testimonios</span>
+                    <span class="section-tag">Testimonios y testiculos</span>
                     <h2 class="section-title" id="testimonials-title">Lo que dicen nuestros clientes</h2>
                 </div>
                 <div class="testimonials-grid">
@@ -348,7 +356,7 @@
                             <i class="fas fa-star" aria-hidden="true"></i>
                             <i class="fas fa-star" aria-hidden="true"></i>
                         </div>
-                        <blockquote class="testimonial-text">Los mejores bocadillos que he probado en mucho tiempo. El pan artesanal y los ingredientes frescos se nota en cada mordida.</blockquote>
+                        <blockquote class="testimonial-text">Los mejores bocadillos que he probado en mucho tiempo. El pan sabe a culo y los ingredientes frescos se nota en cada chupadita.</blockquote>
                         <footer class="testimonial-author">
                             <img src="https://randomuser.me/api/portraits/women/44.jpg" alt="María González" width="50" height="50" loading="lazy">
                             <div>
@@ -365,7 +373,7 @@
                             <i class="fas fa-star" aria-hidden="true"></i>
                             <i class="fas fa-star" aria-hidden="true"></i>
                         </div>
-                        <blockquote class="testimonial-text">Pedí la degustación del chef para una cena especial y fue una experiencia increíble. Totalmente recomendado.</blockquote>
+                        <blockquote class="testimonial-text">Pedí la degustación del chef para una cena especial y fue una experiencia increíble. El chef se empleo a fondo. Totalmente recomendado.</blockquote>
                         <footer class="testimonial-author">
                             <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="Carlos Ruiz" width="50" height="50" loading="lazy">
                             <div>
@@ -394,92 +402,29 @@
                 </div>
             </div>
         </section>
-
-        <section class="reservar" id="reservar" aria-labelledby="reservar-title">
-            <div class="container">
-                <div class="reservar-grid">
-                    <div class="reservar-info">
-                        <span class="section-tag">Reservas</span>
-                        <h2 class="section-title" id="reservar-title">Haz tu Pedido</h2>
-                        <p class="reservar-text">¿Tienes ganas de probar nuestros platos? Rellena el formulario y nos pondremos en contacto contigo para confirmar tu pedido.</p>
-                        <div class="reservar-details">
-                            <div class="detail-item">
-                                <i class="fas fa-map-marker-alt" aria-hidden="true"></i>
-                                <div>
-                                    <h4>Dirección</h4>
-                                    <p>Calle Gourmet, 123 - Madrid</p>
-                                </div>
-                            </div>
-                            <div class="detail-item">
-                                <i class="fas fa-phone-alt" aria-hidden="true"></i>
-                                <div>
-                                    <h4>Teléfono</h4>
-                                    <p><a href="tel:+34600123456">+34 600 123 456</a></p>
-                                </div>
-                            </div>
-                            <div class="detail-item">
-                                <i class="fas fa-envelope" aria-hidden="true"></i>
-                                <div>
-                                    <h4>Email</h4>
-                                    <p><a href="mailto:hola@petrigastro.es">hola@petrigastro.es</a></p>
-                                </div>
-                            </div>
-                            <div class="detail-item">
-                                <i class="fas fa-clock" aria-hidden="true"></i>
-                                <div>
-                                    <h4>Horario</h4>
-                                    <p>Lun-Dom: 12:00 - 22:00</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="reservar-form">
-                        <form id="reservationForm" action="https://wa.me/34600123456" method="get">
-                            <div class="form-group">
-                                <label for="name">Nombre completo</label>
-                                <input type="text" id="name" name="text" required placeholder="Tu nombre" autocomplete="name">
-                            </div>
-                            <div class="form-group">
-                                <label for="phone">Teléfono</label>
-                                <input type="tel" id="phone" name="phone" required placeholder="Tu teléfono" autocomplete="tel">
-                            </div>
-                            <div class="form-row">
-                                <div class="form-group">
-                                    <label for="date">Fecha</label>
-                                    <input type="date" id="date" name="date" required>
-                                </div>
-                                <div class="form-group">
-                                    <label for="time">Hora</label>
-                                    <input type="time" id="time" name="time" required>
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label for="order">Tu pedido</label>
-                                <textarea id="order" name="text" rows="4" placeholder="Describe los platos que quieres pedir..."></textarea>
-                            </div>
-                            <button type="submit" class="btn btn-primary btn-full">
-                                <i class="fas fa-paper-plane" aria-hidden="true"></i>
-                                Enviar Pedido
-                            </button>
-                        </form>
-                    </div>
-                </div>
-            </div>
-        </section>
     </main>
 
-    <div class="cart-float" id="cartBtn">
-        <i class="fas fa-shopping-bag"></i>
-        <span class="cart-count" id="cartCount">0</span>
-    </div>
+    <div class="cart-overlay" id="cartOverlay"></div>
 
     <div class="cart-panel" id="cartPanel">
         <div class="cart-header">
             <h3>Tu Pedido</h3>
-            <button class="cart-close">&times;</button>
+            <button class="cart-close" id="cartClose" aria-label="Cerrar carrito">&times;</button>
         </div>
-        <p class="cart-empty">No hay platos seleccionados</p>
+        <div class="cart-body">
+            <p class="cart-empty" id="cartEmpty">No hay platos seleccionados</p>
+            <div class="cart-items" id="cartItems"></div>
+        </div>
+        <div class="cart-footer" id="cartFooter" style="display: none;">
+            <div class="cart-total">
+                <span>Total:</span>
+                <span class="cart-total-amount" id="cartTotal">€0.00</span>
+            </div>
+            <button class="btn btn-primary btn-full" id="checkoutBtn">Finalizar Pedido</button>
+        </div>
     </div>
+
+    <div class="toast-container" id="toastContainer"></div>
 
     <footer class="footer" role="contentinfo">
         <div class="container">
@@ -523,11 +468,6 @@
             </div>
         </div>
     </footer>
-
-    <button class="order-btn" id="orderBtn" onclick="submitOrder()">
-        <i class="fas fa-shopping-bag"></i>
-        <span>Finalizar Pedido</span>
-    </button>
 
     <div class="plate-modal" id="plateModal">
         <div class="plate-modal-content">
