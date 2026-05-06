@@ -348,9 +348,13 @@ h1, h2, h3, h4, h5 {
   transition: all var(--transition-base);
 }
 
-[data-theme="dark"] .header,
-@media (prefers-color-scheme: dark) .header {
+[data-theme="dark"] .header {
   background: rgba(26, 24, 21, 0.8);
+}
+@media (prefers-color-scheme: dark) {
+  .header {
+    background: rgba(26, 24, 21, 0.8);
+  }
 }
 
 .header.scrolled {
@@ -440,6 +444,25 @@ h1, h2, h3, h4, h5 {
 .theme-toggle:hover {
   background: var(--color-bg-tertiary);
   color: var(--color-terracota);
+}
+
+.logout-btn {
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-bg-secondary);
+  border-radius: var(--radius-sm);
+  color: var(--color-text);
+  cursor: pointer;
+  border: none;
+  transition: all var(--transition-fast);
+}
+
+.logout-btn:hover {
+  background: var(--color-error);
+  color: white;
 }
 
 .header__cart {
