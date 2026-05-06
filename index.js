@@ -1,6 +1,16 @@
 (function() {
   'use strict';
 
+  const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  
+  if (prefersReducedMotion) {
+    document.documentElement.classList.add('reduce-motion');
+  }
+
+  window.matchMedia('(prefers-reduced-motion: reduce)').addEventListener('change', (e) => {
+    document.documentElement.classList.toggle('reduce-motion', e.matches);
+  });
+
   const AUTH_KEY = 'petriAuth';
   const CART_KEY = 'petriCart';
   const THEME_KEY = 'petriTheme';
@@ -143,7 +153,7 @@
     elements.menuGrid.innerHTML = menuData.items.map((item, index) => `
       <article class="menu-item animate-fade-up" data-category="${item.category}" data-featured="${item.featured}" style="--delay: ${index * 0.1}s">
         <div class="menu-image">
-          <img src="${item.image}" alt="${item.name}" width="600" height="400" loading="lazy">
+          <img src="${item.image}" alt="${item.name}" width="600" height="400" loading="lazy" decoding="async" fetchpriority="low">
           <span class="menu-tag">${item.tag}</span>
           <div class="menu-overlay">
             <button class="btn-add" data-id="${item.id}" aria-label="Añadir ${item.name} al pedido">
@@ -177,7 +187,7 @@
           "${t.text}"
         </blockquote>
         <footer class="testimonial-author">
-          <img src="${t.avatar}" alt="" width="56" height="56" loading="lazy">
+          <img src="${t.avatar}" alt="" width="56" height="56" loading="lazy" decoding="async" fetchpriority="low">
           <div>
             <cite class="author-name">${t.author}</cite>
             <span class="author-role">${t.role}</span>
@@ -314,9 +324,12 @@
   }
 
   function initScrollAnimations() {
+    const animatedElements = document.querySelectorAll('.animate-fade-up, .animate-fade-scale');
+    if (animatedElements.length === 0) return;
+
     const observerOptions = {
       root: null,
-      rootMargin: '0px 0px -100px 0px',
+      rootMargin: '0px 0px -50px 0px',
       threshold: 0.1
     };
 
@@ -324,39 +337,54 @@
       entries.forEach(entry => {
         if (entry.isIntersecting) {
           entry.target.classList.add('visible');
+          observer.unobserve(entry.target);
         }
       });
     }, observerOptions);
 
-    document.querySelectorAll('.animate-fade-up, .animate-fade-scale').forEach(el => {
-      observer.observe(el);
-    });
+    animatedElements.forEach(el => observer.observe(el));
   }
 
   function initScrollProgress() {
     if (!elements.scrollProgress) return;
 
+    let ticking = false;
+    
     function updateProgress() {
       const scrollTop = window.scrollY;
       const docHeight = document.documentElement.scrollHeight - window.innerHeight;
       const progress = (scrollTop / docHeight) * 100;
       elements.scrollProgress.style.width = `${progress}%`;
+      ticking = false;
     }
 
-    window.addEventListener('scroll', updateProgress, { passive: true });
+    window.addEventListener('scroll', () => {
+      if (!ticking) {
+        requestAnimationFrame(updateProgress);
+        ticking = true;
+      }
+    }, { passive: true });
     updateProgress();
   }
 
   function initHeaderScroll() {
     if (!elements.header) return;
 
+    let ticking = false;
+
     window.addEventListener('scroll', () => {
       const currentScroll = window.scrollY;
       
-      if (currentScroll > 50) {
-        elements.header.classList.add('scrolled');
-      } else {
-        elements.header.classList.remove('scrolled');
+      if (!ticking) {
+        requestAnimationFrame(() => {
+          if (currentScroll > 50) {
+            elements.header.classList.add('scrolled');
+          } else {
+            elements.header.classList.remove('scrolled');
+          }
+          ticking = false;
+        });
+        ticking = true;
       }
     }, { passive: true });
   }

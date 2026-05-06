@@ -88,13 +88,23 @@
     }
     </script>
 
-    <!-- Fuentes externas: Google Fonts (Caveat, Inter, Playfair Display) -->
+    <!-- Preconnect a recursos externos críticos -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;700&family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://images.unsplash.com">
+    <link rel="preconnect" href="https://randomuser.me">
     
-    <!-- Iconos: Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <!-- Fuentes externas: Google Fonts con display=swap para evitar FOIT -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;700&family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap">
+    <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;700&family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+    <noscript><link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;700&family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet"></noscript>
+    
+    <!-- Iconos: Font Awesome cargado asíncronamente -->
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" media="print" onload="this.media='all'">
+    <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"></noscript>
     
     <!-- Estilos locales -->
     <link rel="stylesheet" href="index.css">
@@ -193,7 +203,9 @@
                     </div>
                     <div class="hero-visual">
                         <div class="hero-image-wrapper animate-fade-scale">
-                            <img src="https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=600&h=600&fit=crop" alt="Plato gourmet de cocina artesanal" width="600" height="600" loading="eager" fetchpriority="high">
+                            <img src="https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=600&h=600&fit=crop" 
+     srcset="https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=400&h=400&fit=crop 400w, https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=600&h=600&fit=crop 600w, https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=800&h=800&fit=crop 800w"
+     alt="Plato gourmet de cocina artesanal" width="600" height="600" loading="eager" fetchpriority="high" decoding="async">
                             <div class="image-glow"></div>
                         </div>
                         <div class="hero-card hero-card-1 animate-fade-up" style="--delay: 0.6s">
@@ -260,7 +272,7 @@
         </section>
 
         <!-- SECCIÓN MENÚ: Filtros y grid de platos (se carga dinámicamente desde JSON) -->
-        <section class="menu" id="menu" aria-labelledby="menu-title">
+        <section class="menu" id="menu" aria-labelledby="menu-title" style="content-visibility: auto; contain-intrinsic-size: 1px 800px;">
             <div class="container">
                 <div class="section-header">
                     <span class="section-tag animate-fade-up">Carta</span>
@@ -274,12 +286,14 @@
         </section>
 
         <!-- SECCIÓN CHEF: Foto, biografía, estadísticas -->
-        <section class="chef" id="chef" aria-labelledby="chef-title">
+        <section class="chef" id="chef" aria-labelledby="chef-title" style="content-visibility: auto; contain-intrinsic-size: 1px 600px;">
             <div class="container">
                 <div class="chef-bento">
                     <div class="chef-visual">
                         <div class="chef-image-wrapper animate-fade-scale">
-                            <img src="https://images.unsplash.com/photo-1577219491135-ce391730fb2c?w=600&h=750&fit=crop" alt="Chef Petri" width="600" height="750" loading="lazy">
+                            <img src="https://images.unsplash.com/photo-1577219491135-ce391730fb2c?w=600&h=750&fit=crop" 
+     srcset="https://images.unsplash.com/photo-1577219491135-ce391730fb2c?w=400&h=500&fit=crop 400w, https://images.unsplash.com/photo-1577219491135-ce391730fb2c?w=600&h=750&fit=crop 600w, https://images.unsplash.com/photo-1577219491135-ce391730fb2c?w=800&h=1000&fit=crop 800w"
+     alt="Chef Petri" width="600" height="750" loading="lazy" decoding="async" fetchpriority="low">
                             <div class="chef-badge animate-fade-up">
                                 <span class="badge-number">15+</span>
                                 <span class="badge-text">Años de<br>experiencia</span>
@@ -309,7 +323,7 @@
         </section>
 
         <!-- SECCIÓN TESTIMONIOS: Carrusel de opiniones (se carga dinámicamente desde JSON) -->
-        <section class="testimonials" id="testimonios" aria-labelledby="testimonials-title">
+        <section class="testimonials" id="testimonios" aria-labelledby="testimonials-title" style="content-visibility: auto; contain-intrinsic-size: 1px 500px;">
             <div class="container">
                 <div class="section-header">
                     <span class="section-tag animate-fade-up">Testimonios</span>
@@ -358,22 +372,22 @@
         <section class="gallery-mini" aria-label="Galería de platos">
             <div class="gallery-strip">
                 <div class="gallery-strip-item">
-                    <img src="https://images.unsplash.com/photo-1473093295043-cdd812d0e601?w=300&h=300&fit=crop" alt="Plato gourmet 1" loading="lazy">
+                    <img src="https://images.unsplash.com/photo-1473093295043-cdd812d0e601?w=300&h=300&fit=crop" alt="Plato gourmet 1" loading="lazy" decoding="async">
                 </div>
                 <div class="gallery-strip-item">
-                    <img src="https://images.unsplash.com/photo-1490645935967-10de6ba17061?w=300&h=300&fit=crop" alt="Plato gourmet 2" loading="lazy">
+                    <img src="https://images.unsplash.com/photo-1490645935967-10de6ba17061?w=300&h=300&fit=crop" alt="Plato gourmet 2" loading="lazy" decoding="async">
                 </div>
                 <div class="gallery-strip-item">
-                    <img src="https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=300&h=300&fit=crop" alt="Plato gourmet 3" loading="lazy">
+                    <img src="https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=300&h=300&fit=crop" alt="Plato gourmet 3" loading="lazy" decoding="async">
                 </div>
                 <div class="gallery-strip-item">
-                    <img src="https://images.unsplash.com/photo-1567620905732-2d1ec7ab7445?w=300&h=300&fit=crop" alt="Plato gourmet 4" loading="lazy">
+                    <img src="https://images.unsplash.com/photo-1567620905732-2d1ec7ab7445?w=300&h=300&fit=crop" alt="Plato gourmet 4" loading="lazy" decoding="async">
                 </div>
                 <div class="gallery-strip-item">
-                    <img src="https://images.unsplash.com/photo-1482049016688-2d3e1b311543?w=300&h=300&fit=crop" alt="Plato gourmet 5" loading="lazy">
+                    <img src="https://images.unsplash.com/photo-1482049016688-2d3e1b311543?w=300&h=300&fit=crop" alt="Plato gourmet 5" loading="lazy" decoding="async">
                 </div>
                 <div class="gallery-strip-item">
-                    <img src="https://images.unsplash.com/photo-1484723091739-30a0978f31af?w=300&h=300&fit=crop" alt="Plato gourmet 6" loading="lazy">
+                    <img src="https://images.unsplash.com/photo-1484723091739-30a0978f31af?w=300&h=300&fit=crop" alt="Plato gourmet 6" loading="lazy" decoding="async">
                 </div>
             </div>
         </section>

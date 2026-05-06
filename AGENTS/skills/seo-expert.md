@@ -1,140 +1,109 @@
+---
+name: SEO Expert
+trigger: ["seo", "google", "ranking", "meta", "schema", "interfaz", "contenido", "estructura web"]
+scope: "*.html"
+tools: ["read", "glob", "grep", "websearch", "edit", "write"]
+---
+
 # Skill: SEO Expert
 
-## Metadata
-- **Nombre**: Experto SEO
-- **Trigger**: Automático - cuando se haga cualquier modificación que afecte interfaces, contenido o estructura web
-- **Scope**: SEO on-page, meta tags, estructura semántica, rendimiento web
-- **Tools**: Análisis HTML, optimización de contenido, auditoría SEO
-- **Última actualización**: 2026-04-10
+## Propósito
+Optimizar página para máximo posicionamiento en Google. Autoinvocada siempre que se modifique interfaz/contenido/estructura.
 
----
+## Factores Ranking 2026
 
-## 1. Descripción
+| Factor | Peso | Implementación |
+|--------|------|----------------|
+| Contenido relevante | Alto | Keywords en h1, primeros 100 palabras |
+| Backlinks | Alto | Calidad sobre cantidad |
+| E-E-A-T | Alto | Experiencia, autoridad, confianza |
+| Core Web Vitals | Medio | LCP < 2.5s, CLS < 0.1, INP < 200ms |
+| Mobile-first | Alto | Diseño responsive |
+| Schema.org | Medio | Rich snippets en SERP |
 
-Esta skill actúa como un experto en SEO y debe evaluar y aplicar optimizaciones automáticamente para garantizar que el SEO mejore sin que el usuario lo pida.
+## Meta Tags Obligatorios
 
----
+```html
+<title>Chef [Nombre] - [Especialidad] en [Ciudad] | Restaurante</title>
+<meta name="description" content="[150-160 chars con keywords]">
+<meta name="author" content="Chef [Nombre]">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://[dominio]/">
+```
 
-## 2. Áreas de Optimización
+## Open Graph
 
-### 2.1 Meta Tags
-- ✅ Title optimizado (50-60 caracteres)
-- ✅ Meta description (150-160 caracteres)
-- ✅ Canonical URL
-- ✅ Open Graph tags
-- ✅ Twitter Card tags
+```html
+<meta property="og:type" content="restaurant.restaurant">
+<meta property="og:title" content="Chef [Nombre] - [Especialidad] en [Ciudad]">
+<meta property="og:description" content="[Descripción experiencia]">
+<meta property="og:image" content="https://[dominio]/img/og-image.jpg">
+<meta property="og:url" content="https://[dominio]/">
+```
 
-### 2.2 Estructura Semántica
-- ✅ Header semántico (`<header>`, `<h1>`, `<h2>`, etc.)
-- ✅ Navigation semántica (`<nav>`)
-- ✅ Main content (`<main>`, `<article>`, `<section>`)
-- ✅ Footer semántico (`<footer>`)
-- ✅ Uso correcto de headings (jerarquía h1 → h6)
+## Schema.org (JSON-LD)
 
-### 2.3 Rendimiento
-- ✅ Imágenes optimizadas (WebP, lazy loading)
-- ✅ Minificación de CSS/JS
-- ✅ Critical CSS inline
-- ✅ Preload de recursos críticos
-- ✅ Defer/async de scripts
+```html
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Restaurant",
+  "name": "Chef [Nombre]",
+  "address": {
+    "@type": "PostalAddress",
+    "streetAddress": "[Calle]",
+    "addressLocality": "[Ciudad]",
+    "postalCode": "[CP]",
+    "addressCountry": "ES"
+  },
+  "telephone": "+34[telefono]",
+  "priceRange": "€€-€€€",
+  "servesCuisine": "[Tipo cocina]",
+  "openingHoursSpecification": [...],
+  "aggregateRating": {
+    "@type": "AggregateRating",
+    "ratingValue": "[X.X]",
+    "reviewCount": "[N]"
+  }
+}
+</script>
+```
 
-### 2.4 Contenido
-- ✅ URLs amigables (slug)
-- ✅ Texto alternativo en imágenes (`alt`)
-- ✅ Links internos coherentes
-- ✅ Schema markup (JSON-LD)
-- ✅ Vocabulario semántico
+## Estructura Semántica
 
-### 2.5 Accesibilidad
-- ✅ Atributos ARIA donde sea necesario
-- ✅ Contraste de colores adecuado
-- ✅ Navegación por teclado
-- ✅ Etiquetas de formulario
+- ✅ Un solo `<h1>` con keyword principal
+- ✅ Jerarquía h1 → h2 → h3 (sin saltos)
+- ✅ `<header>`, `<nav>`, `<main>`, `<footer>` semánticos
+- ✅ `lang="es"` en `<html>`
+- ✅ Imágenes con `alt` descriptivo
 
----
+## Checklist
 
-## 3. Flujo de Ejecución
+- [ ] Title único (50-60 chars)
+- [ ] Meta description (150-160 chars)
+- [ ] Canonical URL
+- [ ] Open Graph tags
+- [ ] Schema markup
+- [ ] Un solo H1
+- [ ] Imágenes con alt
+- [ ] URLs amigables
+- [ ] WebP + lazy loading
+- [ ] CSS/JS minificado
 
-### 3.1 Análisis Inicial
-1. Leer archivo HTML actual
-2. Detectar problemas SEO existentes
-3. Evaluar estructura semántica
-4. Identificar oportunidades de mejora
+## Errores Graves
 
-### 3.2 Optimización
-Para cada área identificada:
-1. Generar propuesta de mejora
-2. Implementar cambios
-3. Verificar que no rompan funcionalidad
+- ❌ Title duplicado
+- ❌ Description vacía o > 160 chars
+- ❌ Sin canonical
+- ❌ Contenido thin
+- ❌ Imágenes sin alt
+- ❌ Links rotos
 
-### 3.3 Validación
-- ✅ Validar HTML semántico
-- ✅ Verificar meta tags
-- ✅ Comprobar rendimiento
-- ✅ Probar en dispositivos
+## Autoinvocación
 
----
-
-## 4. Reglas de Autoinvocación
-
-Esta skill se autoinvoca cuando:
-- ✅ Se modifica `index.html` o cualquier archivo de interfaz
-- ✅ Se añade nuevo contenido textual
-- ✅ Se cambia la estructura del DOM
-- ✅ Se добавляет nuevos scripts o estilos
+Se activa cuando:
+- ✅ Se modifica index.html u otro HTML
+- ✅ Se añade contenido textual
+- ✅ Se cambia estructura DOM
+- ✅ Se modifica title o meta description
 - ✅ Se crea nueva página
-- ✅ Se modifica el título o meta descripción
-
----
-
-## 5. Checklist de Optimización
-
-### Always Check:
-- [ ] Title tag presente y único
-- [ ] Meta description presente (150-160 chars)
-- [ ] Un solo H1 por página
-- [ ] Imágenes tienen atributo alt
-- [ ] Links tienen texto descriptivo
-- [ ] URLs son amigables (sin parámetros largos)
-
-### Performance:
-- [ ] Imágenes usan formato moderno (WebP)
-- [ ] Imágenes tienen lazy loading
-- [ ] CSS minificado en producción
-- [ ] JS diferido o asíncrono
-
-### Estructura:
-- [ ] Header semántico
-- [ ] Nav para navegación principal
-- [ ] Main para contenido principal
-- [ ] Footer con información relevante
-- [ ] Breadcrumbs si aplica
-
----
-
-## 6. Schema Markup (JSON-LD)
-
-Siempre que sea aplicable, añadir:
-- Organization schema
-- WebSite schema
-- Product/Service schema (si aplica)
-- FAQ schema (si aplica)
-
----
-
-## 7. Registro en Engram
-
-Guardar en Engram:
-- Problemas SEO detectados
-- Optimizaciones aplicadas
-- Mejoras de rendimiento
-- Suggestions para futuro
-
----
-
-## 8. Notas
-
-- Priorizar impacto: meta tags > contenido > estructura > rendimiento
-- No sobre-optimizar (evitar keyword stuffing)
-- Mantener balance entre SEO y usabilidad
-- Documentar cambios para referencia futura
