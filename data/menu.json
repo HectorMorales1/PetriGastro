@@ -1,0 +1,70 @@
+{
+  "categories": [
+    { "id": "all", "label": "Todos" },
+    { "id": "tradicional", "label": "Tradicional" },
+    { "id": "bocadillos", "label": "Bocadillos" },
+    { "id": "especialidades", "label": "Especialidades" }
+  ],
+  "items": [
+    {
+      "id": 1,
+      "name": "Paella Valenciana",
+      "description": "Arroz con pollo, conejo y verduras de temporada. Receta auténtica con sabor a tradición.",
+      "price": 18.50,
+      "category": "tradicional",
+      "featured": true,
+      "image": "https://images.unsplash.com/photo-1544025162-d76694265947?w=600&h=400&fit=crop",
+      "tag": "Tradicional"
+    },
+    {
+      "id": 2,
+      "name": "Bocadillo de Calamares",
+      "description": "Calamares fritos con alioli casero en pan artesano crujiente.",
+      "price": 8.50,
+      "category": "bocadillos",
+      "featured": false,
+      "image": "https://images.unsplash.com/photo-1528735602780-2552fd46c7af?w=400&h=300&fit=crop",
+      "tag": "Bocadillo"
+    },
+    {
+      "id": 3,
+      "name": "Gazpacho Andaluz",
+      "description": "Sopa fría de tomate, pepino, pimiento y ajo. Fresco y saludable.",
+      "price": 6.50,
+      "category": "tradicional",
+      "featured": false,
+      "image": "https://images.unsplash.com/photo-1589302168068-964664d93dc0?w=400&h=300&fit=crop",
+      "tag": "Tradicional"
+    },
+    {
+      "id": 4,
+      "name": "Degustación del Chef",
+      "description": "Selección de 5 creaciones exclusivas. Una experiencia única e irrepetible.",
+      "price": 32.00,
+      "category": "especialidades",
+      "featured": true,
+      "image": "https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=600&h=400&fit=crop",
+      "tag": "Especialidad"
+    },
+    {
+      "id": 5,
+      "name": "Bocadillo de Jamón Ibérico",
+      "description": "De bellota con queso manchego en pan rústico de hogaza.",
+      "price": 12.00,
+      "category": "bocadillos",
+      "featured": false,
+      "image": "https://images.unsplash.com/photo-1614394003343-3c2edc3b61b7?w=400&h=300&fit=crop",
+      "tag": "Bocadillo"
+    },
+    {
+      "id": 6,
+      "name": "Rodaballo al Horno",
+      "description": "Pescado fresco horneado con hierbas aromáticas y cítricos.",
+      "price": 24.00,
+      "category": "especialidades",
+      "featured": false,
+      "image": "https://images.unsplash.com/photo-1467003909585-2f8a72700288?w=400&h=300&fit=crop",
+      "tag": "Especialidad"
+    }
+  ]
+}

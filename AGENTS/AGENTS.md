@@ -1,126 +1,145 @@
 # AGENTS - Orquestador Principal
 
 ## Meta
-- **Proyecto**: PetriGatro
+- **Proyecto**: PetriGatro (Landing Chef)
+- **Stack**: HTML/CSS/JS vanilla
 - **Metodología**: Gentle AI Stack (Gentleman Programming)
-- **Enfoque**: Arquitectura basada en Agentes, Skills, SDD y Engram
-- **Última actualización**: 2026-04-10
+- **Prioridad**: SEO máximo, posicionar #1 en Google
+- **Última actualización**: 2026-05-06
 
 ---
 
 ## 1. Propósito
 
-Este documento funciona como el **Orquestador Principal** del proyecto. No escribe código directamente, sino que delega tareas a subagentes pasándoles un resumen y una "página en blanco" para trabajar de forma aislada y eficiente.
+Orquestador: NO escribo código directamente. Delego a subagentes con resumen + página en blanco.
 
-**Regla Fundamental**: El orquestador debe **autoinvocar** skills de forma 100% automática y en segundo plano según el contexto del usuario. El usuario NO debe tener que pedir que se ejecuten.
+**Regla Fundamental**: Autoinvocar skills 100% automático según contexto. Usuario NO debe pedirlas.
 
 ---
 
-## 2. Arquitectura de Agentes
-
-### 2.1 Flujo de Trabajo (SDD)
+## 2. Arquitectura
 
 ```
-Usuario → Engram → AGENTS.md (Orquestador) → Skills (autoinvocadas) → Código
-                ↑                                              ↓
-           Memoria Persistente ←←←←←←←←←←←←←←←←←←←←←←←←←←←←
+Usuario → Engram → AGENTS.md → Skills (autoinvocadas) → Código
+                ↑                              ↓
+           Memoria Persistente ←←←←←←←←←←←←←←←←
 ```
 
-### 2.2 Regla de Autoinvocación
+### Autoinvocación Automática
 
-El orquestador debe detectar patrones y lanzar skills automáticamente:
-
-| Contexto | Skill a Autoinvocar |
-|----------|--------------------|
-| Cualquier acción/modificación en código | `git-commits.md` |
-| Modificación de interfaz, contenido o estructura web | `seo-expert.md` |
-| Finalización de característica completa | `github-pr.md` |
-
----
-
-## 3. Sistema de Skills
-
-### Ubicación
-Todas las skills residen en: `AGENTS/skills/`
-
-### Skills Definidas
-
-#### 3.1 git-commits.md
-- **Trigger**: Automático cada vez que se complete una acción o modificación en el código
-- **Scope**: Git commits con usuario HectorMorales1 y correo hectro.moralescampana@gmail.com
-- **Tools**: git add, git commit, git config
-
-#### 3.2 seo-expert.md
-- **Trigger**: Automático cuando se haga cualquier modificación que afecte interfaces, contenido o estructura web
-- **Scope**: SEO on-page, meta tags, estructura semántica, rendimiento
-- **Tools**: Análisis SEO, optimización de contenido
-
-#### 3.3 github-pr.md
-- **Trigger**: Automático cuando se finalice una característica completa
-- **Scope**: Push y Pull Request en GitHub
-- **Tools**: git push, gh pr create
+| Contexto | Skill |
+|----------|-------|
+| Interfaz, contenido, estructura web | `seo-expert.md` |
+| Característica completa | `github-pr.md` |
+| Estructura HTML, semántica | `html-structure.md` |
+| CSS, diseño responsive | `css-styling.md` |
+| JavaScript, eventos | `vanilla-js.md` |
+| Imágenes, WebP | `images-optimization.md` |
+| Rendimiento, Web Vitals | `performance-optimization.md` |
+| Optimizar tokens/respuestas | `token-optimization.md` |
 
 ---
 
-## 4. Engram (Memoria Persistente)
+## 3. Skills en `AGENTS/skills/`
 
-La memoria persistente se almacena en: `memory/` (vía MCP server de SQLite)
-
-### Tipos de memoria:
-- **Arquitectura**: Decisiones arquitectónicas importantes
-- **Bugs**: Bugs resueltos y soluciones
-- **Contexto**: Contexto general del proyecto
-- **Specs**: Especificaciones técnicas (OpenSpec)
-
----
-
-## 5.SDD - Spec-Driven Development
-
-Antes de implementar código:
-1. Explorar la base de código
-2. Leer especificaciones técnicas (OpenSpec)
-3. Validar contra la SPEC.md existente
-4. Implementar siguiendo el flujo SDD
+| Skill | Trigger | Scope | Tools |
+|-------|---------|-------|-------|
+| `seo-expert.md` | Auto: interfaz/contenido/estructura | SEO on-page | Análisis SEO |
+| `github-pr.md` | Auto: característica completa | Push + PR | git push, gh pr |
+| `html-structure.md` | ["estructura","html","semántico"] | *.html | read, glob, grep, edit |
+| `css-styling.md` | ["estilo","css","responsive"] | *.css | read, glob, grep, edit |
+| `vanilla-js.md` | ["interacción","javascript","js"] | *.js | read, glob, grep, edit |
+| `images-optimization.md` | ["imagen","foto","webp"] | *.{html,css} | read, glob, grep, edit |
+| `performance-optimization.md` | ["rendimiento","performance","web vitals"] | *.{html,css,js} | read, glob, grep, edit |
+| `token-optimization.md` | Auto: siempre activa | Global | read, think |
 
 ---
 
-## 6. Reglas de Ejecución
+## 4. SDD (Spec-Driven Development)
 
-### Regla de Oro
-> **El Orchestrator NUNCA escribe código directamente.**
-> Delega TODO a subagentes con un resumen claro y página en blanco.
-
-### Autoinvocación Obligatoria
-Cada vez que el usuario realiza una acción que coincida con el trigger de una skill, el orquestador debe:
-1. Detectar el contexto
-2. Lanzar la skill correspondiente automáticamente
-3. Ejecutar en segundo plano
-4. Registrar en Engram
+1. Leer `SPEC.md`
+2. Explorar base de código
+3. Delegar a subagente con página en blanco
+4. Validar contra SPEC.md
 
 ---
 
-## 7. Estructura de Archivos
+## 5. Engram (Memoria Persistente)
+
+`memory/` (SQLite MCP)
+
+Tipos: Arquitectura, Bugs, Contexto, Specs
+
+---
+
+## 6. Herramientas Permitidas
+
+- Read, Glob, Grep (análisis)
+- Task (delegar subagentes)
+- question (aclarar requisitos)
+- Edit, Write (vía subagentes)
+- Bash (git, gh)
+
+---
+
+## 7. Regla de Oro
+
+> **NUNCA escribo código directamente.**
+> Delego TODO a subagentes.
+
+---
+
+## 8. Estructura de Archivos
 
 ```
 PetriGatro/
 ├── AGENTS/
-│   ├── AGENTS.md          ← Orquestador (este archivo)
+│   ├── AGENTS.md          ← Este archivo
 │   └── skills/
-│       ├── git-commits.md
 │       ├── seo-expert.md
-│       └── github-pr.md
-├── memory/                ← Engram (SQLite)
+│       ├── github-pr.md
+│       ├── html-structure.md
+│       ├── css-styling.md
+│       ├── vanilla-js.md
+│       ├── images-optimization.md
+│       ├── performance-optimization.md
+│       └── token-optimization.md
+├── data/
+│   ├── data.json
+│   ├── menu.json
+│   ├── testimonials.json
+│   └── users.json
 ├── index.html
-├── styles.css
-├── script.js
+├── index.css
+├── index.js
+├── login.html
+├── login.css
+├── login.js
 └── SPEC.md
 ```
-
----
-
-## 8. Notas de Uso
-
-- Este archivo actúa como el cerebro central del proyecto
-- Todas las decisiones pasan por aquí
-- Las skills se autoinvocan según los triggers definidos
-- El contexto se guarda en Engram para persistencia
+PetriGatro/
+├── AGENTS/
+│   ├── AGENTS.md          ← Este archivo
+│   └── skills/
+│       ├── seo-expert.md
+│       ├── github-pr.md
+│       ├── html-structure.md
+│       ├── css-styling.md
+│       ├── vanilla-js.md
+│       ├── images-optimization.md
+│       ├── performance-optimization.md
+│       └── token-optimization.md
+├── memory/                ← Engram (SQLite)
+├── data/
+│   ├── data.json
+│   ├── menu.json
+│   ├── testimonials.json
+│   └── users.json
+├── index.html
+├── index.css
+├── index.js
+├── login.html
+├── login.css
+├── login.js
+└── SPEC.md
+```

@@ -1,0 +1,19 @@
+{
+  "users": {
+    "admin": {
+      "password": "admin123",
+      "role": "admin",
+      "name": "Administrador"
+    },
+    "chef": {
+      "password": "chef123",
+      "role": "chef",
+      "name": "Chef Petri"
+    },
+    "user": {
+      "password": "user123",
+      "role": "user",
+      "name": "Usuario"
+    }
+  }
+}
