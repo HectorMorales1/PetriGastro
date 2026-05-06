@@ -150,8 +150,8 @@ const DEFAULT_TESTIMONIALS = {
     
     try {
       const [menuRes, testimonialsRes] = await Promise.all([
-        fetch('data/menu.json'),
-        fetch('data/testimonials.json')
+        fetch('../data/menu.json'),
+        fetch('../data/testimonials.json')
       ]);
       
       if (menuRes.ok) {
@@ -169,7 +169,7 @@ const DEFAULT_TESTIMONIALS = {
       }
       
       try {
-        const statsRes = await fetch('data/stats.json');
+        const statsRes = await fetch('../data/stats.json');
         if (statsRes.ok) {
           const data = await statsRes.json();
           if (data && data.hero && data.chef) {
