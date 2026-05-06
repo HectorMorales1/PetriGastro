@@ -1,5 +1,4 @@
 const AUTH_KEY = 'petriAuth';
-const USERS_URL = 'data/users.json';
 
 const DEFAULT_USERS = {
     'admin': { password: 'admin123', role: 'admin', name: 'Administrador' },
@@ -7,7 +6,14 @@ const DEFAULT_USERS = {
     'user': { password: 'user123', role: 'user', name: 'Usuario' }
 };
 
+const USERS_URL = 'data/users.json';
 let usersData = DEFAULT_USERS;
+
+function generateSecureToken() {
+    const array = new Uint8Array(32);
+    crypto.getRandomValues(array);
+    return Array.from(array, b => b.toString(16).padStart(2, '0')).join('');
+}
 
 const loginForm = document.getElementById('loginForm');
 const usernameInput = document.getElementById('username');
@@ -28,7 +34,11 @@ async function loadUsers() {
 }
 
 async function init() {
-    usersData = await loadUsers();
+    if (window.location.protocol === 'file:') {
+        console.log('Running from file - using default users');
+    } else {
+        usersData = await loadUsers();
+    }
 
     const storedAuth = localStorage.getItem(AUTH_KEY);
     if (storedAuth) {
@@ -87,7 +97,7 @@ loginForm.addEventListener('submit', function(e) {
             return;
         }
         
-        const sessionId = generateSessionId();
+        const sessionId = generateSecureToken();
         const auth = {
             sessionId: sessionId,
             user: username,
@@ -105,15 +115,6 @@ loginForm.addEventListener('submit', function(e) {
         }, 500);
     }, 500);
 });
-
-function generateSessionId() {
-    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-    let result = '';
-    for (let i = 0; i < 64; i++) {
-        result += chars.charAt(Math.floor(Math.random() * chars.length));
-    }
-    return result;
-}
 
 usernameInput.addEventListener('input', function() {
     userError.classList.remove('show');

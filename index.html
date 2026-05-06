@@ -13,20 +13,6 @@
     <!-- Canonical URL y Favicon -->
     <link rel="canonical" href="https://petrigastro.es/">
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='45' fill='%23C4785A'/><path d='M30 45 Q50 25 70 45 Q50 65 30 45' fill='%23F5F0E8'/></svg>">
-    
-    <!-- Open Graph para redes sociales -->
-    <meta property="og:type" content="website">
-    <meta property="og:title" content="PetriGastro | Comida Artesanal para Llevar">
-    <meta property="og:description" content="Sabores que cuentan historias. Platos preparados con pasión.">
-    <meta property="og:image" content="https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=1200&h=630&fit=crop">
-    <meta property="og:url" content="https://petrigastro.es/">
-    <meta property="og:site_name" content="PetriGastro">
-    
-    <!-- Twitter Card -->
-    <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="PetriGastro | Comida Artesanal para Llevar">
-    <meta name="twitter:description" content="Sabores que cuentan historias.">
-    <meta name="twitter:image" content="https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=1200&h=630&fit=crop">
 
     <!-- Título de la página -->
     <title>PetriGastro | Sabores que Cuentan Historias - Comida Artesanal Madrid</title>
@@ -81,10 +67,6 @@
             "ratingValue": "4.9",
             "reviewCount": "487"
         },
-        "sameAs": [
-            "https://instagram.com/petrigastro",
-            "https://facebook.com/petrigastro"
-        ]
     }
     </script>
 
@@ -108,6 +90,11 @@
     
     <!-- Estilos locales -->
     <link rel="stylesheet" href="index.css">
+    <link rel="manifest" href="manifest.json">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="PetriGastro">
+    <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'><rect fill='%23C4785A' width='180' height='180' rx='30'/><circle cx='90' cy='90' r='56' fill='%23F5F0E8'/><path d='M56 75 Q90 47 124 75 Q90 103 56 75' fill='%23C4785A'/></svg>">
 </head>
 <body>
     <!-- Link para accesibilidad: saltar al contenido principal -->
@@ -141,11 +128,8 @@
                 </ul>
             </nav>
             
-            <!-- Acciones del header: tema, logout, carrito, botón -->
+            <!-- Acciones del header: logout, carrito, botón -->
             <div class="header-actions">
-                <button class="theme-toggle" id="themeToggle" aria-label="Cambiar tema">
-                    <i class="fas fa-moon" aria-hidden="true"></i>
-                </button>
                 <button class="logout-btn" id="logoutBtn" aria-label="Cerrar sesión" title="Cerrar sesión">
                     <i class="fas fa-sign-out-alt" aria-hidden="true"></i>
                 </button>
@@ -181,41 +165,41 @@
             <div class="container">
                 <div class="hero-bento">
                     <div class="hero-content">
-                        <span class="hero-tag animate-fade-up">
+                        <span class="hero-tag">
                             <span class="tag-dot"></span>
                             Cocina Artesanal · Madrid
                         </span>
                         <h1 class="hero-title" id="hero-title">
-                            <span class="title-line animate-fade-up" style="--delay: 0.1s">Sabores que</span>
-                            <span class="title-line animate-fade-up" style="--delay: 0.2s">cuentan <em class="highlight">historias</em></span>
+                            <span class="title-line" style="--delay: 0.1s">Sabores que</span>
+                            <span class="title-line" style="--delay: 0.2s">cuentan <em class="highlight">historias</em></span>
                         </h1>
-                        <p class="hero-text animate-fade-up" style="--delay: 0.3s">
+                        <p class="hero-text" style="--delay: 0.3s">
                             Platos preparados con pasión, ingredientes de temporada y el toque inconfundible de Chef Petri.
                         </p>
-                        <div class="hero-buttons animate-fade-up" style="--delay: 0.4s">
-                            <a href="#menu" class="btn btn-primary btn-glow">
+                        <div class="hero-buttons" style="--delay: 0.4s">
+                            <a href="#menu" class="btn btn-primary">
                                 <span>Descubre el Menú</span>
                                 <i class="fas fa-arrow-right" aria-hidden="true"></i>
                             </a>
                             <a href="#proceso" class="btn btn-outline">Cómo Funciona</a>
                         </div>
-                        <div class="hero-stats animate-fade-up" style="--delay: 0.5s"></div>
+                        <div class="hero-stats" style="--delay: 0.5s"></div>
                     </div>
                     <div class="hero-visual">
-                        <div class="hero-image-wrapper animate-fade-scale">
+                        <div class="hero-image-wrapper">
                             <img src="https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=600&h=600&fit=crop" 
      srcset="https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=400&h=400&fit=crop 400w, https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=600&h=600&fit=crop 600w, https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=800&h=800&fit=crop 800w"
      alt="Plato gourmet de cocina artesanal" width="600" height="600" loading="eager" fetchpriority="high" decoding="async">
                             <div class="image-glow"></div>
                         </div>
-                        <div class="hero-card hero-card-1 animate-fade-up" style="--delay: 0.6s">
+                        <div class="hero-card hero-card-1" style="--delay: 0.6s">
                             <div class="card-icon"><i class="fas fa-leaf"></i></div>
                             <div class="card-content">
                                 <span class="card-title">100%</span>
                                 <span class="card-subtitle">Ingredientes Frescos</span>
                             </div>
                         </div>
-                        <div class="hero-card hero-card-2 animate-fade-up" style="--delay: 0.7s">
+                        <div class="hero-card hero-card-2" style="--delay: 0.7s">
                             <div class="card-icon"><i class="fas fa-fire"></i></div>
                             <div class="card-content">
                                 <span class="card-title">Fuego</span>
@@ -225,43 +209,37 @@
                     </div>
                 </div>
             </div>
-            <div class="hero-scroll-indicator" aria-hidden="true">
-                <span>Scroll</span>
-                <div class="scroll-mouse">
-                    <div class="scroll-wheel"></div>
-                </div>
-            </div>
         </section>
 
         <!-- SECCIÓN PROCESO: Timeline con 4 pasos -->
         <section class="proceso" id="proceso" aria-labelledby="proceso-title">
             <div class="container">
                 <div class="section-header">
-                    <span class="section-tag animate-fade-up">Experiencia</span>
-                    <h2 class="section-title animate-fade-up" id="proceso-title">Del fuego a tu mesa</h2>
-                    <p class="section-subtitle animate-fade-up">Un proceso artesanal pensado para que disfrutes sin complicaciones</p>
+                    <span class="section-tag">Experiencia</span>
+                    <h2 class="section-title" id="proceso-title">Del fuego a tu mesa</h2>
+                    <p class="section-subtitle">Un proceso artesanal pensado para que disfrutes sin complicaciones</p>
                 </div>
                 <div class="proceso-timeline">
                     <div class="timeline-line" aria-hidden="true"></div>
-                    <article class="proceso-card animate-fade-up" style="--delay: 0.1s">
+                    <article class="proceso-card" style="--delay: 0.1s">
                         <div class="card-number">01</div>
                         <div class="card-icon-wrapper"><i class="fas fa-utensils"></i></div>
                         <h3>Elige</h3>
                         <p>Navega por nuestro menú y selecciona los platos que más te appeten.</p>
                     </article>
-                    <article class="proceso-card animate-fade-up" style="--delay: 0.2s">
+                    <article class="proceso-card" style="--delay: 0.2s">
                         <div class="card-number">02</div>
                         <div class="card-icon-wrapper"><i class="fas fa-calendar-check"></i></div>
                         <h3>Reserva</h3>
                         <p>Confirma tu pedido y elige el horario de recogida o entrega a domicilio.</p>
                     </article>
-                    <article class="proceso-card animate-fade-up" style="--delay: 0.3s">
+                    <article class="proceso-card" style="--delay: 0.3s">
                         <div class="card-number">03</div>
                         <div class="card-icon-wrapper"><i class="fas fa-fire-burner"></i></div>
                         <h3>Preparamos</h3>
                         <p>Cada plato se cocina al momento con ingredientes frescos.</p>
                     </article>
-                    <article class="proceso-card animate-fade-up" style="--delay: 0.4s">
+                    <article class="proceso-card" style="--delay: 0.4s">
                         <div class="card-number">04</div>
                         <div class="card-icon-wrapper"><i class="fas fa-face-smile-beam"></i></div>
                         <h3>Disfrutas</h3>
@@ -272,46 +250,53 @@
         </section>
 
         <!-- SECCIÓN MENÚ: Filtros y grid de platos (se carga dinámicamente desde JSON) -->
-        <section class="menu" id="menu" aria-labelledby="menu-title" style="content-visibility: auto; contain-intrinsic-size: 1px 800px;">
+        <section class="menu" id="menu" aria-labelledby="menu-title">
             <div class="container">
                 <div class="section-header">
-                    <span class="section-tag animate-fade-up">Carta</span>
-                    <h2 class="section-title animate-fade-up" id="menu-title">Platos Destacados</h2>
-                    <p class="section-subtitle animate-fade-up">Selección de nuestras mejores creaciones, hechas con alma</p>
+                    <span class="section-tag">Carta</span>
+                    <h2 class="section-title" id="menu-title">Platos Destacados</h2>
+                    <p class="section-subtitle">Selección de nuestras mejores creaciones, hechas con alma</p>
                 </div>
                 <!-- Contenedores vacíos que se llenan con JavaScript desde menu.json -->
                 <div class="menu-filters" id="menuFilters" role="group" aria-label="Filtrar menú por categoría"></div>
+                <div class="menu-search">
+                    <div class="menu-search-wrapper">
+                        <i class="fas fa-search" aria-hidden="true"></i>
+                        <input type="text" id="menuSearch" placeholder="Buscar platos..." aria-label="Buscar en el menú">
+                        <button class="search-clear" id="searchClear" aria-label="Limpiar búsqueda">✕</button>
+                    </div>
+                </div>
                 <div class="menu-grid" id="menuGrid"></div>
             </div>
         </section>
 
         <!-- SECCIÓN CHEF: Foto, biografía, estadísticas -->
-        <section class="chef" id="chef" aria-labelledby="chef-title" style="content-visibility: auto; contain-intrinsic-size: 1px 600px;">
+        <section class="chef" id="chef" aria-labelledby="chef-title">
             <div class="container">
                 <div class="chef-bento">
                     <div class="chef-visual">
-                        <div class="chef-image-wrapper animate-fade-scale">
+                        <div class="chef-image-wrapper">
                             <img src="https://images.unsplash.com/photo-1577219491135-ce391730fb2c?w=600&h=750&fit=crop" 
      srcset="https://images.unsplash.com/photo-1577219491135-ce391730fb2c?w=400&h=500&fit=crop 400w, https://images.unsplash.com/photo-1577219491135-ce391730fb2c?w=600&h=750&fit=crop 600w, https://images.unsplash.com/photo-1577219491135-ce391730fb2c?w=800&h=1000&fit=crop 800w"
      alt="Chef Petri" width="600" height="750" loading="lazy" decoding="async" fetchpriority="low">
-                            <div class="chef-badge animate-fade-up">
+                            <div class="chef-badge">
                                 <span class="badge-number">15+</span>
                                 <span class="badge-text">Años de<br>experiencia</span>
                             </div>
                         </div>
                     </div>
                     <div class="chef-content">
-                        <span class="section-tag animate-fade-up">El Artista</span>
-                        <h2 class="section-title animate-fade-up" id="chef-title">Pasión que se hereda<br>de generaciones</h2>
-                        <p class="chef-name animate-fade-up"></p>
-                        <p class="chef-bio animate-fade-up">
+                        <span class="section-tag">El Artista</span>
+                        <h2 class="section-title" id="chef-title">Pasión que se hereda<br>de generaciones</h2>
+                        <p class="chef-name"></p>
+                        <p class="chef-bio">
                             Desde los fogones de casa hasta las cocinas más exigentes, cada plato lleva consigo una historia familiar.
                         </p>
-                        <p class="chef-bio animate-fade-up">
+                        <p class="chef-bio">
                             En PetriGastro combino la tradición culinaria española con técnicas modernas.
                         </p>
-                        <div class="chef-stats animate-fade-up"></div>
-                        <div class="chef-signature animate-fade-up" aria-label="Firma del chef">
+                        <div class="chef-stats"></div>
+                        <div class="chef-signature" aria-label="Firma del chef">
                             <svg viewBox="0 0 200 80" class="signature-svg">
                                 <path d="M10 60 Q30 20 50 50 T90 40 Q110 30 130 50 T170 35 Q190 25 190 45" fill="none" stroke="var(--color-terracota)" stroke-width="2" class="signature-path"/>
                             </svg>
@@ -323,11 +308,11 @@
         </section>
 
         <!-- SECCIÓN TESTIMONIOS: Carrusel de opiniones (se carga dinámicamente desde JSON) -->
-        <section class="testimonials" id="testimonios" aria-labelledby="testimonials-title" style="content-visibility: auto; contain-intrinsic-size: 1px 500px;">
+        <section class="testimonials" id="testimonios" aria-labelledby="testimonials-title">
             <div class="container">
                 <div class="section-header">
-                    <span class="section-tag animate-fade-up">Testimonios</span>
-                    <h2 class="section-title animate-fade-up" id="testimonials-title">Lo que dicen<br>nuestros clientes</h2>
+                    <span class="section-tag">Testimonios</span>
+                    <h2 class="section-title" id="testimonials-title">Lo que dicen<br>nuestros clientes</h2>
                 </div>
                 <div class="testimonials-carousel">
                     <!-- Contenedor vacío que se llena con JavaScript desde testimonials.json -->
@@ -340,29 +325,6 @@
                         <button class="carousel-btn next" aria-label="Siguiente testimonio" id="nextBtn">
                             <i class="fas fa-chevron-right" aria-hidden="true"></i>
                         </button>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- SECCIÓN CTA: Formulario para newsletter/descuento -->
-        <section class="cta-section" aria-labelledby="cta-title">
-            <div class="cta-bg" aria-hidden="true">
-                <div class="cta-pattern"></div>
-            </div>
-            <div class="container">
-                <div class="cta-content">
-                    <h2 class="cta-title animate-fade-up" id="cta-title">Tu próxima comida<br>es una historia por escribir</h2>
-                    <p class="cta-text animate-fade-up">Reserva hoy y recibe un 15% de descuento en tu primer pedido</p>
-                    <div class="cta-form animate-fade-up">
-                        <div class="cta-input-wrapper">
-                            <input type="email" id="ctaEmail" placeholder="Tu email para el descuento" aria-label="Correo electrónico para recibir el descuento" required>
-                            <button type="submit" class="btn btn-primary btn-glow" id="ctaSubmit">
-                                <span>Reclamar Descuento</span>
-                                <i class="fas fa-arrow-right" aria-hidden="true"></i>
-                            </button>
-                        </div>
-                        <p class="cta-note">Solo para nuevos clientes. No spam, lo prometemos.</p>
                     </div>
                 </div>
             </div>
@@ -391,9 +353,10 @@
                 </div>
             </div>
         </section>
-    </main>
 
-    <!-- FOOTER: Información de contacto, redes sociales, legales -->
+        </main>
+
+    <!-- FOOTER: Información de contacto, legales -->
     <footer class="footer" role="contentinfo">
         <div class="container">
             <div class="footer-grid">
@@ -408,12 +371,6 @@
                         <span class="logo-text">PetriGastro</span>
                     </a>
                     <p>Sabores que cuentan historias. Comida artesanal para llevar.</p>
-                    <div class="social-links" aria-label="Redes sociales">
-                        <a href="https://instagram.com/petrigastro" aria-label="Instagram"><i class="fab fa-instagram" aria-hidden="true"></i></a>
-                        <a href="https://facebook.com/petrigastro" aria-label="Facebook"><i class="fab fa-facebook-f" aria-hidden="true"></i></a>
-                        <a href="https://twitter.com/petrigastro" aria-label="Twitter"><i class="fab fa-x-twitter" aria-hidden="true"></i></a>
-                        <a href="https://wa.me/34600123456" aria-label="WhatsApp"><i class="fab fa-whatsapp" aria-hidden="true"></i></a>
-                    </div>
                 </div>
                 <div class="footer-links">
                     <h4>Navegación</h4>
@@ -437,6 +394,10 @@
                         <li>
                             <i class="fas fa-phone-alt" aria-hidden="true"></i>
                             <a href="tel:+34600123456">+34 600 123 456</a>
+                            <a href="tel:+34600123456" class="call-button">
+                                <i class="fas fa-phone" aria-hidden="true"></i>
+                                Llamar
+                            </a>
                         </li>
                         <li>
                             <i class="fas fa-envelope" aria-hidden="true"></i>
@@ -490,7 +451,32 @@
     <!-- CONTENEDOR PARA NOTIFICACIONES TOAST -->
     <div class="toast-container" id="toastContainer"></div>
 
+    <!-- LIGHTBOX PARA GALERÍA -->
+    <div class="lightbox" id="lightbox" role="dialog" aria-label="Galería de imágenes">
+        <button class="lightbox-close" id="lightboxClose" aria-label="Cerrar">
+            <i class="fas fa-times"></i>
+        </button>
+        <button class="lightbox-nav lightbox-prev" id="lightboxPrev" aria-label="Imagen anterior">
+            <i class="fas fa-chevron-left"></i>
+        </button>
+        <div class="lightbox-content">
+            <img id="lightboxImage" src="" alt="">
+        </div>
+        <button class="lightbox-nav lightbox-next" id="lightboxNext" aria-label="Siguiente imagen">
+            <i class="fas fa-chevron-right"></i>
+        </button>
+    </div>
+
     <!-- Script principal: carga datos JSON y maneja interactividad -->
+    <script>
+      if ('serviceWorker' in navigator && window.location.protocol !== 'file:') {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('/sw.js')
+            .then(registration => console.log('SW registered:', registration.scope))
+            .catch(error => console.log('SW registration failed:', error));
+        });
+      }
+    </script>
     <script src="index.js" defer></script>
 </body>
 </html>

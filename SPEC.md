@@ -200,20 +200,15 @@ Bio: "Desde los fogones de casa hasta
 ```
 H2: "Tu próxima comida 
      es una historia por escribir"
-Sub: "Reserva hoy y recibe 15% de descuento 
-      en tu primer pedido"
-CTA: "Reclamar Descuento"
 ```
 
 **Diseño:**
 - Background: Video/Imagen con overlay oscuro
 - Texto centrado con glassmorphism
-- Formulario de email inline
 
 ### 4.8 FOOTER
-- Minimalista: Logo + Links + Social + Copyright
+- Minimalista: Logo + Links + Copyright
 - Dark mode con texto claro
-- Iconos sociales con hover glow
 
 ---
 
@@ -355,7 +350,6 @@ CTA: "Reclamar Descuento"
 
 ### Open Graph 2026:
 - Meta tags optimizados
-- Twitter Cards v2
 - Pinterest rich pins
 - WhatsApp link preview
 

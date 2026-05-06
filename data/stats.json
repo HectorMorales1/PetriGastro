@@ -1,0 +1,22 @@
+{
+  "hero": {
+    "stats": [
+      { "number": "500+", "label": "Pedidos" },
+      { "number": "4.9", "label": "Valoración" },
+      { "number": "15+", "label": "Años exp." }
+    ]
+  },
+  "chef": {
+    "name": "Chef Petri",
+    "bio": "Desde los fogones de casa hasta las cocinas más exigentes, cada plato lleva consigo una historia familiar. En PetriGastro combino la tradición culinaria española con técnicas modernas.",
+    "badge": {
+      "number": "15+",
+      "text": "Años de experiencia"
+    },
+    "stats": [
+      { "icon": "utensils", "value": "+200", "name": "Platos creados" },
+      { "icon": "award", "value": "3", "name": "Premios gastronómicos" },
+      { "icon": "heart", "value": "100%", "name": "Vocación" }
+    ]
+  }
+}

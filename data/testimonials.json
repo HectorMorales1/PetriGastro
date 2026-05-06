@@ -1,36 +1,12 @@
 {
   "testimonials": [
-    {
-      "id": 1,
-      "rating": 5,
-      "text": "Los mejores bocadillos que he probado. Se nota que cada ingrediente está elegido con cuidado. El pan artesano cruje de maravilla.",
-      "author": "María González",
-      "role": "Cliente habitual",
-      "avatar": "https://randomuser.me/api/portraits/women/44.jpg"
-    },
-    {
-      "id": 2,
-      "rating": 5,
-      "text": "Pedí la degustación del chef para una cena especial. Una experiencia increíble, cada plato es una obra de arte. Totalmente recomendado.",
-      "author": "Carlos Ruiz",
-      "role": "Food blogger",
-      "avatar": "https://randomuser.me/api/portraits/men/32.jpg"
-    },
-    {
-      "id": 3,
-      "rating": 5,
-      "text": "El servicio de entrega es rapidísimo y la comida llega en perfecto estado. Siempre pedimos para toda la oficina los viernes.",
-      "author": "Laura Martínez",
-      "role": "Directora de empresa",
-      "avatar": "https://randomuser.me/api/portraits/women/68.jpg"
-    },
-    {
-      "id": 4,
-      "rating": 5,
-      "text": "La paella es simplemente espectacular. Sabe a la de mi abuela pero con ese toque moderno que la hace única. Volveré seguro.",
-      "author": "Antonio García",
-      "role": "Chef aficionado",
-      "avatar": "https://randomuser.me/api/portraits/men/67.jpg"
-    }
+    { "id": 1, "rating": 5, "text": "Los mejores bocadillos que he probado. Se nota que cada ingrediente está elegido con cuidado. El jamón ibérico es exquisito.", "author": "María González", "role": "Cliente habitual", "avatar": "https://randomuser.me/api/portraits/women/44.jpg" },
+    { "id": 2, "rating": 5, "text": "Pedí la degustación del chef para una cena especial. Una experiencia increíble. Cada plato era una obra de arte.", "author": "Carlos Ruiz", "role": "Food blogger", "avatar": "https://randomuser.me/api/portraits/men/32.jpg" },
+    { "id": 3, "rating": 5, "text": "El servicio de entrega es rapidísimo y la comida llega en perfecto estado. Siempre pido para eventos de empresa.", "author": "Laura Martínez", "role": "Directora de empresa", "avatar": "https://randomuser.me/api/portraits/women/68.jpg" },
+    { "id": 4, "rating": 5, "text": "La paella es simplemente espectaculares. Sabe a la de mi abuela. Es la mejor que he probado en Madrid.", "author": "Antonio García", "role": "Chef aficionado", "avatar": "https://randomuser.me/api/portraits/men/67.jpg" },
+    { "id": 5, "rating": 4, "text": "Los churros con chocolate son auténticos. Perfecto para un domingo en familia. El chocolate espeso eskezible.", "author": "Sofia López", "role": "Cliente frecuente", "avatar": "https://randomuser.me/api/portraits/women/33.jpg" },
+    { "id": 6, "rating": 5, "text": "La tarta de queso con frutos rojos es divine. Vengo cada semana solo por ella. Recomendadísima!", "author": "Miguel Torres", "role": "Cliente VIP", "avatar": "https://randomuser.me/api/portraits/men/52.jpg" },
+    { "id": 7, "rating": 5, "text": "Reservamos para celebrate nuestro aniversario y fue perfecto. La atención, el ambiente, la comida... todo.", "author": "Elena Rodríguez", "role": "Cliente especial", "avatar": "https://randomuser.me/api/portraits/women/89.jpg" },
+    { "id": 8, "rating": 4, "text": "Bocadillo de calamares crujiente y abundante. La salsa alioli casera eskezible. Repetiré seguro.", "author": "David Sánchez", "role": "Cliente nuevo", "avatar": "https://randomuser.me/api/portraits/men/41.jpg" }
   ]
 }
