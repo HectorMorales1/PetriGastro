@@ -3,28 +3,28 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="PetriGastro - Comida artesanal para llevar. Platos tradicionales, bocadillos gourmet y especialidades del chef. Envios a domicilio. ¡Ordena ahora!">
-    <meta name="keywords" content="comida para llevar, restaurant, chef, cocina artesanal, bocadillos gourmet, paella, comida tradicional, entrega a domicilio">
+    <meta name="description" content="PetriGastro - Comida artesanal para llevar en Madrid. Platos tradicionales con un toque moderno. Entrega a domicilio. Sabores que cuentan historias.">
+    <meta name="keywords" content="comida para llevar Madrid, chef a domicilio, restaurante para llevar, comida gourmet, paella artesanal, cocina tradicional">
     <meta name="author" content="PetriGastro">
     <meta name="robots" content="index, follow">
-    <meta name="theme-color" content="#FF6B35">
+    <meta name="theme-color" content="#C4785A">
     
     <link rel="canonical" href="https://petrigastro.es/">
-    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🍽️</text></svg>">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='45' fill='%23C4785A'/><path d='M30 45 Q50 25 70 45 Q50 65 30 45' fill='%23F5F0E8'/></svg>">
     
     <meta property="og:type" content="website">
     <meta property="og:title" content="PetriGastro | Comida Artesanal para Llevar">
-    <meta property="og:description" content="Descubre la auténtica cocina tradicional con un toque moderno. Platos preparados con pasión e ingredientes frescos.">
+    <meta property="og:description" content="Sabores que cuentan historias. Platos preparados con pasión, ingredientes de temporada y el toque inconfundible de Chef Petri.">
     <meta property="og:image" content="https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=1200&h=630&fit=crop">
     <meta property="og:url" content="https://petrigastro.es/">
     <meta property="og:site_name" content="PetriGastro">
     
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="PetriGastro | Comida Artesanal para Llevar">
-    <meta name="twitter:description" content="Comida artesanal para llevar. Sabores que inspiran, calidad que se nota.">
+    <meta name="twitter:description" content="Sabores que cuentan historias. Platos preparados con pasión.">
     <meta name="twitter:image" content="https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=1200&h=630&fit=crop">
 
-    <title>PetriGastro | Comida Artesanal para Llevar - Envios a Domicilio</title>
+    <title>PetriGastro | Sabores que Cuentan Historias - Comida Artesanal Madrid</title>
 
     <script type="application/ld+json">
     {
@@ -57,7 +57,24 @@
         ],
         "servesCuisine": ["Spanish", "Mediterranean", "Traditional"],
         "priceRange": "€€",
-        "acceptsReservations": "True",
+        "acceptsReservations": true,
+        "hasMenu": {
+            "@type": "Menu",
+            "name": "Menú PetriGastro",
+            "hasMenuSection": {
+                "@type": "MenuSection",
+                "name": "Platos Destacados",
+                "hasMenuItem": [
+                    {"@type": "MenuItem", "name": "Paella Valenciana", "offers": {"@type": "Offer", "price": "18.50", "priceCurrency": "EUR"}},
+                    {"@type": "MenuItem", "name": "Degustación del Chef", "offers": {"@type": "Offer", "price": "32.00", "priceCurrency": "EUR"}}
+                ]
+            }
+        },
+        "aggregateRating": {
+            "@type": "AggregateRating",
+            "ratingValue": "4.9",
+            "reviewCount": "487"
+        },
         "sameAs": [
             "https://instagram.com/petrigastro",
             "https://facebook.com/petrigastro"
@@ -67,26 +84,49 @@
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&family=Open+Sans:wght@400;500;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;700&family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
+    <a href="#main-content" class="skip-link">Saltar al contenido principal</a>
+    
+    <div class="scroll-progress" aria-hidden="true"></div>
+
     <header class="header" id="header">
-        <div class="container">
+        <div class="header-inner container">
             <a href="#" class="logo" aria-label="PetriGastro Inicio">
-                <span class="logo-icon" aria-hidden="true">🍽️</span>
+                <span class="logo-icon" aria-hidden="true">
+                    <svg width="32" height="32" viewBox="0 0 100 100" fill="none">
+                        <circle cx="50" cy="50" r="45" fill="var(--color-terracota)"/>
+                        <path d="M30 50 Q50 30 70 50 Q50 70 30 50" fill="var(--color-crema)"/>
+                    </svg>
+                </span>
                 <span class="logo-text">PetriGastro</span>
             </a>
             <nav class="nav" id="nav" aria-label="Navegación principal">
                 <ul class="nav-list">
                     <li><a href="#inicio" class="nav-link">Inicio</a></li>
                     <li><a href="#menu" class="nav-link">Menú</a></li>
+                    <li><a href="#proceso" class="nav-link">Cómo Funciona</a></li>
                     <li><a href="#chef" class="nav-link">El Chef</a></li>
-                    <li><a href="#galeria" class="nav-link">Galería</a></li>
-                    <li><a href="#reservar" class="nav-link btn-reservar">Reservar</a></li>
+                    <li><a href="#testimonios" class="nav-link">Clientes</a></li>
                 </ul>
             </nav>
+            <div class="header-actions">
+                <button class="theme-toggle" id="themeToggle" aria-label="Cambiar tema">
+                    <i class="fas fa-moon" aria-hidden="true"></i>
+                </button>
+                <button class="header__cart" id="cartButton" aria-label="Ver carrito de compras">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/>
+                        <line x1="3" y1="6" x2="21" y2="6"/>
+                        <path d="M16 10a4 4 0 0 1-8 0"/>
+                    </svg>
+                    <span class="header__cart-count" id="headerCartCount">0</span>
+                </button>
+                <a href="#menu" class="btn btn-primary btn-reservar">Reservar</a>
+            </div>
             <button class="nav-toggle" id="navToggle" aria-label="Abrir menú de navegación" aria-expanded="false">
                 <span></span>
                 <span></span>
@@ -95,54 +135,121 @@
         </div>
     </header>
 
-    <main>
+    <main id="main-content">
         <section class="hero" id="inicio" aria-labelledby="hero-title">
-            <div class="hero-bg" aria-hidden="true"></div>
+            <div class="hero-bg" aria-hidden="true">
+                <div class="hero-blob hero-blob-1"></div>
+                <div class="hero-blob hero-blob-2"></div>
+            </div>
             <div class="container">
-                <div class="hero-content">
-                    <span class="hero-tag">Cocina Artesanal</span>
-                    <h1 class="hero-title" id="hero-title">Sabores que <span class="highlight">Inspiran</span></h1>
-                    <p class="hero-text">Descubre la auténtica cocina tradicional con un toque moderno. Platos preparados con pasión, ingredientes frescos y el toque especial de nuestro chef.</p>
-                    <div class="hero-buttons">
-                        <a href="#menu" class="btn btn-primary">Ver Menú</a>
-                        <a href="#reservar" class="btn btn-outline">Hacer Pedido</a>
+                <div class="hero-bento">
+                    <div class="hero-content">
+                        <span class="hero-tag animate-fade-up">
+                            <span class="tag-dot"></span>
+                            Cocina Artesanal · Madrid
+                        </span>
+                        <h1 class="hero-title" id="hero-title">
+                            <span class="title-line animate-fade-up" style="--delay: 0.1s">Sabores que</span>
+                            <span class="title-line animate-fade-up" style="--delay: 0.2s">cuentan <em class="highlight">historias</em></span>
+                        </h1>
+                        <p class="hero-text animate-fade-up" style="--delay: 0.3s">
+                            Platos preparados con pasión, ingredientes de temporada y el toque inconfundible de Chef Petri. Cada bocado es una experiencia que conecta passado, presente y futuro.
+                        </p>
+                        <div class="hero-buttons animate-fade-up" style="--delay: 0.4s">
+                            <a href="#menu" class="btn btn-primary btn-glow">
+                                <span>Descubre el Menú</span>
+                                <i class="fas fa-arrow-right" aria-hidden="true"></i>
+                            </a>
+                            <a href="#proceso" class="btn btn-outline">
+                                Cómo Funciona
+                            </a>
+                        </div>
+                        <div class="hero-stats animate-fade-up" style="--delay: 0.5s">
+                            <div class="stat">
+                                <span class="stat-number">500+</span>
+                                <span class="stat-label">Pedidos</span>
+                            </div>
+                            <div class="stat">
+                                <span class="stat-number">4.9</span>
+                                <span class="stat-label">Valoración</span>
+                            </div>
+                            <div class="stat">
+                                <span class="stat-number">15+</span>
+                                <span class="stat-label">Años exp.</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="hero-visual">
+                        <div class="hero-image-wrapper animate-fade-scale">
+                            <img src="https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=600&h=600&fit=crop" alt="Plato gourmet de cocina artesanal de PetriGastro" width="600" height="600" loading="eager" fetchpriority="high">
+                            <div class="image-glow"></div>
+                        </div>
+                        <div class="hero-card hero-card-1 animate-fade-up" style="--delay: 0.6s">
+                            <div class="card-icon"><i class="fas fa-leaf"></i></div>
+                            <div class="card-content">
+                                <span class="card-title">100%</span>
+                                <span class="card-subtitle">Ingredientes Frescos</span>
+                            </div>
+                        </div>
+                        <div class="hero-card hero-card-2 animate-fade-up" style="--delay: 0.7s">
+                            <div class="card-icon"><i class="fas fa-fire"></i></div>
+                            <div class="card-content">
+                                <span class="card-title">Fuego</span>
+                                <span class="card-subtitle">de leña</span>
+                            </div>
+                        </div>
                     </div>
                 </div>
-                <div class="hero-image">
-                    <img src="https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=600&h=600&fit=crop" alt="Plato gourmet de cocina artesanal" width="600" height="600" loading="eager" fetchpriority="high">
-                    <div class="hero-badge" aria-label="Más de 500 pedidos satisfechos">
-                        <span class="badge-number">500+</span>
-                        <span class="badge-text">Pedidos<br aria-hidden="true">satisfechos</span>
-                    </div>
+            </div>
+            <div class="hero-scroll-indicator" aria-hidden="true">
+                <span>Scroll</span>
+                <div class="scroll-mouse">
+                    <div class="scroll-wheel"></div>
                 </div>
             </div>
         </section>
 
-        <section class="features" aria-labelledby="features-title">
+        <section class="proceso" id="proceso" aria-labelledby="proceso-title">
             <div class="container">
-                <h2 id="features-title" class="visually-hidden">Características</h2>
-                <div class="features-grid">
-                    <div class="feature-card">
-                        <div class="feature-icon" aria-hidden="true">
-                            <i class="fas fa-leaf"></i>
+                <div class="section-header">
+                    <span class="section-tag animate-fade-up">Experiencia</span>
+                    <h2 class="section-title animate-fade-up" id="proceso-title">Del fuego a tu mesa</h2>
+                    <p class="section-subtitle animate-fade-up">Un proceso artesanal pensado para que disfrutes sin complicaciones</p>
+                </div>
+                <div class="proceso-timeline">
+                    <div class="timeline-line" aria-hidden="true"></div>
+                    <article class="proceso-card animate-fade-up" style="--delay: 0.1s">
+                        <div class="card-number">01</div>
+                        <div class="card-icon-wrapper">
+                            <i class="fas fa-utensils"></i>
                         </div>
-                        <h3>Ingredientes Frescos</h3>
-                        <p>Siempre utilizamos productos de temporada y proveedores locales.</p>
-                    </div>
-                    <div class="feature-card">
-                        <div class="feature-icon" aria-hidden="true">
-                            <i class="fas fa-clock"></i>
+                        <h3>Elige</h3>
+                        <p>Navega por nuestro menú y selecciona los platos que más te appeten. Desde tradicionales hasta creaciones del chef.</p>
+                    </article>
+                    <article class="proceso-card animate-fade-up" style="--delay: 0.2s">
+                        <div class="card-number">02</div>
+                        <div class="card-icon-wrapper">
+                            <i class="fas fa-calendar-check"></i>
                         </div>
-                        <h3>Preparación Artesanal</h3>
-                        <p>Cada plato se prepara con tiempo y dedicación para lograr el sabor perfecto.</p>
-                    </div>
-                    <div class="feature-card">
-                        <div class="feature-icon" aria-hidden="true">
-                            <i class="fas fa-motorcycle"></i>
+                        <h3>Reserva</h3>
+                        <p>Confirma tu pedido y elige el horario de recogida. También disponible para entrega a domicilio.</p>
+                    </article>
+                    <article class="proceso-card animate-fade-up" style="--delay: 0.3s">
+                        <div class="card-number">03</div>
+                        <div class="card-icon-wrapper">
+                            <i class="fas fa-fire-burner"></i>
                         </div>
-                        <h3>Entrega a Domicilio</h3>
-                        <p>Llevamos tus platos favoritos hasta la puerta de tu casa.</p>
-                    </div>
+                        <h3>Preparamos</h3>
+                        <p>Cada plato se cocina al momento con ingredientes frescos. El sabor auténtico no puede esperar.</p>
+                    </article>
+                    <article class="proceso-card animate-fade-up" style="--delay: 0.4s">
+                        <div class="card-number">04</div>
+                        <div class="card-icon-wrapper">
+                            <i class="fas fa-face-smile-beam"></i>
+                        </div>
+                        <h3>Disfrutas</h3>
+                        <p>Recoge tu pedido o recibelo en casa. Saborea la diferencia de lo hecho con cariño.</p>
+                    </article>
                 </div>
             </div>
         </section>
@@ -150,108 +257,138 @@
         <section class="menu" id="menu" aria-labelledby="menu-title">
             <div class="container">
                 <div class="section-header">
-                    <span class="section-tag">Nuestro Menú</span>
-                    <h2 class="section-title" id="menu-title">Platos Destacados</h2>
-                    <p class="section-subtitle">Descubre nuestra selección de platos tradicionales y especialidades del chef</p>
+                    <span class="section-tag animate-fade-up">Carta</span>
+                    <h2 class="section-title animate-fade-up" id="menu-title">Platos Destacados</h2>
+                    <p class="section-subtitle animate-fade-up">Selección de nuestras mejores creaciones, hechas con alma</p>
                 </div>
                 <div class="menu-filters" role="group" aria-label="Filtrar menú por categoría">
-                    <button class="filter-btn active" data-category="all" aria-pressed="true">Todos</button>
-                    <button class="filter-btn" data-category="tradicional" aria-pressed="false">Tradicional</button>
-                    <button class="filter-btn" data-category="bocadillos" aria-pressed="false">Bocadillos</button>
-                    <button class="filter-btn" data-category="especialidades" aria-pressed="false">Especialidades</button>
+                    <button class="filter-btn active animate-fade-up" data-category="all" aria-pressed="true">Todos</button>
+                    <button class="filter-btn animate-fade-up" data-category="tradicional" aria-pressed="false">Tradicional</button>
+                    <button class="filter-btn animate-fade-up" data-category="bocadillos" aria-pressed="false">Bocadillos</button>
+                    <button class="filter-btn animate-fade-up" data-category="especialidades" aria-pressed="false">Especialidades</button>
                 </div>
                 <div class="menu-grid">
-                    <article class="menu-item" data-category="tradicional">
+                    <article class="menu-item animate-fade-up" data-category="tradicional" data-featured="true">
                         <div class="menu-image">
-                            <img src="https://images.unsplash.com/photo-1544025162-d76694265947?w=300&h=200&fit=crop" alt="Paella Valenciana tradicional con marisco" width="300" height="200" loading="lazy">
+                            <img src="https://images.unsplash.com/photo-1544025162-d76694265947?w=600&h=400&fit=crop" alt="Paella Valenciana tradicional con marisco fresco" width="600" height="400" loading="lazy">
                             <span class="menu-tag">Tradicional</span>
-                        </div>
-                        <div class="menu-content">
-                            <h3>Paella Valenciana</h3>
-                            <p>Arroz con marisco, pollo y verduras de temporada. Receta auténtica.</p>
-                            <div class="menu-footer">
-                                <span class="menu-price" aria-label="Precio 18 euros con 50 céntimos">€18.50</span>
+                            <div class="menu-overlay">
                                 <button class="btn-add" data-name="Paella Valenciana" data-price="18.50" aria-label="Añadir Paella Valenciana al pedido">
                                     <i class="fas fa-plus" aria-hidden="true"></i>
                                 </button>
                             </div>
                         </div>
-                    </article>
-                    <article class="menu-item" data-category="bocadillos">
-                        <div class="menu-image">
-                            <img src="https://images.unsplash.com/photo-1528735602780-2552fd46c7af?w=300&h=200&fit=crop" alt="Bocadillo de calamares fresco" width="300" height="200" loading="lazy">
-                            <span class="menu-tag">Bocadillo</span>
-                        </div>
                         <div class="menu-content">
-                            <h3>Bocadillo de Calamares</h3>
-                            <p>Calamares frescos fritos con alioli casero en pan artesano.</p>
+                            <h3>Paella Valenciana</h3>
+                            <p>Arroz con pollo, conejo y verduras de temporada. Receta auténtica con sabor a tradição.</p>
                             <div class="menu-footer">
-                                <span class="menu-price" aria-label="Precio 8 euros con 50 céntimos">€8.50</span>
+                                <span class="menu-price">€18.50</span>
+                                <button class="btn-icon" data-name="Paella Valenciana" data-price="18.50" aria-label="Añadir al pedido">
+                                    <i class="fas fa-plus" aria-hidden="true"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </article>
+                    <article class="menu-item animate-fade-up" data-category="bocadillos">
+                        <div class="menu-image">
+                            <img src="https://images.unsplash.com/photo-1528735602780-2552fd46c7af?w=400&h=300&fit=crop" alt="Bocadillo de calamares con alioli casero" width="400" height="300" loading="lazy">
+                            <span class="menu-tag">Bocadillo</span>
+                            <div class="menu-overlay">
                                 <button class="btn-add" data-name="Bocadillo de Calamares" data-price="8.50" aria-label="Añadir Bocadillo de Calamares al pedido">
                                     <i class="fas fa-plus" aria-hidden="true"></i>
                                 </button>
                             </div>
                         </div>
-                    </article>
-                    <article class="menu-item" data-category="tradicional">
-                        <div class="menu-image">
-                            <img src="https://images.unsplash.com/photo-1589302168068-964664d93dc0?w=300&h=200&fit=crop" alt="Gazpacho Andaluz fresco" width="300" height="200" loading="lazy">
-                            <span class="menu-tag">Tradicional</span>
-                        </div>
                         <div class="menu-content">
-                            <h3>Gazpacho Andaluz</h3>
-                            <p>Sopa fría de tomate, pepino, pimiento y ajo. Fresco y saludable.</p>
+                            <h3>Bocadillo de Calamares</h3>
+                            <p>Calamares fritos con alioli casero en pan artesano crujiente.</p>
                             <div class="menu-footer">
-                                <span class="menu-price" aria-label="Precio 6 euros con 50 céntimos">€6.50</span>
+                                <span class="menu-price">€8.50</span>
+                                <button class="btn-icon" data-name="Bocadillo de Calamares" data-price="8.50" aria-label="Añadir al pedido">
+                                    <i class="fas fa-plus" aria-hidden="true"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </article>
+                    <article class="menu-item animate-fade-up" data-category="tradicional">
+                        <div class="menu-image">
+                            <img src="https://images.unsplash.com/photo-1589302168068-964664d93dc0?w=400&h=300&fit=crop" alt="Gazpacho Andaluz fresco casero" width="400" height="300" loading="lazy">
+                            <span class="menu-tag">Tradicional</span>
+                            <div class="menu-overlay">
                                 <button class="btn-add" data-name="Gazpacho Andaluz" data-price="6.50" aria-label="Añadir Gazpacho Andaluz al pedido">
                                     <i class="fas fa-plus" aria-hidden="true"></i>
                                 </button>
                             </div>
                         </div>
-                    </article>
-                    <article class="menu-item" data-category="especialidades">
-                        <div class="menu-image">
-                            <img src="https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=300&h=200&fit=crop" alt="Degustación del chef exclusiva" width="300" height="200" loading="lazy">
-                            <span class="menu-tag">Especialidad</span>
-                        </div>
                         <div class="menu-content">
-                            <h3>Degustación del Chef</h3>
-                            <p>Selección de 5 creaciones exclusivas del chef. Una experiencia única.</p>
+                            <h3>Gazpacho Andaluz</h3>
+                            <p>Sopa fría de tomate, pepino, pimiento y ajo. Fresco y saludable.</p>
                             <div class="menu-footer">
-                                <span class="menu-price" aria-label="Precio 32 euros">€32.00</span>
+                                <span class="menu-price">€6.50</span>
+                                <button class="btn-icon" data-name="Gazpacho Andaluz" data-price="6.50" aria-label="Añadir al pedido">
+                                    <i class="fas fa-plus" aria-hidden="true"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </article>
+                    <article class="menu-item animate-fade-up" data-category="especialidades" data-featured="true">
+                        <div class="menu-image">
+                            <img src="https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=600&h=400&fit=crop" alt="Degustación del chef con platos exclusivos" width="600" height="400" loading="lazy">
+                            <span class="menu-tag">Especialidad</span>
+                            <div class="menu-overlay">
                                 <button class="btn-add" data-name="Degustación del Chef" data-price="32.00" aria-label="Añadir Degustación del Chef al pedido">
                                     <i class="fas fa-plus" aria-hidden="true"></i>
                                 </button>
                             </div>
                         </div>
-                    </article>
-                    <article class="menu-item" data-category="bocadillos">
-                        <div class="menu-image">
-                            <img src="https://images.unsplash.com/photo-1614394003343-3c2edc3b61b7?w=300&h=200&fit=crop" alt="Bocadillo de jamón ibérico" width="300" height="200" loading="lazy">
-                            <span class="menu-tag">Bocadillo</span>
-                        </div>
                         <div class="menu-content">
-                            <h3>Bocadillo de Jamón Ibérico</h3>
-                            <p>Jamón ibérico de bellota con queso manchego en pan rústico.</p>
+                            <h3>Degustación del Chef</h3>
+                            <p>Selección de 5 creaciones exclusivas. Una experiencia única e irrepetible.</p>
                             <div class="menu-footer">
-                                <span class="menu-price" aria-label="Precio 12 euros">€12.00</span>
-                                <button class="btn-add" data-name="Bocadillo de Jamón Ibérico" data-price="12.00" aria-label="Añadir Bocadillo de Jamón Ibérico al pedido">
+                                <span class="menu-price">€32.00</span>
+                                <button class="btn-icon" data-name="Degustación del Chef" data-price="32.00" aria-label="Añadir al pedido">
                                     <i class="fas fa-plus" aria-hidden="true"></i>
                                 </button>
                             </div>
                         </div>
                     </article>
-                    <article class="menu-item" data-category="especialidades">
+                    <article class="menu-item animate-fade-up" data-category="bocadillos">
                         <div class="menu-image">
-                            <img src="https://images.unsplash.com/photo-1467003909585-2f8a72700288?w=300&h=200&fit=crop" alt="Rodaballo al horno" width="300" height="200" loading="lazy">
+                            <img src="https://images.unsplash.com/photo-1614394003343-3c2edc3b61b7?w=400&h=300&fit=crop" alt="Bocadillo de jamón ibérico de bellota" width="400" height="300" loading="lazy">
+                            <span class="menu-tag">Bocadillo</span>
+                            <div class="menu-overlay">
+                                <button class="btn-add" data-name="Bocadillo de Jamón Ibérico" data-price="12.00" aria-label="Añadir Bocadillo de Jamón Ibérico al pedido">
+                                    <i class="fas fa-plus" aria-hidden="true"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="menu-content">
+                            <h3>Jamón Ibérico</h3>
+                            <p>De bellota con queso manchego en pan rústico de hogaza.</p>
+                            <div class="menu-footer">
+                                <span class="menu-price">€12.00</span>
+                                <button class="btn-icon" data-name="Bocadillo de Jamón Ibérico" data-price="12.00" aria-label="Añadir al pedido">
+                                    <i class="fas fa-plus" aria-hidden="true"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </article>
+                    <article class="menu-item animate-fade-up" data-category="especialidades">
+                        <div class="menu-image">
+                            <img src="https://images.unsplash.com/photo-1467003909585-2f8a72700288?w=400&h=300&fit=crop" alt="Rodaballo al horno con hierbas" width="400" height="300" loading="lazy">
                             <span class="menu-tag">Especialidad</span>
+                            <div class="menu-overlay">
+                                <button class="btn-add" data-name="Rodaballo al Horno" data-price="24.00" aria-label="Añadir Rodaballo al Horno al pedido">
+                                    <i class="fas fa-plus" aria-hidden="true"></i>
+                                </button>
+                            </div>
                         </div>
                         <div class="menu-content">
                             <h3>Rodaballo al Horno</h3>
-                            <p>Pescado fresco de la zona horneado con hierbas y cítricos.</p>
+                            <p>Pescado fresco horneado con hierbas aromáticas y cítricos.</p>
                             <div class="menu-footer">
-                                <span class="menu-price" aria-label="Precio 24 euros">€24.00</span>
-                                <button class="btn-add" data-name="Rodaballo al Horno" data-price="24.00" aria-label="Añadir Rodaballo al Horno al pedido">
+                                <span class="menu-price">€24.00</span>
+                                <button class="btn-icon" data-name="Rodaballo al Horno" data-price="24.00" aria-label="Añadir al pedido">
                                     <i class="fas fa-plus" aria-hidden="true"></i>
                                 </button>
                             </div>
@@ -263,302 +400,293 @@
 
         <section class="chef" id="chef" aria-labelledby="chef-title">
             <div class="container">
-                <div class="chef-grid">
-                    <div class="chef-image">
-                        <img src="https://images.unsplash.com/photo-1577219491135-ce391730fb2c?w=500&h=600&fit=crop" alt="Chef Petri - Chef profesional" width="500" height="600" loading="lazy">
-                        <div class="chef-experience" aria-label="Más de 15 años de experiencia">
-                            <span class="exp-number">15+</span>
-                            <span class="exp-text">Años de<br aria-hidden="true">experiencia</span>
+                <div class="chef-bento">
+                    <div class="chef-visual">
+                        <div class="chef-image-wrapper animate-fade-scale">
+                            <img src="https://images.unsplash.com/photo-1577219491135-ce391730fb2c?w=600&h=750&fit=crop" alt="Chef Petri - Chef profesional con pasión por la cocina" width="600" height="750" loading="lazy">
+                            <div class="chef-badge animate-fade-up">
+                                <span class="badge-number">15+</span>
+                                <span class="badge-text">Años de<br>experiencia</span>
+                            </div>
                         </div>
                     </div>
                     <div class="chef-content">
-                        <span class="section-tag">El Chef</span>
-                        <h2 class="section-title" id="chef-title">Pasión por la Cocina</h2>
-                        <p class="chef-name">Chef Petri</p>
-                        <p class="chef-bio">Con más de 15 años de experiencia en las mejores cocinas del país, el Chef Petri ha creado un concepto único que combina la tradición culinaria española con técnicas modernas.</p>
-                        <p class="chef-bio">Cada plato cuenta una historia, cada sabor evoca recuerdos. En PetriGastro, la comida no es solo alimentación, es una experiencia que conecta personas y culturas.</p>
-                        <div class="chef-signature" aria-label="Firma del chef">
-                            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/e4/Signature_sample.svg/300px-Signature_sample.svg.png" alt="Firma del Chef Petri" width="150" height="50" loading="lazy">
+                        <span class="section-tag animate-fade-up">El Artista</span>
+                        <h2 class="section-title animate-fade-up" id="chef-title">Pasión que se hereda<br>de generaciones</h2>
+                        <p class="chef-name animate-fade-up">Chef Petri</p>
+                        <p class="chef-bio animate-fade-up">
+                            Desde los fogones de casa hasta las cocinas más exigentes, cada plato lleva consigo una historia familiar. La cocina para mí no es solo alimentación, es el arte de crear momentos que conectan personas.
+                        </p>
+                        <p class="chef-bio animate-fade-up">
+                            En PetriGastro, combino la tradición culinaria española con técnicas modernas, respeto por los ingredientes y ese toque personal que solo la experiencia puede dar.
+                        </p>
+                        <div class="chef-stats animate-fade-up">
+                            <div class="chef-stat">
+                                <span class="stat-icon"><i class="fas fa-utensils"></i></span>
+                                <span class="stat-value">+200</span>
+                                <span class="stat-name">Platos creados</span>
+                            </div>
+                            <div class="chef-stat">
+                                <span class="stat-icon"><i class="fas fa-award"></i></span>
+                                <span class="stat-value">3</span>
+                                <span class="stat-name">Premios gastronómicos</span>
+                            </div>
+                            <div class="chef-stat">
+                                <span class="stat-icon"><i class="fas fa-heart"></i></span>
+                                <span class="stat-value">100%</span>
+                                <span class="stat-name">Vocación</span>
+                            </div>
+                        </div>
+                        <div class="chef-signature animate-fade-up" aria-label="Firma del chef">
+                            <svg viewBox="0 0 200 80" class="signature-svg">
+                                <path d="M10 60 Q30 20 50 50 T90 40 Q110 30 130 50 T170 35 Q190 25 190 45" fill="none" stroke="var(--color-terracota)" stroke-width="2" class="signature-path"/>
+                            </svg>
+                            <span class="signature-name">Chef Petri</span>
                         </div>
                     </div>
                 </div>
             </div>
         </section>
 
-        <section class="gallery" id="galeria" aria-labelledby="gallery-title">
+        <section class="testimonials" id="testimonios" aria-labelledby="testimonials-title">
             <div class="container">
                 <div class="section-header">
-                    <span class="section-tag">Galería</span>
-                    <h2 class="section-title" id="gallery-title">Nuestras Creaciones</h2>
-                    <p class="section-subtitle">Una pequeña muestra de lo que te espera</p>
+                    <span class="section-tag animate-fade-up">Testimonios</span>
+                    <h2 class="section-title animate-fade-up" id="testimonials-title">Lo que dicen<br>nuestros clientes</h2>
                 </div>
-                <div class="gallery-grid">
-                    <div class="gallery-item">
-                        <img src="https://images.unsplash.com/photo-1473093295043-cdd812d0e601?w=400&h=300&fit=crop" alt="Plato gourmet 1" width="400" height="300" loading="lazy">
-                        <div class="gallery-overlay" aria-hidden="true">
-                            <i class="fas fa-search-plus"></i>
-                        </div>
-                    </div>
-                    <div class="gallery-item">
-                        <img src="https://images.unsplash.com/photo-1490645935967-10de6ba17061?w=400&h=300&fit=crop" alt="Plato gourmet 2" width="400" height="300" loading="lazy">
-                        <div class="gallery-overlay" aria-hidden="true">
-                            <i class="fas fa-search-plus"></i>
-                        </div>
-                    </div>
-                    <div class="gallery-item">
-                        <img src="https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=400&h=300&fit=crop" alt="Plato gourmet 3" width="400" height="300" loading="lazy">
-                        <div class="gallery-overlay" aria-hidden="true">
-                            <i class="fas fa-search-plus"></i>
-                        </div>
-                    </div>
-                    <div class="gallery-item">
-                        <img src="https://images.unsplash.com/photo-1567620905732-2d1ec7ab7445?w=400&h=300&fit=crop" alt="Plato gourmet 4" width="400" height="300" loading="lazy">
-                        <div class="gallery-overlay" aria-hidden="true">
-                            <i class="fas fa-search-plus"></i>
-                        </div>
-                    </div>
-                    <div class="gallery-item">
-                        <img src="https://images.unsplash.com/photo-1482049016688-2d3e1b311543?w=400&h=300&fit=crop" alt="Plato gourmet 5" width="400" height="300" loading="lazy">
-                        <div class="gallery-overlay" aria-hidden="true">
-                            <i class="fas fa-search-plus"></i>
-                        </div>
-                    </div>
-                    <div class="gallery-item">
-                        <img src="https://images.unsplash.com/photo-1484723091739-30a0978f31af?w=400&h=300&fit=crop" alt="Plato gourmet 6" width="400" height="300" loading="lazy">
-                        <div class="gallery-overlay" aria-hidden="true">
-                            <i class="fas fa-search-plus"></i>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <section class="testimonials" aria-labelledby="testimonials-title">
-            <div class="container">
-                <div class="section-header">
-                    <span class="section-tag">Testimonios</span>
-                    <h2 class="section-title" id="testimonials-title">Lo que dicen nuestros clientes</h2>
-                </div>
-                <div class="testimonials-grid">
-                    <article class="testimonial-card">
-                        <div class="testimonial-stars" aria-label="5 estrellas">
-                            <i class="fas fa-star" aria-hidden="true"></i>
-                            <i class="fas fa-star" aria-hidden="true"></i>
-                            <i class="fas fa-star" aria-hidden="true"></i>
-                            <i class="fas fa-star" aria-hidden="true"></i>
-                            <i class="fas fa-star" aria-hidden="true"></i>
-                        </div>
-                        <blockquote class="testimonial-text">Los mejores bocadillos que he probado en mucho tiempo. El pan artesanal y los ingredientes frescos se nota en cada mordida.</blockquote>
-                        <footer class="testimonial-author">
-                            <img src="https://randomuser.me/api/portraits/women/44.jpg" alt="María González" width="50" height="50" loading="lazy">
-                            <div>
-                                <cite class="author-name">María González</cite>
-                                <span class="author-role">Cliente habitual</span>
+                <div class="testimonials-carousel">
+                    <div class="testimonials-track" id="testimonialsTrack">
+                        <article class="testimonial-card animate-fade-up">
+                            <div class="testimonial-rating" aria-label="5 estrellas">
+                                <i class="fas fa-star" aria-hidden="true"></i>
+                                <i class="fas fa-star" aria-hidden="true"></i>
+                                <i class="fas fa-star" aria-hidden="true"></i>
+                                <i class="fas fa-star" aria-hidden="true"></i>
+                                <i class="fas fa-star" aria-hidden="true"></i>
                             </div>
-                        </footer>
-                    </article>
-                    <article class="testimonial-card">
-                        <div class="testimonial-stars" aria-label="5 estrellas">
-                            <i class="fas fa-star" aria-hidden="true"></i>
-                            <i class="fas fa-star" aria-hidden="true"></i>
-                            <i class="fas fa-star" aria-hidden="true"></i>
-                            <i class="fas fa-star" aria-hidden="true"></i>
-                            <i class="fas fa-star" aria-hidden="true"></i>
-                        </div>
-                        <blockquote class="testimonial-text">Pedí la degustación del chef para una cena especial y fue una experiencia increíble. Totalmente recomendado.</blockquote>
-                        <footer class="testimonial-author">
-                            <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="Carlos Ruiz" width="50" height="50" loading="lazy">
-                            <div>
-                                <cite class="author-name">Carlos Ruiz</cite>
-                                <span class="author-role">Food blogger</span>
+                            <blockquote class="testimonial-text">
+                                "Los mejores bocadillos que he probado. Se nota que cada ingrediente está elegido con cuidado. El pan artesano cruje de maravilla."
+                            </blockquote>
+                            <footer class="testimonial-author">
+                                <img src="https://randomuser.me/api/portraits/women/44.jpg" alt="" width="56" height="56" loading="lazy">
+                                <div>
+                                    <cite class="author-name">María González</cite>
+                                    <span class="author-role">Cliente habitual</span>
+                                </div>
+                            </footer>
+                        </article>
+                        <article class="testimonial-card animate-fade-up" style="--delay: 0.1s">
+                            <div class="testimonial-rating" aria-label="5 estrellas">
+                                <i class="fas fa-star" aria-hidden="true"></i>
+                                <i class="fas fa-star" aria-hidden="true"></i>
+                                <i class="fas fa-star" aria-hidden="true"></i>
+                                <i class="fas fa-star" aria-hidden="true"></i>
+                                <i class="fas fa-star" aria-hidden="true"></i>
                             </div>
-                        </footer>
-                    </article>
-                    <article class="testimonial-card">
-                        <div class="testimonial-stars" aria-label="5 estrellas">
-                            <i class="fas fa-star" aria-hidden="true"></i>
-                            <i class="fas fa-star" aria-hidden="true"></i>
-                            <i class="fas fa-star" aria-hidden="true"></i>
-                            <i class="fas fa-star" aria-hidden="true"></i>
-                            <i class="fas fa-star" aria-hidden="true"></i>
-                        </div>
-                        <blockquote class="testimonial-text">El servicio de entrega es rápido y la comida llega en perfecto estado. Siempre pedimos para toda la oficina.</blockquote>
-                        <footer class="testimonial-author">
-                            <img src="https://randomuser.me/api/portraits/women/68.jpg" alt="Laura Martínez" width="50" height="50" loading="lazy">
-                            <div>
-                                <cite class="author-name">Laura Martínez</cite>
-                                <span class="author-role">Directora de empresa</span>
+                            <blockquote class="testimonial-text">
+                                "Pedí la degustación del chef para una cena especial. Una experiencia increíble, cada plato es una obra de arte. Totalmente recomendado."
+                            </blockquote>
+                            <footer class="testimonial-author">
+                                <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="" width="56" height="56" loading="lazy">
+                                <div>
+                                    <cite class="author-name">Carlos Ruiz</cite>
+                                    <span class="author-role">Food blogger</span>
+                                </div>
+                            </footer>
+                        </article>
+                        <article class="testimonial-card animate-fade-up" style="--delay: 0.2s">
+                            <div class="testimonial-rating" aria-label="5 estrellas">
+                                <i class="fas fa-star" aria-hidden="true"></i>
+                                <i class="fas fa-star" aria-hidden="true"></i>
+                                <i class="fas fa-star" aria-hidden="true"></i>
+                                <i class="fas fa-star" aria-hidden="true"></i>
+                                <i class="fas fa-star" aria-hidden="true"></i>
                             </div>
-                        </footer>
-                    </article>
+                            <blockquote class="testimonial-text">
+                                "El servicio de entrega es rapidísimo y la comida llega en perfecto estado. Siempre pedimos para toda la oficina los viernes."
+                            </blockquote>
+                            <footer class="testimonial-author">
+                                <img src="https://randomuser.me/api/portraits/women/68.jpg" alt="" width="56" height="56" loading="lazy">
+                                <div>
+                                    <cite class="author-name">Laura Martínez</cite>
+                                    <span class="author-role">Directora de empresa</span>
+                                </div>
+                            </footer>
+                        </article>
+                        <article class="testimonial-card animate-fade-up" style="--delay: 0.3s">
+                            <div class="testimonial-rating" aria-label="5 estrellas">
+                                <i class="fas fa-star" aria-hidden="true"></i>
+                                <i class="fas fa-star" aria-hidden="true"></i>
+                                <i class="fas fa-star" aria-hidden="true"></i>
+                                <i class="fas fa-star" aria-hidden="true"></i>
+                                <i class="fas fa-star" aria-hidden="true"></i>
+                            </div>
+                            <blockquote class="testimonial-text">
+                                "La paella es simplemente espectacular. Sabe a la de mi abuela pero con ese toque moderno que la hace única. Volveré seguro."
+                            </blockquote>
+                            <footer class="testimonial-author">
+                                <img src="https://randomuser.me/api/portraits/men/67.jpg" alt="" width="56" height="56" loading="lazy">
+                                <div>
+                                    <cite class="author-name">Antonio García</cite>
+                                    <span class="author-role">Chef aficionado</span>
+                                </div>
+                            </footer>
+                        </article>
+                    </div>
+                    <div class="carousel-controls">
+                        <button class="carousel-btn prev" aria-label="Testimonio anterior" id="prevBtn">
+                            <i class="fas fa-chevron-left" aria-hidden="true"></i>
+                        </button>
+                        <div class="carousel-dots" id="carouselDots"></div>
+                        <button class="carousel-btn next" aria-label="Siguiente testimonio" id="nextBtn">
+                            <i class="fas fa-chevron-right" aria-hidden="true"></i>
+                        </button>
+                    </div>
                 </div>
             </div>
         </section>
 
-        <section class="reservar" id="reservar" aria-labelledby="reservar-title">
+        <section class="cta-section" aria-labelledby="cta-title">
+            <div class="cta-bg" aria-hidden="true">
+                <div class="cta-pattern"></div>
+            </div>
             <div class="container">
-                <div class="reservar-grid">
-                    <div class="reservar-info">
-                        <span class="section-tag">Reservas</span>
-                        <h2 class="section-title" id="reservar-title">Haz tu Pedido</h2>
-                        <p class="reservar-text">¿Tienes ganas de probar nuestros platos? Rellena el formulario y nos pondremos en contacto contigo para confirmar tu pedido.</p>
-                        <div class="reservar-details">
-                            <div class="detail-item">
-                                <i class="fas fa-map-marker-alt" aria-hidden="true"></i>
-                                <div>
-                                    <h4>Dirección</h4>
-                                    <p>Calle Gourmet, 123 - Madrid</p>
-                                </div>
-                            </div>
-                            <div class="detail-item">
-                                <i class="fas fa-phone-alt" aria-hidden="true"></i>
-                                <div>
-                                    <h4>Teléfono</h4>
-                                    <p><a href="tel:+34600123456">+34 600 123 456</a></p>
-                                </div>
-                            </div>
-                            <div class="detail-item">
-                                <i class="fas fa-envelope" aria-hidden="true"></i>
-                                <div>
-                                    <h4>Email</h4>
-                                    <p><a href="mailto:hola@petrigastro.es">hola@petrigastro.es</a></p>
-                                </div>
-                            </div>
-                            <div class="detail-item">
-                                <i class="fas fa-clock" aria-hidden="true"></i>
-                                <div>
-                                    <h4>Horario</h4>
-                                    <p>Lun-Dom: 12:00 - 22:00</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="reservar-form">
-                        <form id="reservationForm" action="https://wa.me/34600123456" method="get">
-                            <div class="form-group">
-                                <label for="name">Nombre completo</label>
-                                <input type="text" id="name" name="text" required placeholder="Tu nombre" autocomplete="name">
-                            </div>
-                            <div class="form-group">
-                                <label for="phone">Teléfono</label>
-                                <input type="tel" id="phone" name="phone" required placeholder="Tu teléfono" autocomplete="tel">
-                            </div>
-                            <div class="form-row">
-                                <div class="form-group">
-                                    <label for="date">Fecha</label>
-                                    <input type="date" id="date" name="date" required>
-                                </div>
-                                <div class="form-group">
-                                    <label for="time">Hora</label>
-                                    <input type="time" id="time" name="time" required>
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label for="order">Tu pedido</label>
-                                <textarea id="order" name="text" rows="4" placeholder="Describe los platos que quieres pedir..."></textarea>
-                            </div>
-                            <button type="submit" class="btn btn-primary btn-full">
-                                <i class="fas fa-paper-plane" aria-hidden="true"></i>
-                                Enviar Pedido
+                <div class="cta-content">
+                    <h2 class="cta-title animate-fade-up" id="cta-title">Tu próxima comida<br>es una historia por escribir</h2>
+                    <p class="cta-text animate-fade-up">Reserva hoy y recibe un 15% de descuento en tu primer pedido</p>
+                    <div class="cta-form animate-fade-up">
+                        <div class="cta-input-wrapper">
+                            <input type="email" id="ctaEmail" placeholder="Tu email para el descuento" aria-label="Correo electrónico para recibir el descuento" required>
+                            <button type="submit" class="btn btn-primary btn-glow" id="ctaSubmit">
+                                <span>Reclamar Descuento</span>
+                                <i class="fas fa-arrow-right" aria-hidden="true"></i>
                             </button>
-                        </form>
+                        </div>
+                        <p class="cta-note">Solo para nuevos clientes. No spam, lo prometemos.</p>
                     </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="gallery-mini" aria-label="Galería de platos">
+            <div class="gallery-strip">
+                <div class="gallery-strip-item">
+                    <img src="https://images.unsplash.com/photo-1473093295043-cdd812d0e601?w=300&h=300&fit=crop" alt="Plato gourmet 1" loading="lazy">
+                </div>
+                <div class="gallery-strip-item">
+                    <img src="https://images.unsplash.com/photo-1490645935967-10de6ba17061?w=300&h=300&fit=crop" alt="Plato gourmet 2" loading="lazy">
+                </div>
+                <div class="gallery-strip-item">
+                    <img src="https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=300&h=300&fit=crop" alt="Plato gourmet 3" loading="lazy">
+                </div>
+                <div class="gallery-strip-item">
+                    <img src="https://images.unsplash.com/photo-1567620905732-2d1ec7ab7445?w=300&h=300&fit=crop" alt="Plato gourmet 4" loading="lazy">
+                </div>
+                <div class="gallery-strip-item">
+                    <img src="https://images.unsplash.com/photo-1482049016688-2d3e1b311543?w=300&h=300&fit=crop" alt="Plato gourmet 5" loading="lazy">
+                </div>
+                <div class="gallery-strip-item">
+                    <img src="https://images.unsplash.com/photo-1484723091739-30a0978f31af?w=300&h=300&fit=crop" alt="Plato gourmet 6" loading="lazy">
                 </div>
             </div>
         </section>
     </main>
-
-    <div class="cart-float" id="cartBtn">
-        <i class="fas fa-shopping-bag"></i>
-        <span class="cart-count" id="cartCount">0</span>
-    </div>
-
-    <div class="cart-panel" id="cartPanel">
-        <div class="cart-header">
-            <h3>Tu Pedido</h3>
-            <button class="cart-close">&times;</button>
-        </div>
-        <p class="cart-empty">No hay platos seleccionados</p>
-    </div>
 
     <footer class="footer" role="contentinfo">
         <div class="container">
             <div class="footer-grid">
                 <div class="footer-brand">
                     <a href="#" class="logo" aria-label="PetriGastro Inicio">
-                        <span class="logo-icon" aria-hidden="true">🍽️</span>
+                        <span class="logo-icon" aria-hidden="true">
+                            <svg width="32" height="32" viewBox="0 0 100 100" fill="none">
+                                <circle cx="50" cy="50" r="45" fill="var(--color-terracota)"/>
+                                <path d="M30 50 Q50 30 70 50 Q50 70 30 50" fill="var(--color-crema)"/>
+                            </svg>
+                        </span>
                         <span class="logo-text">PetriGastro</span>
                     </a>
-                    <p>Comida artesanal para llevar. Sabores que inspiran, calidad que se nota.</p>
+                    <p>Sabores que cuentan historias. Comida artesanal para llevar, hecha con pasión y los mejores ingredientes.</p>
                     <div class="social-links" aria-label="Redes sociales">
-                        <a href="#" aria-label="Instagram"><i class="fab fa-instagram" aria-hidden="true"></i></a>
-                        <a href="#" aria-label="Facebook"><i class="fab fa-facebook-f" aria-hidden="true"></i></a>
-                        <a href="#" aria-label="Twitter"><i class="fab fa-twitter" aria-hidden="true"></i></a>
+                        <a href="https://instagram.com/petrigastro" aria-label="Instagram"><i class="fab fa-instagram" aria-hidden="true"></i></a>
+                        <a href="https://facebook.com/petrigastro" aria-label="Facebook"><i class="fab fa-facebook-f" aria-hidden="true"></i></a>
+                        <a href="https://twitter.com/petrigastro" aria-label="Twitter"><i class="fab fa-x-twitter" aria-hidden="true"></i></a>
                         <a href="https://wa.me/34600123456" aria-label="WhatsApp"><i class="fab fa-whatsapp" aria-hidden="true"></i></a>
                     </div>
                 </div>
                 <div class="footer-links">
-                    <h4>Enlaces rápidos</h4>
+                    <h4>Navegación</h4>
                     <nav aria-label="Navegación del pie">
                         <ul>
                             <li><a href="#inicio">Inicio</a></li>
                             <li><a href="#menu">Menú</a></li>
+                            <li><a href="#proceso">Cómo Funciona</a></li>
                             <li><a href="#chef">El Chef</a></li>
-                            <li><a href="#galeria">Galería</a></li>
-                            <li><a href="#reservar">Reservar</a></li>
+                            <li><a href="#testimonios">Testimonios</a></li>
                         </ul>
                     </nav>
                 </div>
                 <div class="footer-contact">
                     <h4>Contacto</h4>
                     <ul>
-                        <li><i class="fas fa-map-marker-alt" aria-hidden="true"></i> Calle Gourmet, 123</li>
-                        <li><i class="fas fa-phone-alt" aria-hidden="true"></i> <a href="tel:+34600123456">+34 600 123 456</a></li>
-                        <li><i class="fas fa-envelope" aria-hidden="true"></i> <a href="mailto:hola@petrigastro.es">hola@petrigastro.es</a></li>
+                        <li>
+                            <i class="fas fa-map-marker-alt" aria-hidden="true"></i>
+                            <span>Calle Gourmet, 123<br>28001 Madrid, España</span>
+                        </li>
+                        <li>
+                            <i class="fas fa-phone-alt" aria-hidden="true"></i>
+                            <a href="tel:+34600123456">+34 600 123 456</a>
+                        </li>
+                        <li>
+                            <i class="fas fa-envelope" aria-hidden="true"></i>
+                            <a href="mailto:hola@petrigastro.es">hola@petrigastro.es</a>
+                        </li>
+                        <li>
+                            <i class="fas fa-clock" aria-hidden="true"></i>
+                            <span>Lun-Dom: 12:00 - 22:00</span>
+                        </li>
                     </ul>
                 </div>
             </div>
             <div class="footer-bottom">
                 <p>&copy; 2024 PetriGastro. Todos los derechos reservados.</p>
+                <p class="footer-made">Hecho con <i class="fas fa-heart" aria-hidden="true"></i> en Madrid</p>
             </div>
         </div>
     </footer>
 
-    <button class="order-btn" id="orderBtn" onclick="submitOrder()">
-        <i class="fas fa-shopping-bag"></i>
-        <span>Finalizar Pedido</span>
-    </button>
+    <div class="cart-overlay" id="cartOverlay"></div>
 
-    <div class="plate-modal" id="plateModal">
-        <div class="plate-modal-content">
-            <button class="plate-modal-close" onclick="closePlateModal()">&times;</button>
-            <div class="plate-modal-body">
-                <img src="" alt="" id="plateModalImg" class="plate-modal-img">
-                <div class="plate-modal-info">
-                    <span class="plate-modal-tag" id="plateModalTag"></span>
-                    <h3 id="plateModalTitle"></h3>
-                    <p id="plateModalDesc"></p>
-                    <div class="plate-modal-price">
-                        <span id="plateModalPrice"></span>
-                    </div>
-                    <div class="plate-modal-qty">
-                        <button class="qty-btn" onclick="changeQty(-1)">-</button>
-                        <span id="plateQty">1</span>
-                        <button class="qty-btn" onclick="changeQty(1)">+</button>
-                    </div>
-                    <button class="btn btn-primary btn-full" onclick="addToCartFromModal()">Añadir al Pedido</button>
-                </div>
+    <aside class="cart-panel" id="cartPanel" role="dialog" aria-label="Carrito de compras">
+        <div class="cart-header">
+            <h3>Tu Pedido</h3>
+            <button class="cart-close" id="cartClose" aria-label="Cerrar carrito">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+            </button>
+        </div>
+        <div class="cart-body">
+            <p class="cart-empty" id="cartEmpty">
+                <i class="fas fa-shopping-basket" aria-hidden="true"></i>
+                Tu cesta espera...
+            </p>
+            <div class="cart-items" id="cartItems"></div>
+        </div>
+        <div class="cart-footer" id="cartFooter">
+            <div class="cart-total">
+                <span>Total:</span>
+                <span class="cart-total-amount" id="cartTotal">€0.00</span>
             </div>
+            <button class="btn btn-primary btn-full" id="checkoutBtn">
+                <span>Finalizar Pedido</span>
+                <i class="fab fa-whatsapp" aria-hidden="true"></i>
+            </button>
         </div>
-    </div>
+    </aside>
 
-    <div class="modal" id="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title" hidden>
-        <div class="modal-content">
-            <button class="modal-close" aria-label="Cerrar">&times;</button>
-            <img src="" alt="" id="modalImage">
-        </div>
-    </div>
+    <div class="toast-container" id="toastContainer"></div>
 
-    <script src="script.js"></script>
+    <script src="script.js" defer></script>
 </body>
 </html>
