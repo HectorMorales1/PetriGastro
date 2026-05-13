@@ -932,6 +932,120 @@ function init() {
     });
   }
 
+  (function initScrollVideo() {
+    const VIDEO_PATH = './Recursos/Crea_un_video_cinematico_de_.mp4';
+
+    const section = document.getElementById('scrollVideo');
+    const canvas = document.getElementById('scrollVideoCanvas');
+    const loader = document.getElementById('videoLoader');
+    const content = document.getElementById('videoContent');
+
+    if (!section || !canvas) return;
+
+    const ctx = canvas.getContext('2d');
+    const video = document.createElement('video');
+    video.src = VIDEO_PATH;
+    video.muted = true;
+    video.playsInline = true;
+    video.preload = 'auto';
+    video.load();
+    
+    let isLoaded = false;
+    let duration = 0;
+    let lastProgress = -1;
+    let rafId = null;
+    let pendingSeek = null;
+    let lastDrawnFrame = -1;
+
+    function resizeCanvas() {
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      canvas.width = window.innerWidth * dpr;
+      canvas.height = window.innerHeight * dpr;
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      canvas.style.width = window.innerWidth + 'px';
+      canvas.style.height = window.innerHeight + 'px';
+    }
+
+    function drawFrame() {
+      if (video.readyState < 2 || video.videoWidth === 0) return false;
+      
+      const cw = window.innerWidth;
+      const ch = window.innerHeight;
+      const vw = video.videoWidth;
+      const vh = video.videoHeight;
+      
+      const scale = Math.max(cw / vw, ch / vh);
+      const sw = vw * scale;
+      const sh = vh * scale;
+      const sx = (cw - sw) / 2;
+      const sy = (ch - sh) / 2;
+      
+      ctx.drawImage(video, sx, sy, sw, sh);
+      lastDrawnFrame = video.currentTime;
+      return true;
+    }
+
+    function update() {
+      if (!isLoaded || !duration) return;
+      
+      if (pendingSeek !== null && !video.seeking) {
+        video.currentTime = pendingSeek;
+        pendingSeek = null;
+      }
+      
+      if (video.readyState >= 2 && Math.abs(lastDrawnFrame - video.currentTime) > 0.05) {
+        drawFrame();
+      }
+      
+      if (content && lastProgress !== -1) {
+        content.classList.toggle('visible', lastProgress > 0.8);
+      }
+      
+      rafId = requestAnimationFrame(update);
+    }
+
+    function handleScroll() {
+      const rect = section.getBoundingClientRect();
+      const sectionHeight = section.offsetHeight;
+      const viewportHeight = window.innerHeight;
+      
+      const totalScroll = sectionHeight - viewportHeight;
+      if (totalScroll <= 0) {
+        return;
+      }
+      
+      const scrolled = viewportHeight - rect.top;
+      const progress = Math.max(0, Math.min(1, scrolled / totalScroll));
+      lastProgress = progress;
+      
+      const targetTime = progress * duration;
+      
+      if (Math.abs(video.currentTime - targetTime) > 0.25) {
+        pendingSeek = targetTime;
+      }
+    }
+
+    video.addEventListener('loadeddata', () => {
+      duration = video.duration;
+      isLoaded = true;
+      if (loader) loader.style.display = 'none';
+      
+      video.play().catch(() => {});
+      video.pause();
+      
+      rafId = requestAnimationFrame(update);
+    });
+
+    video.addEventListener('error', () => {
+      if (loader) loader.textContent = 'Error cargando video';
+    });
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    window.addEventListener('resize', resizeCanvas);
+    
+    resizeCanvas();
+  })();
+
   const style = document.createElement('style');
   style.textContent = `
     @keyframes fadeIn {
