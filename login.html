@@ -40,7 +40,51 @@
                         <path d="M5 12h14M12 5l7 7-7 7"/>
                     </svg>
                 </button>
+                
+                <div class="register-link">
+                    <a href="#" id="openRegister">Solicitar acceso</a>
+                </div>
             </form>
+        </div>
+        
+        <div class="modal-overlay" id="registerModal">
+            <div class="modal-content">
+                <button class="modal-close" id="closeRegister">&times;</button>
+                <h2>Solicitar Acceso</h2>
+                <p class="modal-subtitle">Completa el formulario para crear tu cuenta</p>
+                
+                <form id="registerForm">
+                    <div class="form-group">
+                        <label for="regName">Nombre</label>
+                        <input type="text" id="regName" name="name" required placeholder="Tu nombre">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="regLastName">Apellidos</label>
+                        <input type="text" id="regLastName" name="lastName" required placeholder="Tus apellidos">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="regEmail">Correo electrónico</label>
+                        <input type="email" id="regEmail" name="email" required placeholder="tu@correo.com">
+                        <p class="error-message" id="emailError"></p>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="regPassword">Contraseña</label>
+                        <input type="password" id="regPassword" name="password" required minlength="6" placeholder="Mínimo 6 caracteres">
+                        <p class="error-message" id="regPassError"></p>
+                    </div>
+                    
+                    <button type="submit" class="btn-login" id="registerBtn">
+                        <span>Crear cuenta</span>
+                    </button>
+                </form>
+                
+                <div class="success-message" id="registerSuccess">
+                    ¡Cuenta creada exitosamente! Ya puedes iniciar sesión.
+                </div>
+            </div>
         </div>
     </div>
     
