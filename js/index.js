@@ -934,7 +934,7 @@ function init() {
 
   (function initScrollVideo() {
     const FRAMES_PATH = './Recursos/Fotogramas/frame_%03d.jpg';
-    const TOTAL_FRAMES = 60;
+    const TOTAL_FRAMES = 120;
 
     const section = document.getElementById('scrollVideo');
     const canvas = document.getElementById('scrollVideoCanvas');
@@ -947,7 +947,6 @@ function init() {
     const images = [];
     let imagesLoaded = 0;
     let lastFrameIndex = -1;
-    let lastProgress = -1;
 
     function resizeCanvas() {
       const dpr = Math.min(window.devicePixelRatio || 1, 2);
@@ -959,6 +958,7 @@ function init() {
     }
 
     function drawImage(img) {
+      if (!img) return;
       const cw = window.innerWidth;
       const ch = window.innerHeight;
       const vw = img.naturalWidth || img.width;
@@ -973,52 +973,25 @@ function init() {
       ctx.drawImage(img, sx, sy, sw, sh);
     }
 
-    function update() {
-      if (imagesLoaded < TOTAL_FRAMES) return;
-      
-      if (content && lastProgress !== -1) {
-        content.classList.toggle('visible', lastProgress > 0.8);
-      }
-    }
-
     function handleScroll() {
+      if (imagesLoaded < TOTAL_FRAMES) return;
+
       const rect = section.getBoundingClientRect();
       const sectionHeight = section.offsetHeight;
       const viewportHeight = window.innerHeight;
-      const totalScroll = sectionHeight - viewportHeight;
       
-      if (rect.top > viewportHeight) {
-        if (lastFrameIndex !== 0 && images[0]) {
-          drawImage(images[0]);
-          lastFrameIndex = 0;
-        }
-        lastProgress = 0;
-        return;
-      }
+      const progress = (viewportHeight - rect.top) / (sectionHeight + viewportHeight);
+      const clampedProgress = Math.max(0, Math.min(1, progress));
+      const frameIndex = Math.round(clampedProgress * (TOTAL_FRAMES - 1));
       
-      if (rect.bottom < 0) {
-        if (lastFrameIndex !== TOTAL_FRAMES - 1 && images[TOTAL_FRAMES - 1]) {
-          drawImage(images[TOTAL_FRAMES - 1]);
-          lastFrameIndex = TOTAL_FRAMES - 1;
-        }
-        lastProgress = 1;
-        return;
-      }
-      
-      if (totalScroll <= 0) return;
-      
-      const scrolled = viewportHeight - rect.top;
-      const progress = Math.max(0, Math.min(1, scrolled / totalScroll));
-      lastProgress = progress;
-      
-      const frameIndex = Math.round(progress * (TOTAL_FRAMES - 1));
-      
-      if (frameIndex !== lastFrameIndex && images[frameIndex]) {
+      if (frameIndex !== lastFrameIndex) {
         drawImage(images[frameIndex]);
         lastFrameIndex = frameIndex;
+        
+        if (content) {
+          content.classList.toggle('visible', clampedProgress > 0.7);
+        }
       }
-      
-      requestAnimationFrame(update);
     }
 
     for (let i = 0; i < TOTAL_FRAMES; i++) {
@@ -1026,13 +999,10 @@ function init() {
       img.src = FRAMES_PATH.replace('%03d', i.toString().padStart(3, '0'));
       img.onload = () => {
         imagesLoaded++;
-        if (imagesLoaded === 1 && loader) {
-          loader.style.display = 'none';
-        }
         if (imagesLoaded === TOTAL_FRAMES) {
           if (loader) loader.style.display = 'none';
           resizeCanvas();
-          if (images[0]) drawImage(images[0]);
+          handleScroll();
         }
       };
       img.onerror = () => {
