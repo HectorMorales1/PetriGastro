@@ -932,6 +932,91 @@ function init() {
     });
   }
 
+  (function initScrollVideo() {
+    const FRAMES_PATH = './Recursos/Fotogramas/frame_%03d.jpg';
+    const TOTAL_FRAMES = 120;
+
+    const section = document.getElementById('scrollVideo');
+    const canvas = document.getElementById('scrollVideoCanvas');
+    const loader = document.getElementById('videoLoader');
+    const content = document.getElementById('videoContent');
+
+    if (!section || !canvas) return;
+
+    const ctx = canvas.getContext('2d');
+    const images = [];
+    let imagesLoaded = 0;
+    let lastFrameIndex = -1;
+
+    function resizeCanvas() {
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      canvas.width = window.innerWidth * dpr;
+      canvas.height = window.innerHeight * dpr;
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      canvas.style.width = window.innerWidth + 'px';
+      canvas.style.height = window.innerHeight + 'px';
+    }
+
+    function drawImage(img) {
+      if (!img) return;
+      const cw = window.innerWidth;
+      const ch = window.innerHeight;
+      const vw = img.naturalWidth || img.width;
+      const vh = img.naturalHeight || img.height;
+      
+      const scale = Math.max(cw / vw, ch / vh);
+      const sw = vw * scale;
+      const sh = vh * scale;
+      const sx = (cw - sw) / 2;
+      const sy = (ch - sh) / 2;
+      
+      ctx.drawImage(img, sx, sy, sw, sh);
+    }
+
+    function handleScroll() {
+      if (imagesLoaded < TOTAL_FRAMES) return;
+
+      const rect = section.getBoundingClientRect();
+      const sectionHeight = section.offsetHeight;
+      const viewportHeight = window.innerHeight;
+      
+      const progress = (viewportHeight - rect.top) / (sectionHeight + viewportHeight);
+      const clampedProgress = Math.max(0, Math.min(1, progress));
+      const frameIndex = Math.round(clampedProgress * (TOTAL_FRAMES - 1));
+      
+      if (frameIndex !== lastFrameIndex) {
+        drawImage(images[frameIndex]);
+        lastFrameIndex = frameIndex;
+        
+        if (content) {
+          content.classList.toggle('visible', clampedProgress > 0.7);
+        }
+      }
+    }
+
+    for (let i = 0; i < TOTAL_FRAMES; i++) {
+      const img = new Image();
+      img.src = FRAMES_PATH.replace('%03d', i.toString().padStart(3, '0'));
+      img.onload = () => {
+        imagesLoaded++;
+        if (imagesLoaded === TOTAL_FRAMES) {
+          if (loader) loader.style.display = 'none';
+          resizeCanvas();
+          handleScroll();
+        }
+      };
+      img.onerror = () => {
+        imagesLoaded++;
+      };
+      images.push(img);
+    }
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    window.addEventListener('resize', resizeCanvas);
+    
+    resizeCanvas();
+  })();
+
   const style = document.createElement('style');
   style.textContent = `
     @keyframes fadeIn {
