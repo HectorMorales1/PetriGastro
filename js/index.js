@@ -933,7 +933,8 @@ function init() {
   }
 
   (function initScrollVideo() {
-    const VIDEO_PATH = './Recursos/Crea_un_video_cinematico_de_.mp4';
+    const FRAMES_PATH = './Recursos/Fotogramas/frame_%03d.jpg';
+    const TOTAL_FRAMES = 120;
 
     const section = document.getElementById('scrollVideo');
     const canvas = document.getElementById('scrollVideoCanvas');
@@ -943,19 +944,9 @@ function init() {
     if (!section || !canvas) return;
 
     const ctx = canvas.getContext('2d');
-    const video = document.createElement('video');
-    video.src = VIDEO_PATH;
-    video.muted = true;
-    video.playsInline = true;
-    video.preload = 'auto';
-    video.load();
-    
-    let isLoaded = false;
-    let duration = 0;
-    let lastProgress = -1;
-    let rafId = null;
-    let pendingSeek = null;
-    let lastDrawnFrame = -1;
+    const images = [];
+    let imagesLoaded = 0;
+    let lastFrameIndex = -1;
 
     function resizeCanvas() {
       const dpr = Math.min(window.devicePixelRatio || 1, 2);
@@ -966,13 +957,12 @@ function init() {
       canvas.style.height = window.innerHeight + 'px';
     }
 
-    function drawFrame() {
-      if (video.readyState < 2 || video.videoWidth === 0) return false;
-      
+    function drawImage(img) {
+      if (!img) return;
       const cw = window.innerWidth;
       const ch = window.innerHeight;
-      const vw = video.videoWidth;
-      const vh = video.videoHeight;
+      const vw = img.naturalWidth || img.width;
+      const vh = img.naturalHeight || img.height;
       
       const scale = Math.max(cw / vw, ch / vh);
       const sw = vw * scale;
@@ -980,65 +970,46 @@ function init() {
       const sx = (cw - sw) / 2;
       const sy = (ch - sh) / 2;
       
-      ctx.drawImage(video, sx, sy, sw, sh);
-      lastDrawnFrame = video.currentTime;
-      return true;
-    }
-
-    function update() {
-      if (!isLoaded || !duration) return;
-      
-      if (pendingSeek !== null && !video.seeking) {
-        video.currentTime = pendingSeek;
-        pendingSeek = null;
-      }
-      
-      if (video.readyState >= 2 && Math.abs(lastDrawnFrame - video.currentTime) > 0.05) {
-        drawFrame();
-      }
-      
-      if (content && lastProgress !== -1) {
-        content.classList.toggle('visible', lastProgress > 0.8);
-      }
-      
-      rafId = requestAnimationFrame(update);
+      ctx.drawImage(img, sx, sy, sw, sh);
     }
 
     function handleScroll() {
+      if (imagesLoaded < TOTAL_FRAMES) return;
+
       const rect = section.getBoundingClientRect();
       const sectionHeight = section.offsetHeight;
       const viewportHeight = window.innerHeight;
       
-      const totalScroll = sectionHeight - viewportHeight;
-      if (totalScroll <= 0) {
-        return;
-      }
+      const progress = (viewportHeight - rect.top) / (sectionHeight + viewportHeight);
+      const clampedProgress = Math.max(0, Math.min(1, progress));
+      const frameIndex = Math.round(clampedProgress * (TOTAL_FRAMES - 1));
       
-      const scrolled = viewportHeight - rect.top;
-      const progress = Math.max(0, Math.min(1, scrolled / totalScroll));
-      lastProgress = progress;
-      
-      const targetTime = progress * duration;
-      
-      if (Math.abs(video.currentTime - targetTime) > 0.25) {
-        pendingSeek = targetTime;
+      if (frameIndex !== lastFrameIndex) {
+        drawImage(images[frameIndex]);
+        lastFrameIndex = frameIndex;
+        
+        if (content) {
+          content.classList.toggle('visible', clampedProgress > 0.7);
+        }
       }
     }
 
-    video.addEventListener('loadeddata', () => {
-      duration = video.duration;
-      isLoaded = true;
-      if (loader) loader.style.display = 'none';
-      
-      video.play().catch(() => {});
-      video.pause();
-      
-      rafId = requestAnimationFrame(update);
-    });
-
-    video.addEventListener('error', () => {
-      if (loader) loader.textContent = 'Error cargando video';
-    });
+    for (let i = 0; i < TOTAL_FRAMES; i++) {
+      const img = new Image();
+      img.src = FRAMES_PATH.replace('%03d', i.toString().padStart(3, '0'));
+      img.onload = () => {
+        imagesLoaded++;
+        if (imagesLoaded === TOTAL_FRAMES) {
+          if (loader) loader.style.display = 'none';
+          resizeCanvas();
+          handleScroll();
+        }
+      };
+      img.onerror = () => {
+        imagesLoaded++;
+      };
+      images.push(img);
+    }
 
     window.addEventListener('scroll', handleScroll, { passive: true });
     window.addEventListener('resize', resizeCanvas);
