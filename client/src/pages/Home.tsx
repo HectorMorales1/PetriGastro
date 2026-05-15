@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, useMemo } from 'react'
 import { Link } from 'react-router-dom'
 import { ArrowRight, Leaf, Flame, Utensils, CalendarCheck, ChefHat, Smile, Star, X, ChevronLeft, ChevronRight, ShoppingBag, User, LogOut, Loader2 } from 'lucide-react'
 import { Helmet } from 'react-helmet-async'
@@ -146,6 +146,12 @@ const galleryImages = [
   'https://images.unsplash.com/photo-1482049016688-2d3e1b311543?w=300&h=300&fit=crop',
   'https://images.unsplash.com/photo-1484723091739-30a0978f31af?w=300&h=300&fit=crop'
 ]
+
+const getCardsPerView = () => {
+  if (window.innerWidth >= 1024) return 3
+  if (window.innerWidth >= 768) return 2
+  return 1
+}
 
 function LoginModal({ isOpen, onClose, onLoginSuccess }) {
   const [isRegisterMode, setIsRegisterMode] = useState(false)
@@ -353,12 +359,22 @@ function LoginModal({ isOpen, onClose, onLoginSuccess }) {
 export default function Home() {
   const [scrollProgress, setScrollProgress] = useState(0)
   const [currentSlide, setCurrentSlide] = useState(0)
+  const [cardsPerView, setCardsPerView] = useState(() => (typeof window !== 'undefined' ? getCardsPerView() : 3))
   const [lightboxOpen, setLightboxOpen] = useState(false)
   const [lightboxIndex, setLightboxIndex] = useState(0)
   const [loginOpen, setLoginOpen] = useState(false)
-  const carouselRef = useRef(null)
   const { cart } = useCart()
   const { user, logout } = useAuth()
+
+  const testimonialPages = useMemo(() => {
+    const pages = []
+    for (let i = 0; i < testimonialsData.length; i += cardsPerView) {
+      pages.push(testimonialsData.slice(i, i + cardsPerView))
+    }
+    return pages
+  }, [cardsPerView])
+
+  const galleryLoopImages = useMemo(() => [...galleryImages, ...galleryImages], [])
 
   const { data: destacados = [], isLoading: loadingDestacados } = useQuery({
     queryKey: ['platos', 'destacados'],
@@ -377,11 +393,32 @@ export default function Home() {
   }, [])
 
   useEffect(() => {
+    const handleResize = () => {
+      setCardsPerView(getCardsPerView())
+    }
+
+    window.addEventListener('resize', handleResize)
+    return () => window.removeEventListener('resize', handleResize)
+  }, [])
+
+  useEffect(() => {
+    setCurrentSlide(prev => Math.min(prev, Math.max(testimonialPages.length - 1, 0)))
+  }, [testimonialPages.length])
+
+  useEffect(() => {
     const interval = setInterval(() => {
-      setCurrentSlide(prev => (prev >= testimonialsData.length - 3 ? 0 : prev + 1))
+      setCurrentSlide(prev => (prev >= testimonialPages.length - 1 ? 0 : prev + 1))
     }, 5000)
     return () => clearInterval(interval)
-  }, [])
+  }, [testimonialPages.length])
+
+  const prevSlide = () => {
+    setCurrentSlide(prev => (prev <= 0 ? testimonialPages.length - 1 : prev - 1))
+  }
+
+  const nextSlide = () => {
+    setCurrentSlide(prev => (prev >= testimonialPages.length - 1 ? 0 : prev + 1))
+  }
 
   const openLightbox = (index) => {
     setLightboxIndex(index)
@@ -644,62 +681,90 @@ export default function Home() {
               <h2 className="text-4xl font-bold font-heading text-carbon">Lo que dicen<br/>nuestros clientes</h2>
             </div>
 
-            <div className="relative overflow-hidden" ref={carouselRef}>
+            <div className="relative overflow-hidden">
               <div 
                 className="flex transition-transform duration-500 ease-out"
-                style={{ transform: `translateX(-${currentSlide * (100/3)}%)` }}
+                style={{ transform: `translateX(-${currentSlide * 100}%)` }}
               >
-                {testimonialsData.map((t, i) => (
-                  <div key={t.id} className="w-full md:w-1/3 flex-shrink-0 px-4">
-                    <div className="bg-surface rounded-2xl p-6 shadow-lg h-full">
-                      <div className="flex gap-1 mb-4">
-                        {[...Array(5)].map((_, j) => (
-                          <Star 
-                            key={j} 
-                            size={16} 
-                            className={j < t.rating ? 'text-oro fill-oro' : 'text-text-muted'} 
-                          />
-                        ))}
-                      </div>
-                      <p className="text-text-muted mb-4 italic">"{t.text}"</p>
-                      <div className="flex items-center gap-3">
-                        <img src={t.avatar} alt={t.author} className="w-10 h-10 rounded-full object-cover" />
-                        <div>
-                          <div className="font-semibold text-carbon">{t.author}</div>
-                          <div className="text-sm text-text-muted">{t.role}</div>
-                        </div>
-                      </div>
+                {testimonialPages.map((page, pageIndex) => (
+                  <div key={pageIndex} className="w-full flex-shrink-0 px-2">
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                      {page.map((t) => (
+                        <article key={t.id} className="bg-surface rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 h-full">
+                          <div className="flex gap-1 mb-4">
+                            {[...Array(5)].map((_, j) => (
+                              <Star 
+                                key={j} 
+                                size={16} 
+                                className={j < t.rating ? 'text-oro fill-oro' : 'text-text-muted'} 
+                              />
+                            ))}
+                          </div>
+                          <div className="text-accent/30 text-4xl leading-none font-heading">"</div>
+                          <p className="text-text leading-relaxed italic mb-5 -mt-3">{t.text}</p>
+                          <div className="flex items-center gap-3 mt-auto">
+                            <img src={t.avatar} alt={t.author} className="w-12 h-12 rounded-full object-cover border-2 border-bg-secondary" />
+                            <div>
+                              <div className="font-semibold text-carbon">{t.author}</div>
+                              <div className="text-sm text-text-muted">{t.role}</div>
+                            </div>
+                          </div>
+                        </article>
+                      ))}
+                      {page.length < cardsPerView && [...Array(cardsPerView - page.length)].map((_, i) => (
+                        <div key={`empty-${i}`} className="hidden md:block" />
+                      ))}
                     </div>
                   </div>
                 ))}
               </div>
 
-              <div className="flex justify-center gap-2 mt-8">
-                {[...Array(Math.ceil(testimonialsData.length / 3))].map((_, i) => (
-                  <button
-                    key={i}
-                    onClick={() => setCurrentSlide(i)}
-                    className={`w-3 h-3 rounded-full transition ${i === Math.floor(currentSlide) ? 'bg-accent' : 'bg-text-muted'}`}
-                    aria-label={`Ir a testimonio ${i + 1}`}
-                  />
-                ))}
+              <div className="flex items-center justify-center gap-4 mt-8">
+                <button
+                  onClick={prevSlide}
+                  className="w-12 h-12 flex items-center justify-center rounded-full bg-surface shadow-md text-carbon hover:bg-accent hover:text-white transition"
+                  aria-label="Testimonio anterior"
+                >
+                  <ChevronLeft size={20} />
+                </button>
+
+                <div className="flex justify-center gap-2">
+                  {testimonialPages.map((_, i) => (
+                    <button
+                      key={i}
+                      onClick={() => setCurrentSlide(i)}
+                      className={`h-2.5 rounded-full transition-all ${i === currentSlide ? 'w-8 bg-accent' : 'w-2.5 bg-text-muted'}`}
+                      aria-label={`Ir a testimonio ${i + 1}`}
+                    />
+                  ))}
+                </div>
+
+                <button
+                  onClick={nextSlide}
+                  className="w-12 h-12 flex items-center justify-center rounded-full bg-surface shadow-md text-carbon hover:bg-accent hover:text-white transition"
+                  aria-label="Siguiente testimonio"
+                >
+                  <ChevronRight size={20} />
+                </button>
               </div>
             </div>
           </div>
         </section>
 
         {/* Gallery Mini */}
-        <section className="py-12 px-4 overflow-x-auto bg-bg">
-          <div className="flex gap-4 justify-center flex-nowrap">
-            {galleryImages.map((img, i) => (
-              <div 
-                key={i} 
-                className="flex-shrink-0 w-48 h-48 rounded-xl overflow-hidden cursor-pointer hover:scale-105 transition-transform"
-                onClick={() => openLightbox(i)}
-              >
-                <img src={img} alt={`Plato gourmet ${i + 1}`} className="w-full h-full object-cover" loading="lazy" />
-              </div>
-            ))}
+        <section className="py-12 px-4 overflow-hidden bg-bg">
+          <div className="max-w-7xl mx-auto overflow-hidden">
+            <div className="gallery-marquee flex gap-4 w-max">
+              {galleryLoopImages.map((img, i) => (
+                <div 
+                  key={`${img}-${i}`} 
+                  className="flex-shrink-0 w-48 h-48 rounded-xl overflow-hidden cursor-pointer"
+                  onClick={() => openLightbox(i % galleryImages.length)}
+                >
+                  <img src={img} alt={`Plato gourmet ${(i % galleryImages.length) + 1}`} className="w-full h-full object-cover hover:scale-110 transition-transform" loading="lazy" />
+                </div>
+              ))}
+            </div>
           </div>
         </section>
 
