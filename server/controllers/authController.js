@@ -1,39 +1,59 @@
 const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
-const pool = require('../config/db')
 
 const generateToken = (user) => {
   return jwt.sign(
-    { id: user.id, email: user.email, nombre: user.nombre, rol: user.rol },
+    { id: user.id, email: user.email, nombre: user.nombre, apellidos: user.apellidos, rol: user.rol },
     process.env.JWT_SECRET,
-    { expiresIn: process.env.JWT_EXPIRES_IN || '15m' }
+    { expiresIn: '7d' }
   )
 }
 
+let nextId = 3
+const users = [
+  {
+    id: 1,
+    nombre: 'Administrador',
+    apellidos: '',
+    email: 'admin@petrigastro.com',
+    password_hash: bcrypt.hashSync('admin123', 12),
+    rol: 'admin'
+  },
+  {
+    id: 2,
+    nombre: 'Cliente',
+    apellidos: 'De Prueba',
+    email: 'cliente@petrigastro.com',
+    password_hash: bcrypt.hashSync('cliente123', 12),
+    rol: 'cliente'
+  }
+]
+
 exports.register = async (req, res) => {
   try {
-    const { nombre, email, password } = req.body
+    const { nombre, apellidos, email, password } = req.body
 
-    const existingUser = await pool.query(
-      'SELECT id FROM usuarios WHERE email = $1',
-      [email]
-    )
-
-    if (existingUser.rows.length > 0) {
+    if (users.find(u => u.email === email)) {
       return res.status(400).json({ message: 'El email ya está registrado' })
     }
 
     const passwordHash = await bcrypt.hash(password, 12)
+    const newUser = {
+      id: nextId++,
+      nombre,
+      apellidos: apellidos || '',
+      email,
+      password_hash: passwordHash,
+      rol: 'cliente'
+    }
+    users.push(newUser)
 
-    const result = await pool.query(
-      'INSERT INTO usuarios (nombre, email, password_hash, rol) VALUES ($1, $2, $3, $4) RETURNING id, nombre, email, rol',
-      [nombre, email, passwordHash, 'cliente']
-    )
+    const token = generateToken(newUser)
 
-    const user = result.rows[0]
-    const token = generateToken(user)
-
-    res.status(201).json({ token, user: { id: user.id, nombre: user.nombre, email: user.email, rol: user.rol } })
+    res.status(201).json({
+      token,
+      user: { id: newUser.id, nombre: newUser.nombre, apellidos: newUser.apellidos, email: newUser.email, rol: newUser.rol }
+    })
   } catch (error) {
     console.error('Error en registro:', error)
     res.status(500).json({ message: 'Error del servidor' })
@@ -44,18 +64,12 @@ exports.login = async (req, res) => {
   try {
     const { email, password } = req.body
 
-    const result = await pool.query(
-      'SELECT id, nombre, email, password_hash, rol FROM usuarios WHERE email = $1',
-      [email]
-    )
-
-    if (result.rows.length === 0) {
+    const user = users.find(u => u.email === email)
+    if (!user) {
       return res.status(401).json({ message: 'Credenciales inválidas' })
     }
 
-    const user = result.rows[0]
     const validPassword = await bcrypt.compare(password, user.password_hash)
-
     if (!validPassword) {
       return res.status(401).json({ message: 'Credenciales inválidas' })
     }
@@ -64,7 +78,7 @@ exports.login = async (req, res) => {
 
     res.json({
       token,
-      user: { id: user.id, nombre: user.nombre, email: user.email, rol: user.rol }
+      user: { id: user.id, nombre: user.nombre, apellidos: user.apellidos, email: user.email, rol: user.rol }
     })
   } catch (error) {
     console.error('Error en login:', error)
@@ -74,16 +88,12 @@ exports.login = async (req, res) => {
 
 exports.me = async (req, res) => {
   try {
-    const result = await pool.query(
-      'SELECT id, nombre, email, rol FROM usuarios WHERE id = $1',
-      [req.user.id]
-    )
-
-    if (result.rows.length === 0) {
+    const user = users.find(u => u.id === req.user.id)
+    if (!user) {
       return res.status(404).json({ message: 'Usuario no encontrado' })
     }
 
-    res.json(result.rows[0])
+    res.json({ id: user.id, nombre: user.nombre, apellidos: user.apellidos, email: user.email, rol: user.rol })
   } catch (error) {
     console.error('Error en me:', error)
     res.status(500).json({ message: 'Error del servidor' })

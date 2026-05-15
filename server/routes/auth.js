@@ -7,6 +7,7 @@ const router = express.Router()
 
 router.post('/register', [
   body('nombre').trim().isLength({ min: 2, max: 100 }),
+  body('apellidos').optional().trim().isLength({ max: 100 }),
   body('email').isEmail().normalizeEmail(),
   body('password').isLength({ min: 8 })
 ], authController.register)
