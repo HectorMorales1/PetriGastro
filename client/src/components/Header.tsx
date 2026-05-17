@@ -1,5 +1,5 @@
 import { Link, useLocation } from 'react-router-dom'
-import { ShoppingCart, User, Menu, X, LogOut } from 'lucide-react'
+import { ShoppingCart, User, Menu, X, LogOut, Package } from 'lucide-react'
 import { useState, useEffect } from 'react'
 import { useCart } from '../context/CartContext'
 import { useAuth } from '../context/AuthContext'
@@ -31,7 +31,6 @@ export default function Header() {
       ]
     : [
         { to: '/', label: 'Inicio' },
-        { to: '/reservas', label: 'Reservas' },
         { to: '/menu', label: 'Menú' }
       ]
 
@@ -69,7 +68,10 @@ export default function Header() {
         <div className="hidden md:flex items-center gap-4">
           {user ? (
             <div className="flex items-center gap-4">
-              <span className="text-sm font-medium text-carbon">{user.nombre}</span>
+              <Link to="/mis-pedidos" className="flex items-center gap-1 text-sm text-carbon hover:text-accent">
+                <Package size={18} />
+                Mis Pedidos
+              </Link>
               {user.rol === 'admin' && (
                 <Link to="/admin" className="text-accent hover:underline text-sm">Admin</Link>
               )}
@@ -103,13 +105,6 @@ export default function Header() {
               </span>
             )}
           </button>
-          
-          <Link 
-            to="/reservas" 
-            className="px-4 py-2 rounded-full font-semibold text-white hover:opacity-90 transition hover:scale-105 bg-accent"
-          >
-            Reservar
-          </Link>
         </div>
 
         <button

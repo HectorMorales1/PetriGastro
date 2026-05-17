@@ -9,8 +9,9 @@ router.post('/', authMiddleware, [
   body('items').isArray({ min: 1 })
 ], pedidoController.create)
 
-router.get('/', adminMiddleware, pedidoController.getAll)
+router.get('/', authMiddleware, adminMiddleware, pedidoController.getAll)
 router.get('/mios', authMiddleware, pedidoController.getMine)
-router.put('/:id/estado', adminMiddleware, pedidoController.updateEstado)
+router.get('/stats', authMiddleware, adminMiddleware, pedidoController.getStats)
+router.put('/:id/estado', authMiddleware, adminMiddleware, pedidoController.updateEstado)
 
 module.exports = router

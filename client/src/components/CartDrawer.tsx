@@ -1,41 +1,84 @@
-import { useState } from 'react'
-import { X, Minus, Plus, Trash2, Loader2, ShoppingBag } from 'lucide-react'
+import { useState, useEffect } from 'react'
+import { X, Minus, Plus, Trash2, Loader2, ShoppingBag, Calendar } from 'lucide-react'
 import { useCart } from '../context/CartContext'
-import { pedidosApi } from '../services/api'
+import { pedidosApi, fechasApi } from '../services/api'
+
+interface FechaDisponible {
+  id: number
+  fecha: string
+  horarios: { id: number; hora: string; disponible: boolean }[]
+}
 
 export default function CartDrawer() {
   const [submitting, setSubmitting] = useState(false)
   const [submitted, setSubmitted] = useState(false)
+  const [pedidoInfo, setPedidoInfo] = useState<any>(null)
   const [error, setError] = useState('')
+  const [fechas, setFechas] = useState<FechaDisponible[]>([])
+  const [fechaSeleccionada, setFechaSeleccionada] = useState('')
+  const [horaSeleccionada, setHoraSeleccionada] = useState('')
   const { cart, isOpen, setIsOpen, removeItem, updateQuantity, total, clearCart } = useCart()
 
-  if (!isOpen) return null
+  useEffect(() => {
+    if (isOpen) {
+      fechasApi.getAll().then(setFechas).catch(console.error)
+    }
+  }, [isOpen])
+
+  const fechasActivas = fechas.filter(f => f.activo && f.horarios?.length > 0)
+
+  const formatFecha = (fechaStr: string) => {
+    const fecha = new Date(fechaStr)
+    return fecha.toLocaleDateString('es-ES', { weekday: 'long', day: 'numeric', month: 'long' })
+  }
+
+  // Obtener horarios disponibles para una fecha (o defaults)
+  const getHorariosParaFecha = (fechaSeleccionada: string) => {
+    const fechaConfig = fechas.find(f => f.fecha === fechaSeleccionada)
+    if (fechaConfig?.horarios?.length > 0) {
+      return fechaConfig.horarios.filter(h => h.disponible)
+    }
+    // Horarios por defecto si no hay configuración
+    return [
+      { id: 1, hora: '12:00' },
+      { id: 2, hora: '13:00' },
+      { id: 3, hora: '14:00' },
+      { id: 4, hora: '19:00' },
+      { id: 5, hora: '20:00' },
+      { id: 6, hora: '21:00' }
+    ]
+  }
 
   const handleApiCheckout = async () => {
+    if (!fechaSeleccionada) {
+      setError('Por favor selecciona una fecha de recogida')
+      return
+    }
+    if (!horaSeleccionada) {
+      setError('Por favor selecciona una hora de recogida')
+      return
+    }
+
     setSubmitting(true)
     setError('')
     try {
-      await pedidosApi.create({
+      const result = await pedidosApi.create({
         items: cart.map(item => ({ id: item.id, precio: item.precio, cantidad: item.cantidad })),
-        notas: ''
+        notas: horaSeleccionada ? `Recoger a las ${horaSeleccionada}` : '',
+        fecha_recogida: fechaSeleccionada
       })
+      setPedidoInfo(result)
       setSubmitted(true)
       clearCart()
+      setFechaSeleccionada('')
+      setHoraSeleccionada('')
     } catch (err) {
       setError(err.response?.data?.message || 'Error al procesar el pedido')
     }
     setSubmitting(false)
   }
 
-  const handleWhatsApp = () => {
-    const message = cart.map(item => 
-      `• ${item.nombre}: ${item.cantidad}x - ${(item.precio * item.cantidad).toFixed(2)}€`
-    ).join('\n')
-
-    const totalText = `\nTotal: ${total.toFixed(2)}€`
-    const fullMessage = encodeURIComponent(`Hola, me gustaría hacer un pedido:\n\n${message}${totalText}`)
-    window.open(`https://wa.me/34600123456?text=${fullMessage}`, '_blank')
-  }
+  if (!isOpen) return null
 
   return (
     <div className="fixed inset-0 z-50 flex justify-end">
@@ -68,7 +111,7 @@ export default function CartDrawer() {
                   </div>
                   <div className="flex-1">
                     <h3 className="font-semibold">{item.nombre}</h3>
-                    <p className="text-accent font-bold">{item.precio.toFixed(2)}€</p>
+                    <p className="text-accent font-bold">{Number(item.precio).toFixed(2)}€</p>
                     <div className="flex items-center gap-2 mt-2">
                       <button
                         onClick={() => updateQuantity(item.id, item.cantidad - 1)}
@@ -100,15 +143,109 @@ export default function CartDrawer() {
         {cart.length > 0 && (
           <div className="p-4 border-t border-border">
             {submitted ? (
-              <div className="text-center text-success font-semibold py-4">
-                <ShoppingBag className="mx-auto mb-2" size={32} />
-                <p>¡Pedido realizado con éxito!</p>
+              <div className="text-center py-4 space-y-4">
+                <div className="bg-green-100 rounded-full p-4 w-16 h-16 mx-auto flex items-center justify-center">
+                  <ShoppingBag className="text-green-600" size={32} />
+                </div>
+                <div>
+                  <p className="text-xl font-bold text-green-600">¡Pedido realizado!</p>
+                  <p className="text-text-muted">Tu pedido ha sido recibido</p>
+                </div>
+                {pedidoInfo && (
+                  <div className="bg-bg-tertiary rounded-lg p-4 text-left space-y-2">
+                    <div className="flex justify-between">
+                      <span className="text-text-muted">Número de pedido:</span>
+                      <span className="font-bold">#{pedidoInfo.id}</span>
+                    </div>
+                    {pedidoInfo.fecha_recogida && (
+                      <div className="flex justify-between">
+                        <span className="text-text-muted">Fecha de recogida:</span>
+                        <span className="font-medium text-accent">
+                          {new Date(pedidoInfo.fecha_recogida).toLocaleDateString('es-ES', { 
+                            weekday: 'long', day: 'numeric', month: 'long' 
+                          })}
+                        </span>
+                      </div>
+                    )}
+                    {pedidoInfo.notas && (
+                      <div className="flex justify-between">
+                        <span className="text-text-muted">Hora:</span>
+                        <span className="font-medium">{pedidoInfo.notas.replace('Recoger a las ', '')}</span>
+                      </div>
+                    )}
+                    <div className="flex justify-between pt-2 border-t border-border">
+                      <span className="text-text-muted">Total:</span>
+                      <span className="font-bold text-accent">{Number(pedidoInfo.total).toFixed(2)}€</span>
+                    </div>
+                  </div>
+                )}
+                <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
+                  <p className="text-sm text-blue-800">
+                    <strong>Próximos pasos:</strong> Recibirás una confirmación cuando el pedido esté listo. 
+                    Puedes seguir el estado en "Mis Pedidos".
+                  </p>
+                </div>
+                <button
+                  onClick={() => { setSubmitted(false); setPedidoInfo(null) }}
+                  className="w-full py-3 bg-accent text-white rounded-lg font-medium hover:opacity-90"
+                >
+                  Hacer otro pedido
+                </button>
               </div>
             ) : (
               <>
                 <div className="flex justify-between mb-4 text-lg font-bold">
                   <span>Total:</span>
                   <span className="text-accent">{total.toFixed(2)}€</span>
+                </div>
+
+                <div className="mb-4 space-y-3">
+                  <div className="flex items-center gap-2 text-sm text-text-muted">
+                    <Calendar size={16} />
+                    <span>Selecciona fecha de recogida:</span>
+                  </div>
+                  <select
+                    value={fechaSeleccionada}
+                    onChange={(e) => { setFechaSeleccionada(e.target.value); setHoraSeleccionada('') }}
+                    className="w-full bg-bg-tertiary border border-border rounded-lg p-3 text-text"
+                  >
+                    <option value="">Elige una fecha...</option>
+                    {fechasActivas.length === 0 ? (
+                      <option value="" disabled>No hay fechas disponibles</option>
+                    ) : (
+                      fechasActivas.map((f) => (
+                        <option key={f.id} value={f.fecha}>
+                          {formatFecha(f.fecha)}
+                        </option>
+                      ))
+                    )}
+                  </select>
+                  {fechasActivas.length === 0 && (
+                    <p className="text-sm text-text-muted mt-2">
+                      No hay fechas disponibles. Vuelve más tarde.
+                    </p>
+                  )}
+
+                  {fechaSeleccionada && (
+                    <>
+                      <label className="block text-sm text-text-muted">Selecciona hora:</label>
+                      <div className="grid grid-cols-3 gap-2">
+                        {getHorariosParaFecha(fechaSeleccionada).map(h => (
+                          <button
+                            key={h.id}
+                            onClick={() => setHoraSeleccionada(h.hora)}
+                            className={`py-2 px-3 rounded-lg text-sm transition ${
+                              horaSeleccionada === h.hora
+                                ? 'bg-accent text-white'
+                                : 'bg-bg-tertiary text-text hover:bg-border'
+                            }`}
+                          >
+                            {h.hora.slice(0, 5)}
+                          </button>
+                        ))}
+                      </div>
+                    </>
+                  )}
                 </div>
 
                 {error && (
@@ -125,13 +262,6 @@ export default function CartDrawer() {
                   ) : (
                     `Realizar Pedido (${total.toFixed(2)}€)`
                   )}
-                </button>
-
-                <button
-                  onClick={handleWhatsApp}
-                  className="w-full mt-2 py-2 rounded-lg border border-accent text-accent font-medium hover:bg-accent/10 transition text-sm"
-                >
-                  Pedir por WhatsApp
                 </button>
 
                 <button

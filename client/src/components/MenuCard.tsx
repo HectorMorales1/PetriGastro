@@ -40,7 +40,7 @@ export default function MenuCard({ plato }) {
         </p>
         <div className="flex items-center justify-between">
           <span className="text-2xl font-bold text-accent">
-            {plato.precio.toFixed(2)}€
+            {Number(plato.precio).toFixed(2)}€
           </span>
           <button
             onClick={handleAdd}

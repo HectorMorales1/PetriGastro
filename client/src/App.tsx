@@ -14,7 +14,8 @@ import AuthGuard from './components/AuthGuard'
 const Home = lazy(() => import('./pages/Home'))
 const Menu = lazy(() => import('./pages/Menu'))
 const Login = lazy(() => import('./pages/Login'))
-const Reservas = lazy(() => import('./pages/Reservas'))
+const MisPedidos = lazy(() => import('./pages/MisPedidos'))
+
 const Admin = lazy(() => import('./pages/Admin'))
 const NotFound = lazy(() => import('./pages/NotFound'))
 
@@ -42,7 +43,8 @@ function App() {
                         <Route element={<AuthGuard />}>
                           <Route path="/" element={<Home />} />
                           <Route path="/menu" element={<Menu />} />
-                          <Route path="/reservas" element={<Reservas />} />
+                          <Route path="/mis-pedidos" element={<MisPedidos />} />
+                          
                           <Route path="/admin" element={<Admin />} />
                           <Route path="*" element={<NotFound />} />
                         </Route>

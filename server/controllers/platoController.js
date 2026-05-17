@@ -13,7 +13,7 @@ exports.getAll = async (req, res) => {
 
     if (categoria && categoria !== 'todas') {
       params.push(categoria)
-      conditions.push(`p.categoria_id = $${params.length}`)
+      conditions.push(`c.nombre = $${params.length}`)
     }
 
     if (busqueda) {

@@ -3,8 +3,7 @@ import { Phone, MapPin, Mail, Clock, Globe, Send, ExternalLink } from 'lucide-re
 
 const navLinks = [
   { to: '/', label: 'Inicio' },
-  { to: '/menu', label: 'Menú' },
-  { to: '/reservas', label: 'Reservas' }
+  { to: '/menu', label: 'Menú' }
 ]
 
 export default function Footer() {

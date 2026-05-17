@@ -71,7 +71,7 @@ function ScrollVideo() {
   }, [])
 
   return (
-    <section ref={sectionRef} className="relative" style={{ height: '300vh' }}>
+    <section ref={sectionRef} className="relative" style={{ height: '400vh' }}>
       <div className="sticky top-0 h-screen overflow-hidden bg-black">
         <img 
           src={`/Fotogramas/frame_${currentFrame.toString().padStart(3, '0')}.jpg`}
@@ -141,10 +141,7 @@ const statsData = {
 const galleryImages = [
   'https://images.unsplash.com/photo-1473093295043-cdd812d0e601?w=300&h=300&fit=crop',
   'https://images.unsplash.com/photo-1490645935967-10de6ba17061?w=300&h=300&fit=crop',
-  'https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=300&h=300&fit=crop',
-  'https://images.unsplash.com/photo-1567620905732-2d1ec7ab7445?w=300&h=300&fit=crop',
-  'https://images.unsplash.com/photo-1482049016688-2d3e1b311543?w=300&h=300&fit=crop',
-  'https://images.unsplash.com/photo-1484723091739-30a0978f31af?w=300&h=300&fit=crop'
+  'https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=300&h=300&fit=crop'
 ]
 
 const getCardsPerView = () => {
@@ -483,7 +480,7 @@ export default function Home() {
         />
       </div>
 
-      {/* Scroll Video - Sticky: ocupa 300vh para que el contenido siguiente deslice desde abajo */}
+      {/* Scroll Video - Sticky: ocupa 400vh para que el contenido siguiente deslice desde abajo */}
       <ScrollVideo />
 
       {/* Main Content - desliza desde abajo al scrollear pasada la animación */}
