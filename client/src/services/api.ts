@@ -7,11 +7,44 @@ export const api = axios.create({
 
 api.interceptors.request.use((config) => {
   const token = localStorage.getItem('petri_token')
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`
+  if (token && typeof token === 'string') {
+    config.headers.Authorization = `Bearer ${token.trim()}`
   }
   return config
 })
+
+api.interceptors.response.use(
+  (response) => response,
+  async (error) => {
+    const originalRequest = error.config
+    if (error.response?.status === 401 && !originalRequest._retry) {
+      originalRequest._retry = true
+      try {
+        const refreshToken = localStorage.getItem('petri_refresh_token')
+        if (refreshToken) {
+          const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:3000/api'}/auth/refresh`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ refreshToken })
+          })
+          const data = await response.json()
+          if (data.token) {
+            localStorage.setItem('petri_token', data.token)
+            localStorage.setItem('petri_refresh_token', data.refreshToken || '')
+            originalRequest.headers.Authorization = `Bearer ${data.token}`
+            return api(originalRequest)
+          }
+        }
+      } catch (e) {
+        localStorage.removeItem('petri_token')
+        localStorage.removeItem('petri_refresh_token')
+        localStorage.removeItem('petri_user')
+        window.location.href = '/login'
+      }
+    }
+    return Promise.reject(error)
+  }
+)
 
 export const queryClient = new QueryClient({
   defaultOptions: {

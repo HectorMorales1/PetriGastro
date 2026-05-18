@@ -1,15 +1,16 @@
 const express = require('express')
-const { body } = require('express-validator')
+const { body, sanitizeBody } = require('express-validator')
 const authController = require('../controllers/authController')
 const { authMiddleware } = require('../middleware/auth')
 
 const router = express.Router()
 
 router.post('/register', [
-  body('nombre').trim().isLength({ min: 2, max: 100 }),
-  body('apellidos').optional().trim().isLength({ max: 100 }),
+  body('nombre').trim().isLength({ min: 2, max: 100 }).escape(),
+  body('apellidos').optional().trim().isLength({ max: 100 }).escape(),
   body('email').isEmail().normalizeEmail(),
-  body('password').isLength({ min: 8 })
+  body('password').isLength({ min: 8 }).escape(),
+  sanitizeBody('*').trim().stripLow()
 ], authController.register)
 
 router.post('/login', [
@@ -18,5 +19,9 @@ router.post('/login', [
 ], authController.login)
 
 router.get('/me', authMiddleware, authController.me)
+
+router.post('/refresh', [
+  body('refreshToken').notEmpty().escape()
+], authController.refreshToken)
 
 module.exports = router

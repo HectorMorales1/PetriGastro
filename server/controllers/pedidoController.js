@@ -75,6 +75,14 @@ exports.updateEstado = async (req, res) => {
     const { id } = req.params
     const { estado } = req.body
 
+    const ESTADOS_VALIDOS = ['pendiente', 'confirmado', 'preparando', 'preparado', 'entregado', 'cancelado']
+    
+    if (!estado || !ESTADOS_VALIDOS.includes(estado)) {
+      return res.status(400).json({ 
+        message: `Estado inválido. Estados válidos: ${ESTADOS_VALIDOS.join(', ')}` 
+      })
+    }
+
     const result = await pool.query(
       'UPDATE pedidos SET estado = $1 WHERE id = $2 RETURNING *',
       [estado, id]

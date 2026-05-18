@@ -20,6 +20,7 @@ export function AuthProvider({ children }) {
     try {
       const data = await authApi.login(email, password)
       localStorage.setItem('petri_token', data.token)
+      localStorage.setItem('petri_refresh_token', data.refreshToken || '')
       localStorage.setItem('petri_user', JSON.stringify(data.user))
       setUser(data.user)
       return { success: true }
@@ -32,6 +33,7 @@ export function AuthProvider({ children }) {
     try {
       const data = await authApi.register(nombre, apellidos, email, password)
       localStorage.setItem('petri_token', data.token)
+      localStorage.setItem('petri_refresh_token', data.refreshToken || '')
       localStorage.setItem('petri_user', JSON.stringify(data.user))
       setUser(data.user)
       return { success: true }
@@ -42,12 +44,39 @@ export function AuthProvider({ children }) {
 
   const logout = () => {
     localStorage.removeItem('petri_token')
+    localStorage.removeItem('petri_refresh_token')
     localStorage.removeItem('petri_user')
     setUser(null)
   }
 
+  const refreshToken = async () => {
+    const refreshToken = localStorage.getItem('petri_refresh_token')
+    if (!refreshToken) {
+      logout()
+      return { success: false, error: 'No refresh token' }
+    }
+    try {
+      const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:3000/api'}/auth/refresh`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ refreshToken })
+      })
+      const data = await response.json()
+      if (!response.ok) throw new Error(data.message)
+      
+      localStorage.setItem('petri_token', data.token)
+      localStorage.setItem('petri_refresh_token', data.refreshToken || '')
+      localStorage.setItem('petri_user', JSON.stringify(data.user))
+      setUser(data.user)
+      return { success: true }
+    } catch (err) {
+      logout()
+      return { success: false, error: err.message }
+    }
+  }
+
   return (
-    <AuthContext.Provider value={{ user, login, register, logout, loading }}>
+    <AuthContext.Provider value={{ user, login, register, logout, refreshToken, loading }}>
       {children}
     </AuthContext.Provider>
   )

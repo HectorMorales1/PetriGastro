@@ -8,7 +8,7 @@ import { useAuth } from '../context/AuthContext'
 import MenuCard from '../components/MenuCard'
 import { platosApi } from '../services/api'
 
-const TOTAL_FRAMES = 120
+const TOTAL_FRAMES = 40  // 1 de cada 3 frames (de 120 originales)
 
 function ScrollVideo() {
   const sectionRef = useRef(null)
@@ -23,7 +23,7 @@ function ScrollVideo() {
 
     for (let i = 0; i < TOTAL_FRAMES; i++) {
       const img = new Image()
-      const frameNum = i.toString().padStart(3, '0')
+      const frameNum = (i * 3).toString().padStart(3, '0')  // 0, 3, 6, 9... (1 de cada 3)
       img.src = `/Fotogramas/frame_${frameNum}.jpg`
       
       img.onload = () => {
@@ -56,7 +56,15 @@ function ScrollVideo() {
       const sectionHeight = sectionRef.current.offsetHeight
       const viewportHeight = window.innerHeight
       const calcProgress = Math.max(0, Math.min(1, (viewportHeight - rect.top) / (sectionHeight + viewportHeight)))
-      const frameIndex = Math.round(calcProgress * (TOTAL_FRAMES - 1))
+      // Animar los primeros 25 frames, luego mantener el último frame los últimos 25%
+      const animatedFrames = 25
+      // Cuando progress > 0.75, mantener el último frame (pausa al final)
+      const pausedProgress = Math.min(calcProgress / 0.75, 1)
+      let frameIndex = Math.round(pausedProgress * animatedFrames)
+      // Si ya llegamos al frame 25, mostrar el último frame
+      if (calcProgress > 0.75) {
+        frameIndex = TOTAL_FRAMES - 1
+      }
 
       if (frameIndex !== lastFrameRef.current) {
         setCurrentFrame(frameIndex)
@@ -74,7 +82,7 @@ function ScrollVideo() {
     <section ref={sectionRef} className="relative" style={{ height: '400vh' }}>
       <div className="sticky top-0 h-screen overflow-hidden bg-black">
         <img 
-          src={`/Fotogramas/frame_${currentFrame.toString().padStart(3, '0')}.jpg`}
+          src={`/Fotogramas/frame_${(currentFrame * 3).toString().padStart(3, '0')}.jpg`}
           alt=""
           className="w-full h-full object-cover"
           key={currentFrame}
@@ -152,48 +160,69 @@ const getCardsPerView = () => {
 
 function LoginModal({ isOpen, onClose, onLoginSuccess }) {
   const [isRegisterMode, setIsRegisterMode] = useState(false)
-  const [username, setUsername] = useState('')
+  const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [regName, setRegName] = useState('')
   const [regLastName, setRegLastName] = useState('')
   const [regEmail, setRegEmail] = useState('')
   const [regPassword, setRegPassword] = useState('')
-  const [userError, setUserError] = useState(false)
+  const [regConfirmPassword, setRegConfirmPassword] = useState('')
+  const [emailError, setEmailError] = useState(false)
   const [passError, setPassError] = useState(false)
+  const [error, setError] = useState('')
   const [registerSuccess, setRegisterSuccess] = useState(false)
   const [loading, setLoading] = useState(false)
-  const { login } = useAuth()
+  const { login, register } = useAuth()
 
   const handleSubmit = async (e) => {
     e.preventDefault()
-    setUserError(false)
+    setEmailError(false)
     setPassError(false)
+    setError('')
 
-    if (!username) setUserError(true)
+    if (!email) setEmailError(true)
     if (!password) setPassError(true)
 
-    if (username && password) {
+    if (email && password) {
       setLoading(true)
-      const success = await login(username, password)
+      const result = await login(email, password)
       setLoading(false)
-      if (success) {
+      if (result.success) {
         onLoginSuccess()
       } else {
-        setUserError(true)
-        setPassError(true)
+        setError(result.error || 'Credenciales inválidas')
       }
     }
   }
 
   const handleRegister = async (e) => {
     e.preventDefault()
+    setError('')
+    
+    if (regPassword !== regConfirmPassword) {
+      setError('Las contraseñas no coinciden')
+      return
+    }
+    if (regPassword.length < 8) {
+      setError('La contraseña debe tener al menos 8 caracteres')
+      return
+    }
+
     setLoading(true)
-    setRegisterSuccess(true)
+    const result = await register(regName, regLastName, regEmail, regPassword)
     setLoading(false)
-    setTimeout(() => {
-      setIsRegisterMode(false)
-      setRegisterSuccess(false)
-    }, 2000)
+    
+    if (result.success) {
+      setRegisterSuccess(true)
+      setTimeout(() => {
+        setIsRegisterMode(false)
+        setRegisterSuccess(false)
+        setEmail(regEmail)
+        setPassword('')
+      }, 2000)
+    } else {
+      setError(result.error || 'Error al registrarse')
+    }
   }
 
   if (!isOpen) return null
@@ -214,15 +243,15 @@ function LoginModal({ isOpen, onClose, onLoginSuccess }) {
           {!isRegisterMode ? (
             <form onSubmit={handleSubmit}>
               <div className="mb-6">
-                <label className="block text-sm font-medium mb-2 text-carbon">Usuario</label>
+                <label className="block text-sm font-medium mb-2 text-carbon">Correo electrónico</label>
                 <input 
-                  type="text" 
-                  value={username}
-                  onChange={(e) => setUsername(e.target.value)}
-                  className={`w-full px-4 py-3 rounded-lg border-2 ${userError ? 'border-red-500' : 'border-border'} focus:border-accent focus:ring-4 focus:ring-accent/15 outline-none transition-all bg-bg-secondary`}
-                  placeholder="Ingresa tu usuario"
+                  type="email" 
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className={`w-full px-4 py-3 rounded-lg border-2 ${emailError ? 'border-red-500' : 'border-border'} focus:border-accent focus:ring-4 focus:ring-accent/15 outline-none transition-all bg-bg-secondary`}
+                  placeholder="tu@correo.com"
                 />
-                {userError && <p className="text-red-500 text-xs mt-2">Usuario requerido</p>}
+                {emailError && <p className="text-red-500 text-xs mt-2">Email requerido</p>}
               </div>
               
               <div className="mb-6">
@@ -299,18 +328,36 @@ function LoginModal({ isOpen, onClose, onLoginSuccess }) {
                 />
               </div>
               
-              <div className="mb-6">
+              <div className="mb-4">
                 <label className="block text-sm font-medium mb-2 text-carbon">Contraseña</label>
                 <input 
                   type="password" 
                   value={regPassword}
                   onChange={(e) => setRegPassword(e.target.value)}
                   className="w-full px-4 py-3 rounded-lg border-2 border-border focus:border-accent focus:ring-4 focus:ring-accent/15 outline-none transition-all bg-bg-secondary"
-                  placeholder="Mínimo 6 caracteres"
-                  minLength={6}
+                  placeholder="Mínimo 8 caracteres"
+                  minLength={8}
                   required
                 />
               </div>
+              
+              <div className="mb-6">
+                <label className="block text-sm font-medium mb-2 text-carbon">Confirmar contraseña</label>
+                <input 
+                  type="password" 
+                  value={regConfirmPassword}
+                  onChange={(e) => setRegConfirmPassword(e.target.value)}
+                  className="w-full px-4 py-3 rounded-lg border-2 border-border focus:border-accent focus:ring-4 focus:ring-accent/15 outline-none transition-all bg-bg-secondary"
+                  placeholder="Repite la contraseña"
+                  required
+                />
+              </div>
+
+              {error && (
+                <div className="mb-4 p-3 rounded-lg bg-error/10 text-error text-sm">
+                  {error}
+                </div>
+              )}
               
               <button 
                 type="submit" 
