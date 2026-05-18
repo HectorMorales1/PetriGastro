@@ -1,0 +1,181 @@
+@import url('https://fonts.cdnfonts.com/css/cocogoose');
+@import "tailwindcss";
+
+@theme {
+  --color-crema: #F5F0E8;
+  --color-crema-dark: #E8E0D0;
+  --color-terracota: #C4785A;
+  --color-terracota-dark: #A66348;
+  --color-terracota-light: #D4917A;
+  --color-verde-oliva: #6B8F6B;
+  --color-verde-oliva-dark: #5A7A5A;
+  --color-oro: #D4A853;
+  --color-oro-light: #E2B96F;
+  --color-carbon: #F5F0E8;
+  --color-carbon-light: #E8E0D0;
+
+  --color-bg: #121212;
+  --color-bg-secondary: #1E1E1E;
+  --color-bg-tertiary: #1E1E1E;
+  --color-surface: #1E1E1E;
+  --color-text: #F5F0E8;
+  --color-text-muted: #A8A29E;
+  --color-text-light: #A8A29E;
+  --color-border: rgba(255, 255, 255, 0.08);
+  --color-success: #6B8F6B;
+  --color-error: #C75D5D;
+
+  --color-primary: #D4A853;
+  --color-secondary: #C4785A;
+  --color-accent: #D4A853;
+  --color-gold: #D4A853;
+  --color-cream: #F5F0E8;
+}
+
+body {
+  font-family: 'COCOGOOSE', sans-serif;
+  color: var(--color-text);
+  background-color: var(--color-bg);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'COCOGOOSE', sans-serif;
+}
+
+.font-heading {
+  font-family: 'COCOGOOSE', sans-serif;
+}
+
+.font-accent {
+  font-family: 'COCOGOOSE', sans-serif;
+}
+
+.font-cocogoose {
+  font-family: 'COCOGOOSE', sans-serif;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+/* Scrollbar personalizada */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--color-bg);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-oro);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-oro-light);
+}
+
+/* Skip link para accesibilidad */
+.skip-link {
+  position: absolute;
+  top: -40px;
+  left: 0;
+  background: var(--color-primary);
+  color: white;
+  padding: 8px 16px;
+  z-index: 100;
+  transition: top 0.3s;
+}
+
+.skip-link:focus {
+  top: 0;
+}
+
+/* Reducir animaciones si el usuario lo prefiere */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Transitions globales */
+* {
+  transition-property: background-color, border-color, color, fill, stroke, opacity, box-shadow, transform;
+  transition-timing-function: ease-out;
+  transition-duration: 150ms;
+}
+
+/* Animaciones */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.6s ease-out forwards;
+}
+
+.animate-pulse {
+  animation: pulse 2s ease-in-out infinite;
+}
+
+/* Animaciones de slide-up como en el CSS original */
+.animate-slide-up {
+  opacity: 0;
+  transform: translate3d(0, 30px, 0);
+  transition: opacity 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94), transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  will-change: opacity, transform;
+}
+
+.animate-slide-up.visible {
+  opacity: 1;
+  transform: translate3d(0, 0, 0);
+}
+
+.animate-fade-scale {
+  opacity: 0;
+  transform: scale(0.9);
+  transition: opacity 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94), transform 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  will-change: opacity, transform;
+}
+
+.animate-fade-scale.visible {
+  opacity: 1;
+  transform: scale(1);
+}
+
+@keyframes galleryMarquee {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+.gallery-marquee {
+  animation: galleryMarquee 60s linear infinite;
+}
+
+.gallery-marquee:hover {
+  animation-play-state: paused;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .gallery-marquee {
+    animation: none;
+  }
+}
