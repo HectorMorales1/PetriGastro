@@ -15,6 +15,9 @@ const configRoutes = require('./routes/config')
 const uploadRoutes = require('./routes/upload')
 const feedbackRoutes = require('./routes/feedback')
 const logger = require('./config/logger')
+const fs = require('fs')
+const path = require('path')
+const { Pool } = require('pg')
 
 const app = express()
 
@@ -86,5 +89,36 @@ app.use((req, res, next) => {
   res.setHeader('Permissions-Policy', 'geolocation=(), microphone=(), camera=()')
   next()
 })
+
+const migrateDb = async () => {
+  const pool = new Pool({
+    host: process.env.DB_HOST,
+    port: parseInt(process.env.DB_PORT) || 5432,
+    database: process.env.DB_NAME,
+    user: process.env.DB_USER,
+    password: process.env.DB_PASSWORD,
+    ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false
+  })
+  
+  try {
+    const migrationsDir = path.join(__dirname, '..', 'database', 'migrations')
+    const files = fs.readdirSync(migrationsDir).filter(f => f.endsWith('.sql')).sort()
+    
+    for (const file of files) {
+      const sql = fs.readFileSync(path.join(migrationsDir, file), 'utf8')
+      await pool.query(sql)
+      logger.info(`Migración ejecutada: ${file}`)
+    }
+    logger.info('Base de datos migrada exitosamente')
+  } catch (error) {
+    logger.error('Error migrando base de datos:', error.message)
+  } finally {
+    await pool.end()
+  }
+}
+
+if (process.env.NODE_ENV === 'production') {
+  migrateDb()
+}
 
 module.exports = app
