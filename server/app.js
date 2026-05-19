@@ -91,6 +91,8 @@ app.use((req, res, next) => {
 
 const seedDb = async (pool) => {
   try {
+    logger.info('Iniciando seed...')
+    
     await pool.query(`
       INSERT INTO categorias (nombre, icono, orden) VALUES
       ('Entrantes', '🥗', 1),
@@ -99,8 +101,10 @@ const seedDb = async (pool) => {
       ('Bebidas', '🥤', 4)
       ON CONFLICT DO NOTHING
     `)
+    logger.info('Categorías insertadas')
     
     const cats = await pool.query('SELECT id, nombre FROM categorias ORDER BY orden')
+    logger.info('Categorías obténdas:', cats.rows.length)
     
     const platos = [
       ['Ensalada César', 'Lechuga romana, pollo grille, parmesano, crutones, salsa César', 12.50, cats.rows[0]?.id, true, true],
@@ -163,7 +167,7 @@ const startMigration = async () => {
     
     await seedDb(pool)
   } catch (error) {
-    logger.error('Error migrando base de datos:', error.message)
+    logger.error('Error migrando base de datos:', error.stack || error)
   } finally {
     await pool.end()
   }
