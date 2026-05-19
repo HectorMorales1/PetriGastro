@@ -16,7 +16,6 @@ const uploadRoutes = require('./routes/upload')
 const feedbackRoutes = require('./routes/feedback')
 const logger = require('./config/logger')
 const fs = require('fs')
-const path = require('path')
 const { Pool } = require('pg')
 
 const app = express()
