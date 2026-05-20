@@ -1,0 +1,8 @@
+{
+  "name": "petrigastro",
+  "private": true,
+  "scripts": {
+    "build": "cd server && npm install",
+    "start": "node server/server.js"
+  }
+}
