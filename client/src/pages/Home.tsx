@@ -171,6 +171,7 @@ function LoginModal({ isOpen, onClose, onLoginSuccess }) {
   const [passError, setPassError] = useState(false)
   const [error, setError] = useState('')
   const [registerSuccess, setRegisterSuccess] = useState(false)
+  const [registerMessage, setRegisterMessage] = useState('')
   const [loading, setLoading] = useState(false)
   const { login, register } = useAuth()
 
@@ -190,7 +191,15 @@ function LoginModal({ isOpen, onClose, onLoginSuccess }) {
       if (result.success) {
         onLoginSuccess()
       } else {
-        setError(result.error || 'Credenciales inválidas')
+        if (result.estado_solicitud === 'pendiente_verificacion') {
+          setError('Debes verificar tu correo electrónico primero. Revisa tu bandeja de entrada.')
+        } else if (result.estado_solicitud === 'pendiente') {
+          setError('Tu solicitud está pendiente de aprobación por el administrador.')
+        } else if (result.estado_solicitud === 'rechazado') {
+          setError(result.error || 'Tu solicitud ha sido rechazada.')
+        } else {
+          setError(result.error || 'Credenciales inválidas')
+        }
       }
     }
   }
@@ -212,11 +221,16 @@ function LoginModal({ isOpen, onClose, onLoginSuccess }) {
     const result = await register(regName, regLastName, regEmail, regPassword)
     setLoading(false)
     
-    if (result.success) {
+    if (result.success && result.pending) {
       setRegisterSuccess(true)
+      setRegisterMessage(result.message || 'Se ha enviado un correo de verificación. Revisa tu bandeja de entrada.')
+    } else if (result.success) {
+      setRegisterSuccess(true)
+      setRegisterMessage('Cuenta creada exitosamente.')
       setTimeout(() => {
         setIsRegisterMode(false)
         setRegisterSuccess(false)
+        setRegisterMessage('')
         setEmail(regEmail)
         setPassword('')
       }, 2000)
@@ -372,7 +386,7 @@ function LoginModal({ isOpen, onClose, onLoginSuccess }) {
 
               {registerSuccess && (
                 <div className="mt-4 p-4 rounded-lg text-white text-center bg-success">
-                  ¡Cuenta creada exitosamente! Ya puedes iniciar sesión.
+                  {registerMessage}
                 </div>
               )}
 

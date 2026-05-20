@@ -25,18 +25,15 @@ export function AuthProvider({ children }) {
       setUser(data.user)
       return { success: true }
     } catch (err) {
-      return { success: false, error: err.response?.data?.message || 'Error al iniciar sesión' }
+      const estadoSolicitud = err.response?.data?.estado_solicitud
+      return { success: false, error: err.response?.data?.message || 'Error al iniciar sesión', estado_solicitud: estadoSolicitud }
     }
   }
 
   const register = async (nombre, apellidos, email, password) => {
     try {
       const data = await authApi.register(nombre, apellidos, email, password)
-      localStorage.setItem('petri_token', data.token)
-      localStorage.setItem('petri_refresh_token', data.refreshToken || '')
-      localStorage.setItem('petri_user', JSON.stringify(data.user))
-      setUser(data.user)
-      return { success: true }
+      return { success: true, pending: true, message: data.message }
     } catch (err) {
       return { success: false, error: err.response?.data?.message || 'Error al registrarse' }
     }

@@ -14,6 +14,7 @@ import AuthGuard from './components/AuthGuard'
 const Home = lazy(() => import('./pages/Home'))
 const Menu = lazy(() => import('./pages/Menu'))
 const Login = lazy(() => import('./pages/Login'))
+const VerificarEmail = lazy(() => import('./pages/VerificarEmail'))
 const MisPedidos = lazy(() => import('./pages/MisPedidos'))
 
 const Admin = lazy(() => import('./pages/Admin'))
@@ -40,6 +41,7 @@ function App() {
                     <Suspense fallback={<LoadingSpinner />}>
                       <Routes>
                         <Route path="/login" element={<Login />} />
+                        <Route path="/verificar" element={<VerificarEmail />} />
                         <Route element={<AuthGuard />}>
                           <Route path="/" element={<Home />} />
                           <Route path="/menu" element={<Menu />} />

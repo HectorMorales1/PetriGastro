@@ -4,6 +4,18 @@ export interface User {
   apellidos: string
   email: string
   rol: 'admin' | 'cliente'
+  estado_solicitud?: 'pendiente_verificacion' | 'pendiente' | 'aprobado' | 'rechazado'
+  email_verificado?: boolean
+  motivo_rechazo?: string
+}
+
+export interface Solicitud {
+  id: number
+  nombre: string
+  apellidos: string
+  email: string
+  fecha_solicitud: string
+  created_at: string
 }
 
 export interface Plato {

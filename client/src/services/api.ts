@@ -87,7 +87,15 @@ export const reservasApi = {
 
 export const authApi = {
   login: (email, password) => api.post('/auth/login', { email, password }).then(r => r.data),
-  register: (nombre, apellidos, email, password) => api.post('/auth/register', { nombre, apellidos, email, password }).then(r => r.data)
+  register: (nombre, apellidos, email, password) => api.post('/auth/register', { nombre, apellidos, email, password }).then(r => r.data),
+  verificarEmail: (token) => api.get(`/auth/verificar?token=${token}`).then(r => r.data)
+}
+
+export const usuariosApi = {
+  getSolicitudes: () => api.get('/usuarios/solicitudes').then(r => r.data),
+  getAll: () => api.get('/usuarios').then(r => r.data),
+  aprobar: (id) => api.put(`/usuarios/${id}/aprobar`).then(r => r.data),
+  rechazar: (id, motivo) => api.put(`/usuarios/${id}/rechazar`, { motivo }).then(r => r.data)
 }
 
 export const fechasApi = {

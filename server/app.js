@@ -14,6 +14,7 @@ const fechasRoutes = require('./routes/fechas')
 const configRoutes = require('./routes/config')
 const uploadRoutes = require('./routes/upload')
 const feedbackRoutes = require('./routes/feedback')
+const usuarioRoutes = require('./routes/usuarios')
 const logger = require('./config/logger')
 const fs = require('fs')
 const { Pool } = require('pg')
@@ -75,6 +76,7 @@ app.use('/api/pedidos', pedidosRoutes)
 app.use('/api/fechas', fechasRoutes)
 app.use('/api/config', configRoutes)
 app.use('/api/upload', uploadRoutes)
+app.use('/api/usuarios', usuarioRoutes)
 app.use('/api/feedback', feedbackRoutes)
 
 app.use((err, req, res, next) => {
@@ -133,8 +135,8 @@ const seedDb = async (pool) => {
     }
     
     await pool.query(`
-      INSERT INTO usuarios (nombre, email, password_hash, rol) VALUES
-      ('Administrador', 'admin@petrigastro.com', '$2a$12$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/LewY5eX5J8fG4I6y', 'admin')
+      INSERT INTO usuarios (nombre, email, password_hash, rol, estado_solicitud, email_verificado) VALUES
+      ('Administrador', 'admin@petrigastro.com', '$2a$12$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/LewY5eX5J8fG4I6y', 'admin', 'aprobado', true)
       ON CONFLICT DO NOTHING
     `)
     

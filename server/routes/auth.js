@@ -23,4 +23,6 @@ router.post('/refresh', [
   body('refreshToken').notEmpty().escape()
 ], authController.refreshToken)
 
+router.get('/verificar', authController.verificarEmail)
+
 module.exports = router
