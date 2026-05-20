@@ -68,7 +68,7 @@ CREATE TABLE IF NOT EXISTS reservas (
 );
 
 -- Índices para mejor rendimiento
-CREATE INDEX idx_platos_categoria ON platos(categoria_id);
-CREATE INDEX idx_pedidos_usuario ON pedidos(usuario_id);
-CREATE INDEX idx_pedidos_estado ON pedidos(estado);
-CREATE INDEX idx_reservas_fecha ON reservas(fecha);
+CREATE INDEX IF NOT EXISTS idx_platos_categoria ON platos(categoria_id);
+CREATE INDEX IF NOT EXISTS idx_pedidos_usuario ON pedidos(usuario_id);
+CREATE INDEX IF NOT EXISTS idx_pedidos_estado ON pedidos(estado);
+CREATE INDEX IF NOT EXISTS idx_reservas_fecha ON reservas(fecha);
