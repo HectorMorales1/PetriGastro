@@ -5,7 +5,13 @@ const CartContext = createContext(null)
 export function CartProvider({ children }) {
   const [cart, setCart] = useState(() => {
     const stored = localStorage.getItem('petriCart')
-    return stored ? JSON.parse(stored) : []
+    if (!stored || stored === 'undefined') return []
+    try {
+      const parsed = JSON.parse(stored)
+      return Array.isArray(parsed) ? parsed : []
+    } catch {
+      return []
+    }
   })
   const [isOpen, setIsOpen] = useState(false)
 

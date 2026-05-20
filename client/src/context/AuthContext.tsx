@@ -10,8 +10,17 @@ export function AuthProvider({ children }) {
   useEffect(() => {
     const storedUser = localStorage.getItem('petri_user')
     const token = localStorage.getItem('petri_token')
-    if (storedUser && token) {
-      setUser(JSON.parse(storedUser))
+    if (storedUser && storedUser !== 'undefined' && token) {
+      try {
+        const parsed = JSON.parse(storedUser)
+        if (parsed && typeof parsed === 'object') {
+          setUser(parsed)
+        } else {
+          localStorage.removeItem('petri_user')
+        }
+      } catch {
+        localStorage.removeItem('petri_user')
+      }
     }
     setLoading(false)
   }, [])
@@ -21,7 +30,7 @@ export function AuthProvider({ children }) {
       const data = await authApi.login(email, password)
       localStorage.setItem('petri_token', data.token)
       localStorage.setItem('petri_refresh_token', data.refreshToken || '')
-      localStorage.setItem('petri_user', JSON.stringify(data.user))
+      localStorage.setItem('petri_user', data.user ? JSON.stringify(data.user) : '')
       setUser(data.user)
       return { success: true }
     } catch (err) {
@@ -63,7 +72,7 @@ export function AuthProvider({ children }) {
       
       localStorage.setItem('petri_token', data.token)
       localStorage.setItem('petri_refresh_token', data.refreshToken || '')
-      localStorage.setItem('petri_user', JSON.stringify(data.user))
+      localStorage.setItem('petri_user', data.user ? JSON.stringify(data.user) : '')
       setUser(data.user)
       return { success: true }
     } catch (err) {

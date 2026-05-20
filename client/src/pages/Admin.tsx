@@ -204,7 +204,7 @@ export default function Admin() {
 
         {activeTab === 'solicitudes' && <SolicitudesManager />}
       </div>
-    </div>
+    </>
   )
 }
 
