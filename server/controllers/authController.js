@@ -1,6 +1,5 @@
 const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
-const crypto = require('crypto')
 const pool = require('../config/db')
 const { sendEmail } = require('../config/mailer')
 
@@ -27,15 +26,12 @@ exports.register = async (req, res) => {
 
     const { nombre, apellidos, email, password } = req.body
     const passwordHash = await bcrypt.hash(password, 12)
-    const verificationToken = crypto.randomBytes(32).toString('hex')
-    const expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000)
 
     const existingUser = await client.query(
       'SELECT id, estado_solicitud FROM usuarios WHERE email = $1',
       [email]
     )
 
-    let userId
     if (existingUser.rows.length > 0) {
       const existing = existingUser.rows[0]
       if (existing.estado_solicitud === 'aprobado' || existing.estado_solicitud === 'pendiente' || existing.estado_solicitud === 'pendiente_verificacion') {
@@ -45,49 +41,52 @@ exports.register = async (req, res) => {
 
       await client.query(
         `UPDATE usuarios SET nombre = $1, apellidos = $2, password_hash = $3, 
-         estado_solicitud = 'pendiente_verificacion', email_verificado = false,
-         email_verification_token = $4, email_verification_expires = $5,
+         estado_solicitud = 'pendiente', email_verificado = true,
          fecha_solicitud = NOW(), motivo_rechazo = NULL
-         WHERE id = $6 RETURNING id`,
-        [nombre, apellidos || '', passwordHash, verificationToken, expiresAt, existing.id]
+         WHERE id = $4`,
+        [nombre, apellidos || '', passwordHash, existing.id]
       )
-      userId = existing.id
     } else {
-      const result = await client.query(
-        `INSERT INTO usuarios (nombre, apellidos, email, password_hash, rol, estado_solicitud, email_verification_token, email_verification_expires, fecha_solicitud) 
-         VALUES ($1, $2, $3, $4, 'cliente', 'pendiente_verificacion', $5, $6, NOW()) 
-         RETURNING id`,
-        [nombre, apellidos || '', email, passwordHash, verificationToken, expiresAt]
+      await client.query(
+        `INSERT INTO usuarios (nombre, apellidos, email, password_hash, rol, estado_solicitud, email_verificado, fecha_solicitud) 
+         VALUES ($1, $2, $3, $4, 'cliente', 'pendiente', true, NOW())`,
+        [nombre, apellidos || '', email, passwordHash]
       )
-      userId = result.rows[0].id
     }
 
     await client.query('COMMIT')
 
-    const verificationUrl = `${process.env.CLIENT_URL || 'http://localhost:5173'}/verificar?token=${verificationToken}`
-    await sendEmail({
-      to: email,
-      subject: 'Confirma tu correo - PetriGastro',
-      html: `<div style="font-family:sans-serif;max-width:500px;margin:0 auto;">
-        <h2 style="color:#C4785A;">PetriGastro</h2>
-        <p>Hola <strong>${nombre}</strong>,</p>
-        <p>Gracias por solicitar acceso a PetriGastro. Para continuar, confirma tu dirección de correo haciendo clic en el siguiente enlace:</p>
-        <div style="text-align:center;margin:30px 0;">
-          <a href="${verificationUrl}" style="background:#C4785A;color:white;padding:12px 30px;border-radius:8px;text-decoration:none;font-weight:bold;">
-            Confirmar correo
-          </a>
-        </div>
-        <p>Si no puedes hacer clic, copia y pega esta URL en tu navegador:</p>
-        <p style="font-size:12px;color:#666;word-break:break-all;">${verificationUrl}</p>
-        <p>Este enlace expira en 24 horas.</p>
-        <hr style="border:none;border-top:1px solid #eee;margin:20px 0;">
-        <p style="font-size:12px;color:#999;">Si no solicitaste este registro, ignora este mensaje.</p>
-      </div>`
-    })
+    // ─────────────────────────────────────────────────────────
+    // FUTURO: activar verificación por email
+    // 1. Descomentar `const crypto = require('crypto')` arriba
+    // 2. Reemplazar las líneas de INSERT/UPDATE anteriores por:
+    //    estado_solicitud = 'pendiente_verificacion'
+    //    email_verificado = false
+    //    email_verification_token = $token
+    //    email_verification_expires = $expiresAt
+    // 3. Descomentar el bloque inferior de envío de email
+    // ─────────────────────────────────────────────────────────
+    if (process.env.SMTP_HOST) {
+      // const crypto = require('crypto')
+      // const verificationToken = crypto.randomBytes(32).toString('hex')
+      // const expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000)
+      // const verificationUrl = `${process.env.CLIENT_URL || 'http://localhost:5173'}/verificar?token=${verificationToken}`
+      sendEmail({
+        to: email,
+        subject: 'Confirma tu correo - PetriGastro',
+        html: `<div style="font-family:sans-serif;max-width:500px;margin:0 auto;">
+          <h2 style="color:#C4785A;">PetriGastro</h2>
+          <p>Hola <strong>${nombre}</strong>,</p>
+          <p>Gracias por solicitar acceso a PetriGastro. Para continuar, confirma tu dirección de correo.</p>
+          <hr style="border:none;border-top:1px solid #eee;margin:20px 0;">
+          <p style="font-size:12px;color:#999;">Si no solicitaste este registro, ignora este mensaje.</p>
+        </div>`
+      })
+    }
 
     res.status(201).json({
-      message: 'Se ha enviado un correo de verificación. Revisa tu bandeja de entrada para confirmar tu dirección de correo.',
-      pendingVerification: true
+      message: 'Solicitud enviada correctamente. Espera a que el administrador apruebe tu acceso.',
+      pendingVerification: false
     })
   } catch (error) {
     await client.query('ROLLBACK')
