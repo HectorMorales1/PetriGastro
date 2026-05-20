@@ -80,6 +80,10 @@ app.use((err, req, res, next) => {
   res.status(500).json({ message: 'Error del servidor' })
 })
 
+app.get('/', (req, res) => {
+  res.json({ status: 'ok', service: 'PetriGastro API', timestamp: new Date().toISOString() })
+})
+
 app.disable('x-powered-by')
 app.use((req, res, next) => {
   res.setHeader('X-Frame-Options', 'DENY')
@@ -146,14 +150,18 @@ const seedDb = async (pool) => {
 }
 
 const startMigration = async () => {
-  const pool = new Pool({
-    host: process.env.DB_HOST,
-    port: parseInt(process.env.DB_PORT) || 5432,
-    database: process.env.DB_NAME,
-    user: process.env.DB_USER,
-    password: process.env.DB_PASSWORD,
-    ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false
-  })
+  const pool = new Pool(
+    process.env.DATABASE_URL
+      ? { connectionString: process.env.DATABASE_URL, ssl: { rejectUnauthorized: false } }
+      : {
+          host: process.env.DB_HOST,
+          port: parseInt(process.env.DB_PORT) || 5432,
+          database: process.env.DB_NAME,
+          user: process.env.DB_USER,
+          password: process.env.DB_PASSWORD,
+          ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false
+        }
+  )
   
   try {
     const migrationsDir = path.join(__dirname, '..', '..', 'database', 'migrations')
@@ -167,7 +175,7 @@ const startMigration = async () => {
     
     await seedDb(pool)
   } catch (error) {
-    logger.error('Error migrando base de datos:', error.stack || error)
+    logger.error({ err: error }, 'Error migrando base de datos')
   } finally {
     await pool.end()
   }
