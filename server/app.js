@@ -60,14 +60,22 @@ const generalLimiter = rateLimit({
   message: 'Demasiadas solicitudes, intenta más tarde'
 })
 
-const authLimiter = rateLimit({
+const loginLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
   max: 20,
   message: 'Demasiados intentos de login, espera 15 minutos'
 })
 
+const refreshLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 60,
+  message: 'Demasiadas solicitudes de refresco, intenta más tarde'
+})
+
 app.use('/api/', generalLimiter)
-app.use('/api/auth/', authLimiter)
+app.use('/api/auth/login', loginLimiter)
+app.use('/api/auth/register', loginLimiter)
+app.use('/api/auth/refresh', refreshLimiter)
 
 app.use('/api/auth', authRoutes)
 app.use('/api/platos', platosRoutes)

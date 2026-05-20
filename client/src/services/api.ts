@@ -27,20 +27,22 @@ api.interceptors.response.use(
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ refreshToken })
           })
-          const data = await response.json()
-          if (data.token) {
-            localStorage.setItem('petri_token', data.token)
-            localStorage.setItem('petri_refresh_token', data.refreshToken || '')
-            originalRequest.headers.Authorization = `Bearer ${data.token}`
-            return api(originalRequest)
+          if (response.ok) {
+            const data = await response.json()
+            if (data.token) {
+              localStorage.setItem('petri_token', data.token)
+              localStorage.setItem('petri_refresh_token', data.refreshToken || '')
+              originalRequest.headers.Authorization = `Bearer ${data.token}`
+              return api(originalRequest)
+            }
           }
         }
       } catch (e) {
-        localStorage.removeItem('petri_token')
-        localStorage.removeItem('petri_refresh_token')
-        localStorage.removeItem('petri_user')
-        window.location.href = '/login'
       }
+      localStorage.removeItem('petri_token')
+      localStorage.removeItem('petri_refresh_token')
+      localStorage.removeItem('petri_user')
+      window.location.href = '/login'
     }
     return Promise.reject(error)
   }
