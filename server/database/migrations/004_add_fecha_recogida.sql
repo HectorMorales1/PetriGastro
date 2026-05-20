@@ -1,5 +1,5 @@
 -- Añadir columna fecha_recogida a pedidos
-ALTER TABLE pedidos ADD COLUMN fecha_recogida DATE;
+ALTER TABLE pedidos ADD COLUMN IF NOT EXISTS fecha_recogida DATE;
 
 -- Tabla para gestionar fechas disponibles (admin las configura)
 CREATE TABLE IF NOT EXISTS fechas_disponibles (
