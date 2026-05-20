@@ -166,7 +166,7 @@ const startMigration = async () => {
   )
   
   try {
-    const migrationsDir = path.join(__dirname, '..', '..', 'database', 'migrations')
+    const migrationsDir = path.join(__dirname, 'database', 'migrations')
     const files = fs.readdirSync(migrationsDir).filter(f => f.endsWith('.sql')).sort()
     
     for (const file of files) {

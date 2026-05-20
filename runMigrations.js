@@ -14,7 +14,7 @@ const pool = new Pool({
 
 async function runMigrations() {
   const client = await pool.connect()
-  const migrationsDir = path.join(__dirname, 'database', 'migrations')
+  const migrationsDir = path.join(__dirname, 'server', 'database', 'migrations')
   
   try {
     const files = fs.readdirSync(migrationsDir)
