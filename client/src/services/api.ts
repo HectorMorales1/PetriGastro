@@ -1,6 +1,15 @@
 import axios from 'axios'
 import { QueryClient } from '@tanstack/react-query'
 
+const AUTH_ROUTES = ['/auth/login', '/auth/register']
+
+;['petri_user', 'petriCart', 'petri_theme', 'petri_token', 'petri_refresh_token'].forEach(key => {
+  const val = localStorage.getItem(key)
+  if (val === 'undefined' || val === 'null') {
+    localStorage.removeItem(key)
+  }
+})
+
 export const api = axios.create({
   baseURL: import.meta.env.VITE_API_URL || 'http://localhost:3000/api'
 })
@@ -18,6 +27,10 @@ api.interceptors.response.use(
   async (error) => {
     const originalRequest = error.config
     if (error.response?.status === 401 && !originalRequest._retry) {
+      const isAuthRoute = AUTH_ROUTES.some(route => originalRequest.url?.includes(route))
+      if (isAuthRoute) {
+        return Promise.reject(error)
+      }
       originalRequest._retry = true
       try {
         const refreshToken = localStorage.getItem('petri_refresh_token')

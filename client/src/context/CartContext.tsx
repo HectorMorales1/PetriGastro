@@ -2,10 +2,15 @@ import { createContext, useContext, useState, useEffect } from 'react'
 
 const CartContext = createContext(null)
 
+const _petriCart = localStorage.getItem('petriCart')
+if (_petriCart === 'undefined' || _petriCart === 'null') {
+  localStorage.removeItem('petriCart')
+}
+
 export function CartProvider({ children }) {
   const [cart, setCart] = useState(() => {
     const stored = localStorage.getItem('petriCart')
-    if (!stored || stored === 'undefined') return []
+    if (!stored) return []
     try {
       const parsed = JSON.parse(stored)
       return Array.isArray(parsed) ? parsed : []

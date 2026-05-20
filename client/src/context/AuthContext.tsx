@@ -3,6 +3,11 @@ import { authApi } from '../services/api'
 
 const AuthContext = createContext(null)
 
+const _petriUser = localStorage.getItem('petri_user')
+if (_petriUser === 'undefined' || _petriUser === 'null') {
+  localStorage.removeItem('petri_user')
+}
+
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null)
   const [loading, setLoading] = useState(true)
@@ -10,7 +15,7 @@ export function AuthProvider({ children }) {
   useEffect(() => {
     const storedUser = localStorage.getItem('petri_user')
     const token = localStorage.getItem('petri_token')
-    if (storedUser && storedUser !== 'undefined' && token) {
+    if (storedUser && token) {
       try {
         const parsed = JSON.parse(storedUser)
         if (parsed && typeof parsed === 'object') {
