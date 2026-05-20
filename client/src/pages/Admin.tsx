@@ -900,8 +900,9 @@ function PlatosManager() {
     try {
       const result = await uploadApi.imagen(file)
       setForm(prev => ({ ...prev, imagen_url: result.url }))
-    } catch (error) {
-      alert('Error al subir la imagen')
+    } catch (error: any) {
+      const msg = error.response?.data?.message || 'Error al subir la imagen'
+      alert(msg)
     }
     setUploading(false)
   }

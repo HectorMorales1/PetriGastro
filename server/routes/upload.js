@@ -2,7 +2,7 @@ const express = require('express')
 const multer = require('multer')
 const path = require('path')
 const fs = require('fs')
-const { adminMiddleware } = require('../middleware/auth')
+const { authMiddleware, adminMiddleware } = require('../middleware/auth')
 
 const router = express.Router()
 
@@ -39,11 +39,21 @@ const upload = multer({
   fileFilter
 })
 
-router.post('/imagen', adminMiddleware, upload.single('imagen'), (req, res) => {
+router.post('/imagen', authMiddleware, adminMiddleware, (req, res, next) => {
+  upload.single('imagen')(req, res, (err) => {
+    if (err) {
+      if (err.code === 'LIMIT_FILE_SIZE') {
+        return res.status(400).json({ message: 'La imagen es demasiado grande. Máximo 5MB' })
+      }
+      return res.status(400).json({ message: err.message })
+    }
+    next()
+  })
+}, (req, res) => {
   if (!req.file) {
     return res.status(400).json({ message: 'No se ha subido ninguna imagen' })
   }
-  
+
   const imageUrl = `/uploads/${req.file.filename}`
   res.json({ url: imageUrl })
 })

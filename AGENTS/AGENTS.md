@@ -37,6 +37,7 @@ Usuario → Engram → AGENTS.md → Skills (autoinvocadas) → Código
 | Imágenes, WebP | `images-optimization.md` |
 | Rendimiento, Web Vitals | `performance-optimization.md` |
 | Optimizar tokens/respuestas | `token-optimization.md` |
+| Seguridad, secretos, contraseñas | `secret-scan.md` |
 
 ---
 
@@ -52,6 +53,7 @@ Usuario → Engram → AGENTS.md → Skills (autoinvocadas) → Código
 | `images-optimization.md` | ["imagen","foto","webp"] | *.{html,css} | read, glob, grep, edit |
 | `performance-optimization.md` | ["rendimiento","performance","web vitals"] | *.{html,css,js} | read, glob, grep, edit |
 | `token-optimization.md` | Auto: siempre activa | Global | read, think |
+| `secret-scan.md` | Auto: pre-commit / modificación sensible | Git, archivos | read, grep, edit, bash |
 
 ---
 
