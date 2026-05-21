@@ -1,20 +1,26 @@
-import { createContext, useContext, useState, useEffect } from 'react'
-import { authApi } from '../services/api'
+import { createContext, useContext, useState, useEffect, type ReactNode } from 'react'
+import { authApi, API_URL } from '../services/api'
+import { safeGetItem } from '../utils/storage'
+import type { User } from '../types'
 
-const AuthContext = createContext(null)
-
-const _petriUser = localStorage.getItem('petri_user')
-if (_petriUser === 'undefined' || _petriUser === 'null') {
-  localStorage.removeItem('petri_user')
+interface AuthContextType {
+  user: User | null
+  login: (email: string, password: string) => Promise<{ success: boolean; error?: string; estado_solicitud?: string }>
+  register: (nombre: string, apellidos: string, email: string, password: string) => Promise<{ success: boolean; pending?: boolean; message?: string; error?: string }>
+  logout: () => void
+  refreshToken: () => Promise<{ success: boolean; error?: string }>
+  loading: boolean
 }
 
-export function AuthProvider({ children }) {
-  const [user, setUser] = useState(null)
+const AuthContext = createContext<AuthContextType | null>(null)
+
+export function AuthProvider({ children }: { children: ReactNode }) {
+  const [user, setUser] = useState<User | null>(null)
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    const storedUser = localStorage.getItem('petri_user')
-    const token = localStorage.getItem('petri_token')
+    const storedUser = safeGetItem('petri_user')
+    const token = safeGetItem('petri_token')
     if (storedUser && token) {
       try {
         const parsed = JSON.parse(storedUser)
@@ -61,20 +67,20 @@ export function AuthProvider({ children }) {
   }
 
   const refreshToken = async () => {
-    const refreshToken = localStorage.getItem('petri_refresh_token')
+    const refreshToken = safeGetItem('petri_refresh_token')
     if (!refreshToken) {
       logout()
       return { success: false, error: 'No refresh token' }
     }
     try {
-      const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:3000/api'}/auth/refresh`, {
+      const response = await fetch(`${API_URL}/auth/refresh`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ refreshToken })
       })
       const data = await response.json()
       if (!response.ok) throw new Error(data.message)
-      
+
       localStorage.setItem('petri_token', data.token)
       localStorage.setItem('petri_refresh_token', data.refreshToken || '')
       localStorage.setItem('petri_user', data.user ? JSON.stringify(data.user) : '')

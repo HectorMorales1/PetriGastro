@@ -69,6 +69,7 @@ function checkForSecrets(file, content) {
       if (pattern.test(line)) {
         if (/process\.env|import\.meta\.env/.test(line)) continue
         if (/["']\s*["']|null|undefined/.test(line)) continue
+        if (/\b(password|secret|api[_-]?key|token)\s*[:=]\s*(string|number|boolean|null|undefined|any)\b/.test(line)) continue
         findings.push({ line: idx + 1, text: line.trim(), name })
         break
       }

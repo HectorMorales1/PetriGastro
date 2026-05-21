@@ -1,3 +1,4 @@
+import { memo } from 'react'
 import { Link } from 'react-router-dom'
 import { Phone, MapPin, Mail, Clock, Globe, Send, ExternalLink } from 'lucide-react'
 
@@ -6,7 +7,7 @@ const navLinks = [
   { to: '/menu', label: 'Menú' }
 ]
 
-export default function Footer() {
+function Footer() {
   return (
     <footer className="bg-bg-secondary text-carbon">
       <div className="max-w-7xl mx-auto px-4 py-12">
@@ -92,3 +93,5 @@ export default function Footer() {
     </footer>
   )
 }
+
+export default memo(Footer)

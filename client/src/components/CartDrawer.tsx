@@ -1,19 +1,23 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo, useCallback } from 'react'
 import { X, Minus, Plus, Trash2, Loader2, ShoppingBag, Calendar } from 'lucide-react'
 import { useCart } from '../context/CartContext'
+import { useToast } from '../context/ToastContext'
 import { pedidosApi, fechasApi } from '../services/api'
+import type { Pedido } from '../types'
 
 interface FechaDisponible {
   id: number
   fecha: string
+  activo?: boolean
   horarios: { id: number; hora: string; disponible: boolean }[]
 }
 
 export default function CartDrawer() {
   const [submitting, setSubmitting] = useState(false)
   const [submitted, setSubmitted] = useState(false)
-  const [pedidoInfo, setPedidoInfo] = useState<any>(null)
+  const [pedidoInfo, setPedidoInfo] = useState<Pedido | null>(null)
   const [error, setError] = useState('')
+  const { addToast } = useToast()
   const [fechas, setFechas] = useState<FechaDisponible[]>([])
   const [fechaSeleccionada, setFechaSeleccionada] = useState('')
   const [horaSeleccionada, setHoraSeleccionada] = useState('')
@@ -21,24 +25,27 @@ export default function CartDrawer() {
 
   useEffect(() => {
     if (isOpen) {
-      fechasApi.getAll().then(setFechas).catch(console.error)
+      fechasApi.getAll().then(setFechas).catch(() => {
+        addToast('Error al cargar fechas disponibles', 'error')
+      })
     }
-  }, [isOpen])
+  }, [isOpen, addToast])
 
-  const fechasActivas = fechas.filter(f => f.activo && f.horarios?.length > 0)
+  const fechasActivas = useMemo(
+    () => fechas.filter(f => f.activo && f.horarios?.length > 0),
+    [fechas]
+  )
 
-  const formatFecha = (fechaStr: string) => {
+  const formatFecha = useCallback((fechaStr: string) => {
     const fecha = new Date(fechaStr)
     return fecha.toLocaleDateString('es-ES', { weekday: 'long', day: 'numeric', month: 'long' })
-  }
+  }, [])
 
-  // Obtener horarios disponibles para una fecha (o defaults)
-  const getHorariosParaFecha = (fechaSeleccionada: string) => {
-    const fechaConfig = fechas.find(f => f.fecha === fechaSeleccionada)
+  const getHorariosParaFecha = useCallback((fechaSel: string) => {
+    const fechaConfig = fechas.find(f => f.fecha === fechaSel)
     if (fechaConfig?.horarios?.length > 0) {
       return fechaConfig.horarios.filter(h => h.disponible)
     }
-    // Horarios por defecto si no hay configuración
     return [
       { id: 1, hora: '12:00' },
       { id: 2, hora: '13:00' },
@@ -47,9 +54,9 @@ export default function CartDrawer() {
       { id: 5, hora: '20:00' },
       { id: 6, hora: '21:00' }
     ]
-  }
+  }, [fechas])
 
-  const handleApiCheckout = async () => {
+  const handleApiCheckout = useCallback(async () => {
     if (!fechaSeleccionada) {
       setError('Por favor selecciona una fecha de recogida')
       return
@@ -76,7 +83,7 @@ export default function CartDrawer() {
       setError(err.response?.data?.message || 'Error al procesar el pedido')
     }
     setSubmitting(false)
-  }
+  }, [fechaSeleccionada, horaSeleccionada, cart, clearCart])
 
   if (!isOpen) return null
 

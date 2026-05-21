@@ -1,6 +1,8 @@
 const pool = require('../config/db')
+const logger = require('../config/logger')
+const { AppError, asyncHandler } = require('../middleware/errorHandler')
 
-exports.create = async (req, res) => {
+exports.create = asyncHandler(async (req, res) => {
   const client = await pool.connect()
   try {
     await client.query('BEGIN')
@@ -32,126 +34,114 @@ exports.create = async (req, res) => {
     res.status(201).json({ ...pedidoResult.rows[0], items })
   } catch (error) {
     await client.query('ROLLBACK')
-    console.error('Error creating pedido:', error)
-    res.status(500).json({ message: 'Error del servidor' })
+    logger.error({ err: error.message, context: 'pedidoController.create', userId: req.user?.id })
+    throw new AppError('Error del servidor')
   } finally {
     client.release()
   }
-}
+})
 
-exports.getAll = async (req, res) => {
-  try {
-    const result = await pool.query(`
-      SELECT p.*, u.nombre as usuario_nombre, u.email as usuario_email, u.telefono as usuario_telefono
-      FROM pedidos p
-      LEFT JOIN usuarios u ON p.usuario_id = u.id
-      ORDER BY 
-        CASE WHEN p.fecha_recogida IS NULL THEN 1 ELSE 0 END,
-        p.fecha_recogida ASC, 
-        p.created_at ASC
-    `)
-    res.json(result.rows)
-  } catch (error) {
-    console.error('Error getting pedidos:', error)
-    res.status(500).json({ message: 'Error del servidor' })
+const ESTADOS_VALIDOS_PEDIDO = ['pendiente', 'confirmado', 'preparando', 'preparado', 'entregado', 'cancelado']
+
+exports.getAll = asyncHandler(async (req, res) => {
+  const page = Math.max(1, parseInt(req.query.page) || 1)
+  const limit = Math.min(100, Math.max(1, parseInt(req.query.limit) || 50))
+  const offset = (page - 1) * limit
+
+  const countResult = await pool.query('SELECT COUNT(*) as total FROM pedidos')
+  const total = parseInt(countResult.rows[0].total)
+
+  const result = await pool.query(`
+    SELECT p.*, u.nombre as usuario_nombre, u.email as usuario_email, u.telefono as usuario_telefono
+    FROM pedidos p
+    LEFT JOIN usuarios u ON p.usuario_id = u.id
+    ORDER BY 
+      CASE WHEN p.fecha_recogida IS NULL THEN 1 ELSE 0 END,
+      p.fecha_recogida ASC, 
+      p.created_at ASC
+    LIMIT $1 OFFSET $2
+  `, [limit, offset])
+
+  res.json({
+    data: result.rows,
+    pagination: { page, limit, total, totalPages: Math.ceil(total / limit) }
+  })
+})
+
+exports.getMine = asyncHandler(async (req, res) => {
+  const result = await pool.query(
+    'SELECT * FROM pedidos WHERE usuario_id = $1 ORDER BY created_at DESC',
+    [req.user.id]
+  )
+  res.json(result.rows)
+})
+
+exports.updateEstado = asyncHandler(async (req, res) => {
+  const { id } = req.params
+  const { estado } = req.body
+
+  if (!estado || !ESTADOS_VALIDOS_PEDIDO.includes(estado)) {
+    throw new AppError(`Estado inválido. Estados válidos: ${ESTADOS_VALIDOS_PEDIDO.join(', ')}`, 400)
   }
-}
 
-exports.getMine = async (req, res) => {
-  try {
-    const result = await pool.query(
-      'SELECT * FROM pedidos WHERE usuario_id = $1 ORDER BY created_at DESC',
-      [req.user.id]
-    )
-    res.json(result.rows)
-  } catch (error) {
-    console.error('Error getting my pedidos:', error)
-    res.status(500).json({ message: 'Error del servidor' })
+  const result = await pool.query(
+    'UPDATE pedidos SET estado = $1 WHERE id = $2 RETURNING *',
+    [estado, id]
+  )
+
+  if (result.rows.length === 0) {
+    throw new AppError('Pedido no encontrado', 404)
   }
-}
 
-exports.updateEstado = async (req, res) => {
-  try {
-    const { id } = req.params
-    const { estado } = req.body
+  res.json(result.rows[0])
+})
 
-    const ESTADOS_VALIDOS = ['pendiente', 'confirmado', 'preparando', 'preparado', 'entregado', 'cancelado']
-    
-    if (!estado || !ESTADOS_VALIDOS.includes(estado)) {
-      return res.status(400).json({ 
-        message: `Estado inválido. Estados válidos: ${ESTADOS_VALIDOS.join(', ')}` 
-      })
-    }
+exports.getStats = asyncHandler(async (req, res) => {
+  const { filter } = req.query
 
-    const result = await pool.query(
-      'UPDATE pedidos SET estado = $1 WHERE id = $2 RETURNING *',
-      [estado, id]
-    )
-
-    if (result.rows.length === 0) {
-      return res.status(404).json({ message: 'Pedido no encontrado' })
-    }
-
-    res.json(result.rows[0])
-  } catch (error) {
-    console.error('Error updating pedido:', error)
-    res.status(500).json({ message: 'Error del servidor' })
+  let whereClause = "ped.estado NOT IN ('cancelado')"
+  if (filter === 'pendientes') {
+    whereClause = "ped.estado IN ('pendiente', 'confirmado', 'preparando', 'preparado')"
+  } else if (filter === 'terminados') {
+    whereClause = "ped.estado = 'entregado'"
   }
-}
 
-exports.getStats = async (req, res) => {
-  try {
-    const { filter } = req.query
+  const result = await pool.query(`
+    SELECT
+      p.id,
+      p.nombre,
+      p.imagen_url,
+      p.precio,
+      SUM(pd.cantidad) as total_vendido,
+      COUNT(DISTINCT pd.pedido_id) as num_pedidos
+    FROM pedido_detalles pd
+    JOIN platos p ON pd.plato_id = p.id
+    JOIN pedidos ped ON pd.pedido_id = ped.id
+    WHERE ${whereClause}
+    GROUP BY p.id, p.nombre, p.imagen_url, p.precio
+    ORDER BY total_vendido DESC
+  `)
 
-    let whereClause = "ped.estado NOT IN ('cancelado')"
-    if (filter === 'pendientes') {
-      whereClause = "ped.estado IN ('pendiente', 'confirmado', 'preparando', 'preparado')"
-    } else if (filter === 'terminados') {
-      whereClause = "ped.estado = 'entregado'"
-    }
-
-    // Obtener platos más pedidos con cantidades
-    const result = await pool.query(`
-      SELECT
-        p.id,
-        p.nombre,
-        p.imagen_url,
-        p.precio,
-        SUM(pd.cantidad) as total_vendido,
-        COUNT(DISTINCT pd.pedido_id) as num_pedidos
-      FROM pedido_detalles pd
-      JOIN platos p ON pd.plato_id = p.id
-      JOIN pedidos ped ON pd.pedido_id = ped.id
-      WHERE ${whereClause}
-      GROUP BY p.id, p.nombre, p.imagen_url, p.precio
-      ORDER BY total_vendido DESC
-    `)
-
-    let totalsWhere = "estado NOT IN ('cancelado')"
-    if (filter === 'pendientes') {
-      totalsWhere = "estado IN ('pendiente', 'confirmado', 'preparando', 'preparado')"
-    } else if (filter === 'terminados') {
-      totalsWhere = "estado = 'entregado'"
-    }
-
-    // Obtener totales
-    const totales = await pool.query(`
-      SELECT
-        COUNT(*) as total_pedidos,
-        SUM(total) as suma_total
-      FROM pedidos
-      WHERE ${totalsWhere}
-    `)
-
-    res.json({
-      platos: result.rows,
-      totales: {
-        pedidos: parseInt(totales.rows[0].total_pedidos) || 0,
-        ingresos: parseFloat(totales.rows[0].suma_total) || 0
-      }
-    })
-  } catch (error) {
-    console.error('Error getting stats:', error)
-    res.status(500).json({ message: 'Error del servidor' })
+  let totalsWhere = "estado NOT IN ('cancelado')"
+  if (filter === 'pendientes') {
+    totalsWhere = "estado IN ('pendiente', 'confirmado', 'preparando', 'preparado')"
+  } else if (filter === 'terminados') {
+    totalsWhere = "estado = 'entregado'"
   }
-}
+
+  const totales = await pool.query(`
+    SELECT
+      COUNT(*) as total_pedidos,
+      SUM(total) as suma_total
+    FROM pedidos
+    WHERE ${totalsWhere}
+  `)
+
+  res.json({
+    platos: result.rows,
+    totales: {
+      pedidos: parseInt(totales.rows[0].total_pedidos) || 0,
+      ingresos: parseFloat(totales.rows[0].suma_total) || 0
+    }
+  })
+})

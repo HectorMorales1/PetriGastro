@@ -1,8 +1,10 @@
 import { useState } from 'react'
 import { Helmet } from 'react-helmet-async'
+import { useToast } from '../context/ToastContext'
 import { reservasApi } from '../services/api'
 
 export default function Reservas() {
+  const { addToast } = useToast()
   const [formData, setFormData] = useState({
     nombre: '',
     email: '',
@@ -36,7 +38,7 @@ export default function Reservas() {
         notas: ''
       })
     } catch (error) {
-      console.error('Error:', error)
+      addToast(error.response?.data?.message || 'Error al enviar la reserva', 'error')
     }
 
     setLoading(false)

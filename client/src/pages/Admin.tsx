@@ -48,7 +48,7 @@ export default function Admin() {
   const { user } = useAuth()
   const queryClient = useQueryClient()
   const [activeTab, setActiveTab] = useState('pedidos')
-  const [page, setPage] = useState({ pedidos: 1, platos: 1, fechas: 1 })
+  const [pedidoPage, setPedidoPage] = useState(1)
 
   if (!user || user.rol !== 'admin') {
     return (
@@ -59,10 +59,13 @@ export default function Admin() {
     )
   }
 
-  const { data: pedidos = [] } = useQuery({
-    queryKey: ['pedidos'],
-    queryFn: pedidosApi.getAll
+  const { data: pedidosResp = { data: [], pagination: { total: 0, totalPages: 0 } } } = useQuery({
+    queryKey: ['pedidos', pedidoPage],
+    queryFn: () => pedidosApi.getAll({ page: pedidoPage, limit: ITEMS_PER_PAGE })
   })
+
+  const pedidos = pedidosResp.data || []
+  const totalPedidoPages = pedidosResp.pagination?.totalPages || 0
 
   
 
@@ -93,18 +96,14 @@ export default function Admin() {
     { id: 'solicitudes', label: `Solicitudes${solicitudesPendientes > 0 ? ` (${solicitudesPendientes})` : ''}` }
   ]
 
-  const paginatedPedidos = pedidos.slice(
-    (page.pedidos - 1) * ITEMS_PER_PAGE,
-    page.pedidos * ITEMS_PER_PAGE
-  )
-  const totalPedidoPages = Math.ceil(pedidos.length / ITEMS_PER_PAGE)
-
-  const updatePage = (tab, p) => setPage(prev => ({ ...prev, [tab]: p }))
+  const paginatedPedidos = pedidos
 
   return (
     <>
       <Helmet>
         <title>Admin | PetriGastro</title>
+        <meta name="description" content="Panel de administración de PetriGastro. Gestiona pedidos, platos, categorías y solicitudes de acceso." />
+        <meta name="robots" content="noindex, nofollow" />
       </Helmet>
 
       <div className="max-w-7xl mx-auto px-4 py-8">
@@ -190,7 +189,7 @@ export default function Admin() {
                 ))}
               </tbody>
             </table>
-            <Paginacion currentPage={page.pedidos} totalPages={totalPedidoPages} onPageChange={(p) => updatePage('pedidos', p)} />
+            <Paginacion currentPage={pedidoPage} totalPages={totalPedidoPages} onPageChange={setPedidoPage} />
           </div>
         )}
 
@@ -224,7 +223,7 @@ function SolicitudesManager() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['solicitudes'] })
     },
-    onError: (error: any) => {
+    onError: (error: { response?: { data?: { message?: string } } }) => {
       alert(error.response?.data?.message || 'Error al aprobar la solicitud')
     }
   })
@@ -236,7 +235,7 @@ function SolicitudesManager() {
       setRechazarModal(null)
       setMotivoRechazo('')
     },
-    onError: (error: any) => {
+    onError: (error: { response?: { data?: { message?: string } } }) => {
       alert(error.response?.data?.message || 'Error al rechazar la solicitud')
     }
   })
@@ -271,7 +270,7 @@ function SolicitudesManager() {
               </tr>
             </thead>
             <tbody>
-              {solicitudes.map((sol: any) => (
+              {solicitudes.map((sol: { id: number; nombre: string; apellidos: string; email: string; fecha_solicitud: string }) => (
                 <tr key={sol.id} className="border-t border-border">
                   <td className="px-4 py-3 font-medium">
                     {sol.nombre} {sol.apellidos}
@@ -412,7 +411,7 @@ function StatsManager() {
             </tr>
           </thead>
           <tbody>
-            {platos.map((plato: any) => (
+            {platos.map((plato: { id: number; imagen_url: string; nombre: string; precio: number; total_vendido: number; num_pedidos: number }) => (
               <tr key={plato.id} className="border-t border-border">
                 <td className="px-4 py-3">
                   <div className="flex items-center gap-3">
@@ -449,7 +448,7 @@ function StatsManager() {
 function FechasManager() {
   const queryClient = useQueryClient()
   const [showAddForm, setShowAddForm] = useState(false)
-  const [editingFecha, setEditingFecha] = useState<any>(null)
+  const [editingFecha, setEditingFecha] = useState<{ id: number; activo: boolean; horarios: string[] } | null>(null)
   const [showAllFechas, setShowAllFechas] = useState(false)
   const [newFecha, setNewFecha] = useState({ fecha: '', horarios: ['12:00', '13:00', '19:00', '20:00', '21:00'] })
 
@@ -466,7 +465,7 @@ function FechasManager() {
       setShowAddForm(false)
       setNewFecha({ fecha: '', horarios: ['12:00', '13:00', '19:00', '20:00', '21:00'] })
     },
-    onError: (error: any) => {
+    onError: (error: { response?: { data?: { message?: string } } }) => {
       alert(error.response?.data?.message || 'Error al crear la fecha')
     }
   })
@@ -668,7 +667,7 @@ function FechasManager() {
                         {new Date(fecha.fecha).toLocaleDateString('es-ES', { weekday: 'long', day: 'numeric', month: 'long' })}
                       </h4>
                       <div className="flex flex-wrap gap-1 mt-2">
-                        {fecha.horarios?.map((h: any) => (
+                        {fecha.horarios?.map((h: { id: number; hora: string; disponible: boolean }) => (
                           <span
                             key={h.id || h.hora}
                             className={`px-2 py-0.5 rounded text-xs ${
@@ -687,7 +686,7 @@ function FechasManager() {
                         onClick={() => setEditingFecha({
                           id: fecha.id,
                           activo: fecha.activo,
-                          horarios: fecha.horarios?.map((h: any) => h.hora) || []
+                          horarios: fecha.horarios?.map((h: { hora: string }) => h.hora) || []
                         })}
                         className="p-2 rounded hover:bg-bg-secondary text-text-muted hover:text-accent"
                         title="Editar horarios"
@@ -865,10 +864,10 @@ function CategoriasManager() {
   )
 }
 
-function PlatosManager() {
+function PlatosManager({ pageNum = 1 }: { pageNum?: number }) {
   const queryClient = useQueryClient()
   const [showForm, setShowForm] = useState(false)
-  const [platoPage, setPlatoPage] = useState(1)
+  const [platoPage, setPlatoPage] = useState(pageNum)
   const [uploading, setUploading] = useState(false)
   const [previewImg, setPreviewImg] = useState('')
   const [form, setForm] = useState({
@@ -888,6 +887,7 @@ function PlatosManager() {
 
   const handleImageSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
+    const file = e.target.files?.[0]
     if (!file) return
 
     const reader = new FileReader()
@@ -900,15 +900,16 @@ function PlatosManager() {
     try {
       const result = await uploadApi.imagen(file)
       setForm(prev => ({ ...prev, imagen_url: result.url }))
-    } catch (error: any) {
-      const msg = error.response?.data?.message || 'Error al subir la imagen'
+    } catch (error: unknown) {
+      const err = error as { response?: { data?: { message?: string } } }
+      const msg = err.response?.data?.message || 'Error al subir la imagen'
       alert(msg)
     }
     setUploading(false)
   }
 
   const createMutation = useMutation({
-    mutationFn: (data) => platosApi.create(data),
+    mutationFn: (data: Record<string, unknown>) => platosApi.create(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['platos'] })
       setShowForm(false)
@@ -918,16 +919,16 @@ function PlatosManager() {
   })
 
   const updateMutation = useMutation({
-    mutationFn: ({ id, data }) => platosApi.update(id, data),
+    mutationFn: ({ id, data }: { id: number; data: Partial<{ disponible: boolean; destacado: boolean }> }) => platosApi.update(id, data),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['platos'] })
   })
 
   const deleteMutation = useMutation({
-    mutationFn: (id) => platosApi.delete(id),
+    mutationFn: (id: number) => platosApi.delete(id),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['platos'] })
   })
 
-  const handleCreate = (e) => {
+  const handleCreate = (e: React.FormEvent) => {
     e.preventDefault()
     createMutation.mutate({
       ...form,
@@ -936,7 +937,7 @@ function PlatosManager() {
     })
   }
 
-  const toggleField = (plato, field) => {
+  const toggleField = (plato: { id: number; [key: string]: unknown }, field: string) => {
     updateMutation.mutate({ id: plato.id, data: { ...plato, [field]: !plato[field] } })
   }
 

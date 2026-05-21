@@ -106,8 +106,8 @@ html {
   }
 }
 
-/* Transitions globales */
-* {
+/* Transition utility class */
+.transition-default {
   transition-property: background-color, border-color, color, fill, stroke, opacity, box-shadow, transform;
   transition-timing-function: ease-out;
   transition-duration: 150ms;

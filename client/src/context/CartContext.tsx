@@ -1,15 +1,24 @@
-import { createContext, useContext, useState, useEffect } from 'react'
+import { createContext, useContext, useState, useEffect, useMemo, type ReactNode } from 'react'
+import { safeGetItem } from '../utils/storage'
+import type { Plato, CartItem } from '../types'
 
-const CartContext = createContext(null)
-
-const _petriCart = localStorage.getItem('petriCart')
-if (_petriCart === 'undefined' || _petriCart === 'null') {
-  localStorage.removeItem('petriCart')
+interface CartContextType {
+  cart: CartItem[]
+  addItem: (plato: Plato) => void
+  removeItem: (id: number) => void
+  updateQuantity: (id: number, cantidad: number) => void
+  clearCart: () => void
+  total: number
+  isOpen: boolean
+  setIsOpen: (open: boolean) => void
 }
 
-export function CartProvider({ children }) {
+const CartContext = createContext<CartContextType | null>(null)
+
+export function CartProvider({ children }: { children: ReactNode }) {
+  const [cart, setCart] = useState<CartItem[]>(() => {
   const [cart, setCart] = useState(() => {
-    const stored = localStorage.getItem('petriCart')
+    const stored = safeGetItem('petriCart')
     if (!stored) return []
     try {
       const parsed = JSON.parse(stored)
@@ -57,7 +66,10 @@ export function CartProvider({ children }) {
     setCart([])
   }
 
-  const total = cart.reduce((sum, item) => sum + (item.precio * item.cantidad), 0)
+  const total = useMemo(() =>
+    cart.reduce((sum, item) => sum + (item.precio * item.cantidad), 0),
+    [cart]
+  )
 
   return (
     <CartContext.Provider value={{

@@ -46,9 +46,10 @@ function App() {
                           <Route path="/" element={<Home />} />
                           <Route path="/menu" element={<Menu />} />
                           <Route path="/mis-pedidos" element={<MisPedidos />} />
-                          
-                          <Route path="/admin" element={<Admin />} />
                           <Route path="*" element={<NotFound />} />
+                        </Route>
+                        <Route element={<AuthGuard requiredRole="admin" />}>
+                          <Route path="/admin" element={<Admin />} />
                         </Route>
                       </Routes>
                     </Suspense>

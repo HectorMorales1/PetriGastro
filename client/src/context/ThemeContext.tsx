@@ -1,10 +1,16 @@
-import { createContext, useContext, useState, useEffect } from 'react'
+import { createContext, useContext, useState, useEffect, type ReactNode } from 'react'
+import { safeGetItem } from '../utils/storage'
 
-const ThemeContext = createContext(null)
+interface ThemeContextType {
+  theme: string
+  toggleTheme: () => void
+}
 
-export function ThemeProvider({ children }) {
+const ThemeContext = createContext<ThemeContextType | null>(null)
+
+export function ThemeProvider({ children }: { children: ReactNode }) {
   const [theme, setTheme] = useState(() => {
-    const stored = localStorage.getItem('petri_theme')
+    const stored = safeGetItem('petri_theme')
     return stored || 'light'
   })
 

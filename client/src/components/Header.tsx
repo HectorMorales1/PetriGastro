@@ -1,8 +1,9 @@
 import { Link, useLocation } from 'react-router-dom'
 import { ShoppingCart, User, Menu, X, LogOut, Package } from 'lucide-react'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import { useCart } from '../context/CartContext'
 import { useAuth } from '../context/AuthContext'
+
 export default function Header() {
   const [menuOpen, setMenuOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
@@ -11,7 +12,10 @@ export default function Header() {
   const location = useLocation()
   const isHome = location.pathname === '/'
 
-  const cartCount = cart.reduce((sum, item) => sum + item.cantidad, 0)
+  const cartCount = useMemo(() =>
+    cart.reduce((sum, item) => sum + item.cantidad, 0),
+    [cart]
+  )
 
   useEffect(() => {
     const handleScroll = () => {
@@ -21,18 +25,21 @@ export default function Header() {
     return () => window.removeEventListener('scroll', handleScroll)
   }, [])
 
-  const navLinks = isHome 
-    ? [
-        { to: '#inicio', label: 'Inicio' },
-        { to: '#proceso', label: 'Cómo Funciona' },
-        { to: '#menu', label: 'Menú' },
-        { to: '#chef', label: 'El Chef' },
-        { to: '#testimonios', label: 'Clientes' }
-      ]
-    : [
-        { to: '/', label: 'Inicio' },
-        { to: '/menu', label: 'Menú' }
-      ]
+  const navLinks = useMemo(() =>
+    isHome
+      ? [
+          { to: '#inicio', label: 'Inicio' },
+          { to: '#proceso', label: 'Cómo Funciona' },
+          { to: '#menu', label: 'Menú' },
+          { to: '#chef', label: 'El Chef' },
+          { to: '#testimonios', label: 'Clientes' }
+        ]
+      : [
+          { to: '/', label: 'Inicio' },
+          { to: '/menu', label: 'Menú' }
+        ],
+    [isHome]
+  )
 
   return (
     <header 

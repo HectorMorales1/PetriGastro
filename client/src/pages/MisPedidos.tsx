@@ -63,6 +63,7 @@ export default function MisPedidos() {
     <>
       <Helmet>
         <title>Mis Pedidos | PetriGastro</title>
+        <meta name="description" content="Consulta el estado de tus pedidos en PetriGastro. Realiza un seguimiento de tus pedidos de comida artesanal." />
       </Helmet>
 
       <div className="max-w-4xl mx-auto px-4 py-8">

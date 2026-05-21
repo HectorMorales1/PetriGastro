@@ -15,15 +15,33 @@ function ScrollVideo() {
   const [loaded, setLoaded] = useState(false)
   const [currentFrame, setCurrentFrame] = useState(0)
   const [progress, setProgress] = useState(0)
+  const [isVisible, setIsVisible] = useState(false)
   const lastFrameRef = useRef(-1)
 
   useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setIsVisible(true)
+          observer.disconnect()
+        }
+      },
+      { threshold: 0.1 }
+    )
+    if (sectionRef.current) {
+      observer.observe(sectionRef.current)
+    }
+    return () => observer.disconnect()
+  }, [])
+
+  useEffect(() => {
+    if (!isVisible) return
     let loadedCount = 0
-    const images = []
+    const images: HTMLImageElement[] = []
 
     for (let i = 0; i < TOTAL_FRAMES; i++) {
       const img = new Image()
-      const frameNum = (i * 3).toString().padStart(3, '0')  // 0, 3, 6, 9... (1 de cada 3)
+      const frameNum = (i * 3).toString().padStart(3, '0')
       img.src = `/Fotogramas/frame_${frameNum}.jpg`
       
       img.onload = () => {
@@ -47,7 +65,7 @@ function ScrollVideo() {
     }, 100)
 
     return () => clearInterval(preloadImages)
-  }, [])
+  }, [isVisible])
 
   useEffect(() => {
     const handleScroll = () => {

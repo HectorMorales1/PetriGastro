@@ -5,7 +5,9 @@ import { useAuth } from '../context/AuthContext'
 import { ArrowRight, UserPlus } from 'lucide-react'
 
 export default function Login() {
-  const [isRegisterMode, setIsRegisterMode] = useState(false)
+  const navigate = useNavigate()
+  const location = useLocation()
+  const [isRegisterMode, setIsRegisterMode] = useState(location.state?.registerMode || false)
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [nombre, setNombre] = useState('')
@@ -17,8 +19,6 @@ export default function Login() {
   const [successMessage, setSuccessMessage] = useState('')
   const [loading, setLoading] = useState(false)
   const { login, register } = useAuth()
-  const navigate = useNavigate()
-  const location = useLocation()
   const from = location.state?.from?.pathname || '/'
 
   const handleLogin = async (e) => {

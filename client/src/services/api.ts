@@ -1,22 +1,24 @@
 import axios from 'axios'
 import { QueryClient } from '@tanstack/react-query'
+import { safeGetItem } from '../utils/storage'
+
+export const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/api'
 
 const AUTH_ROUTES = ['/auth/login', '/auth/register']
 
 ;['petri_user', 'petriCart', 'petri_theme', 'petri_token', 'petri_refresh_token'].forEach(key => {
-  const val = localStorage.getItem(key)
-  if (val === 'undefined' || val === 'null') {
+  if (safeGetItem(key) === null) {
     localStorage.removeItem(key)
   }
 })
 
 export const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || 'http://localhost:3000/api'
+  baseURL: API_URL
 })
 
 api.interceptors.request.use((config) => {
-  const token = localStorage.getItem('petri_token')
-  if (token && typeof token === 'string') {
+  const token = safeGetItem('petri_token')
+  if (token) {
     config.headers.Authorization = `Bearer ${token.trim()}`
   }
   return config
@@ -33,9 +35,9 @@ api.interceptors.response.use(
       }
       originalRequest._retry = true
       try {
-        const refreshToken = localStorage.getItem('petri_refresh_token')
+        const refreshToken = safeGetItem('petri_refresh_token')
         if (refreshToken) {
-          const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:3000/api'}/auth/refresh`, {
+          const response = await fetch(`${API_URL}/auth/refresh`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ refreshToken })
@@ -89,8 +91,8 @@ export const categoriasApi = {
 
 export const pedidosApi = {
   create: (data) => api.post('/pedidos', data).then(r => r.data),
-  getAll: () => api.get('/pedidos').then(r => r.data),
-  getMine: () => api.get('/pedidos/mios').then(r => r.data),
+  getAll: (params?) => api.get('/pedidos', { params }).then(r => r.data),
+  getMine: () => api.get('/pedidos/mis-pedidos').then(r => r.data),
   getStats: (filter?: string) => api.get('/pedidos/stats', { params: { filter } }).then(r => r.data),
   updateEstado: (id, estado) => api.put(`/pedidos/${id}/estado`, { estado }).then(r => r.data)
 }
@@ -108,7 +110,7 @@ export const authApi = {
 
 export const usuariosApi = {
   getSolicitudes: () => api.get('/usuarios/solicitudes').then(r => r.data),
-  getAll: () => api.get('/usuarios').then(r => r.data),
+  getAll: (params?) => api.get('/usuarios', { params }).then(r => r.data),
   aprobar: (id) => api.put(`/usuarios/${id}/aprobar`).then(r => r.data),
   rechazar: (id, motivo) => api.put(`/usuarios/${id}/rechazar`, { motivo }).then(r => r.data)
 }

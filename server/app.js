@@ -16,6 +16,7 @@ const uploadRoutes = require('./routes/upload')
 const feedbackRoutes = require('./routes/feedback')
 const usuarioRoutes = require('./routes/usuarios')
 const logger = require('./config/logger')
+const { globalErrorHandler } = require('./middleware/errorHandler')
 
 const app = express()
 
@@ -23,13 +24,22 @@ app.set('trust proxy', 1)
 
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')))
 
+const crypto = require('crypto')
+
+const nonce = crypto.randomBytes(16).toString('base64')
+
+app.use((req, res, next) => {
+  res.locals.nonce = nonce
+  next()
+})
+
 app.use(helmet({
   contentSecurityPolicy: {
     directives: {
       defaultSrc: ["'self'"],
-      scriptSrc: ["'self'", "'unsafe-inline'", "https://js.stripe.com"],
-      styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],
-      imgSrc: ["'self'", "data:", "https://*.supabase.co", "https://images.unsplash.com", "http://localhost:3000"],
+      scriptSrc: ["'self'", `'nonce-${nonce}'`, "https://js.stripe.com"],
+      styleSrc: ["'self'", `'nonce-${nonce}'`, "https://fonts.googleapis.com"],
+      imgSrc: ["'self'", "data:", "https://*.supabase.co", "https://images.unsplash.com"],
       fontSrc: ["'self'", "https://fonts.gstatic.com"],
       connectSrc: ["'self'", "https://*.supabase.co"],
       frameSrc: ["'none'"],
@@ -85,10 +95,7 @@ app.use('/api/upload', uploadRoutes)
 app.use('/api/usuarios', usuarioRoutes)
 app.use('/api/feedback', feedbackRoutes)
 
-app.use((err, req, res, next) => {
-  logger.error(err.stack)
-  res.status(500).json({ message: 'Error del servidor' })
-})
+app.use(globalErrorHandler)
 
 app.get('/', (req, res) => {
   res.json({ status: 'ok', service: 'PetriGastro API', timestamp: new Date().toISOString() })
@@ -96,8 +103,6 @@ app.get('/', (req, res) => {
 
 app.disable('x-powered-by')
 app.use((req, res, next) => {
-  res.setHeader('X-Frame-Options', 'DENY')
-  res.setHeader('X-Content-Type-Options', 'nosniff')
   res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin')
   res.setHeader('Permissions-Policy', 'geolocation=(), microphone=(), camera=()')
   next()

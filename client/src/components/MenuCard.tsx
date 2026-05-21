@@ -1,16 +1,21 @@
+import { memo, useState, useCallback } from 'react'
 import { Plus, Check } from 'lucide-react'
 import { useCart } from '../context/CartContext'
-import { useState } from 'react'
+import type { Plato } from '../types'
 
-export default function MenuCard({ plato }) {
+interface MenuCardProps {
+  plato: Plato
+}
+
+function MenuCard({ plato }: MenuCardProps) {
   const { addItem } = useCart()
   const [added, setAdded] = useState(false)
 
-  const handleAdd = () => {
+  const handleAdd = useCallback(() => {
     addItem(plato)
     setAdded(true)
     setTimeout(() => setAdded(false), 2000)
-  }
+  }, [plato, addItem])
 
   return (
     <div className="bg-surface rounded-xl shadow-md overflow-hidden hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
@@ -45,6 +50,7 @@ export default function MenuCard({ plato }) {
           <button
             onClick={handleAdd}
             disabled={!plato.disponible}
+            aria-label={`Añadir ${plato.nombre} al carrito`}
             className={`flex items-center gap-2 px-5 py-2.5 rounded-full font-medium transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed ${
               added 
                 ? 'bg-verde-oliva text-white' 
@@ -68,3 +74,5 @@ export default function MenuCard({ plato }) {
     </div>
   )
 }
+
+export default memo(MenuCard)
