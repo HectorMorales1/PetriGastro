@@ -247,7 +247,7 @@ export default function CartDrawer() {
                                 : 'bg-bg-tertiary text-text hover:bg-border'
                             }`}
                           >
-                            {h.hora.slice(0, 5)}
+                            {typeof h.hora === 'string' ? h.hora.slice(0, 5) : h.hora}
                           </button>
                         ))}
                       </div>

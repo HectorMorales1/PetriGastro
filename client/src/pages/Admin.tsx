@@ -875,15 +875,17 @@ function PlatosManager({ pageNum = 1 }: { pageNum?: number }) {
     imagen_url: '', disponible: true, destacado: false
   })
 
-  const { data: platos = [], isLoading } = useQuery({
+  const { data: platosResp, isLoading } = useQuery({
     queryKey: ['platos', 'admin'],
     queryFn: () => platosApi.getAll({ todas: true })
   })
+  const platos = Array.isArray(platosResp) ? platosResp : []
 
-  const { data: categorias = [] } = useQuery({
+  const { data: categoriasResp } = useQuery({
     queryKey: ['categorias'],
     queryFn: () => categoriasApi.getAll()
   })
+  const categorias = Array.isArray(categoriasResp) ? categoriasResp : []
 
   const handleImageSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
