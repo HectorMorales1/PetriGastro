@@ -15,7 +15,7 @@ process.on('uncaughtException', (error) => {
 })
 
 runMigrations().then(() => {
-  app.listen(PORT, () => {
+  app.listen(PORT, '0.0.0.0', () => {
     logger.info(`Servidor corriendo en puerto ${PORT}`)
     logger.info(`Entorno: ${process.env.NODE_ENV || 'development'}`)
   })
