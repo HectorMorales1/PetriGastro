@@ -10,7 +10,6 @@ export default defineConfig({
     tailwindcss(),
     VitePWA({
       registerType: 'autoUpdate',
-      // Eliminamos la restricción estricta de assets que tumba el build si falta alguno
       manifest: {
         name: 'PetriGastro',
         short_name: 'PetriGastro',
@@ -23,15 +22,10 @@ export default defineConfig({
         ]
       },
       workbox: {
-        // Limitamos la PWA para que solo registre lo que genera Vite en la carpeta dist/assets
+        // Registramos solo los assets principales generados por Vite
         globPatterns: ['assets/**/*.{js,css}', 'index.html'],
-        // Protegemos el build bloqueando que intente cachear los comprimidos .gz
-        globTransforms: [
-          (manifestEntries) => {
-            const manifest = manifestEntries.filter(entry => !entry.url.endsWith('.gz'));
-            return { manifest, warnings: [] };
-          }
-        ],
+        // Reemplazamos la propiedad conflictiva por 'globIgnores' tal como pide Workbox
+        globIgnores: ['**/*.gz', 'node_modules/**/*'],
         runtimeCaching: [
           {
             urlPattern: /^https:\/\/fonts\.googleapis\.com\/.*/i,
@@ -63,7 +57,7 @@ export default defineConfig({
     compression({ algorithm: 'gzip', ext: '.gz' })
   ],
   build: {
-    chunkSizeWarningLimit: 1000 // Subimos el límite para evitar alertas molestas de peso
+    chunkSizeWarningLimit: 1000
   },
   server: {
     port: 5173,
