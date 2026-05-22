@@ -21,6 +21,9 @@ tiempo se desactive la sesion del navegador
 
 - que al clicar sobre un plato salga un la informacion del plato, ingredientes, descripcion etc
 
+- que las fechas no se muestren cuando ya ha pasado, deja un margen de un dia 
+
+-
 
 
 

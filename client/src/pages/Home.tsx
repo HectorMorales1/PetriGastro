@@ -568,8 +568,8 @@ export default function Home() {
         {/* Hero Section */}
         <section id="inicio" className="relative min-h-screen flex items-center pt-16 overflow-hidden" style={{ background: 'linear-gradient(135deg, var(--color-bg) 0%, var(--color-bg-secondary) 100%)' }}>
           <div className="absolute inset-0 overflow-hidden">
-            <div className="absolute top-20 -left-20 w-96 h-96 rounded-full opacity-30" style={{ background: 'radial-gradient(circle, var(--color-accent) 0%, transparent 70%)' }} />
-            <div className="absolute bottom-20 -right-20 w-80 h-80 rounded-full opacity-20" style={{ background: 'radial-gradient(circle, var(--color-success) 0%, transparent 70%)' }} />
+            <div className="absolute top-20 -left-20 w-96 h-96 rounded-full opacity-30 hidden md:block" style={{ background: 'radial-gradient(circle, var(--color-accent) 0%, transparent 70%)' }} />
+            <div className="absolute bottom-20 -right-20 w-80 h-80 rounded-full opacity-20 hidden md:block" style={{ background: 'radial-gradient(circle, var(--color-success) 0%, transparent 70%)' }} />
           </div>
 
           <div className="max-w-7xl mx-auto px-4 py-20 grid grid-cols-1 lg:grid-cols-2 gap-12 items-center relative z-10">
@@ -609,12 +609,12 @@ export default function Home() {
                 <img 
                   src="https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=600&h=600&fit=crop"
                   alt="Plato gourmet de cocina artesanal"
-                  className="w-full h-[500px] object-cover"
+                  className="w-full h-[300px] md:h-[500px] object-cover"
                   loading="eager"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent" />
               </div>
-              <div className="absolute -bottom-6 -left-6 bg-surface rounded-2xl p-4 shadow-xl flex items-center gap-3">
+              <div className="absolute -bottom-6 -left-6 bg-surface rounded-2xl p-4 shadow-xl flex items-center gap-3 hidden md:flex">
                 <div className="w-12 h-12 rounded-full bg-verde-oliva flex items-center justify-center">
                   <Leaf className="text-white" size={20} />
                 </div>
@@ -623,7 +623,7 @@ export default function Home() {
                   <div className="text-sm text-text-muted">Ingredientes Frescos</div>
                 </div>
               </div>
-              <div className="absolute -top-4 -right-4 bg-surface rounded-2xl p-4 shadow-xl flex items-center gap-3">
+              <div className="absolute -top-4 -right-4 bg-surface rounded-2xl p-4 shadow-xl flex items-center gap-3 hidden md:flex">
                 <div className="w-12 h-12 rounded-full bg-accent flex items-center justify-center">
                   <Flame className="text-white" size={20} />
                 </div>
@@ -729,7 +729,7 @@ export default function Home() {
                   En PetriGastro combino la tradición culinaria española con técnicas modernas.
                 </p>
 
-                <div className="grid grid-cols-3 gap-4 pt-4">
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-4">
                   {statsData.chef.stats.map((stat, i) => (
                     <div key={i} className="text-center p-4 rounded-xl bg-bg-secondary">
                       <div className="text-2xl font-bold mb-1 text-accent">{stat.value}</div>
@@ -834,7 +834,7 @@ export default function Home() {
               {galleryLoopImages.map((img, i) => (
                 <div 
                   key={`${img}-${i}`} 
-                  className="flex-shrink-0 w-48 h-48 rounded-xl overflow-hidden cursor-pointer"
+                  className="flex-shrink-0 w-36 sm:w-48 h-36 sm:h-48 rounded-xl overflow-hidden cursor-pointer"
                   onClick={() => openLightbox(i % galleryImages.length)}
                 >
                   <img src={img} alt={`Plato gourmet ${(i % galleryImages.length) + 1}`} className="w-full h-full object-cover hover:scale-110 transition-transform" loading="lazy" />

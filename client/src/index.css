@@ -179,3 +179,28 @@ html {
     animation: none;
   }
 }
+
+button, a {
+  touch-action: manipulation;
+}
+
+.scrollable-table {
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior-x: contain;
+}
+
+@media (max-width: 767px) {
+  .scrollable-table table {
+    min-width: 600px;
+  }
+  
+  .scrollable-table::after {
+    content: '← Desliza para ver más →';
+    display: block;
+    text-align: center;
+    font-size: 0.75rem;
+    color: var(--color-text-muted);
+    padding: 0.25rem;
+    opacity: 0.6;
+  }
+}

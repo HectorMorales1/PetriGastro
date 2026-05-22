@@ -138,12 +138,20 @@ export default function Header() {
           {user ? (
             <>
               <span className="font-medium text-carbon">{user.nombre}</span>
-              {user.rol === 'admin' && <Link to="/admin">Admin</Link>}
+              {user.rol === 'admin' && <Link to="/admin" onClick={() => setMenuOpen(false)} className="text-carbon">Admin</Link>}
+              <Link to="/mis-pedidos" onClick={() => setMenuOpen(false)} className="text-carbon">Mis Pedidos</Link>
               <button onClick={logout} className="text-left text-carbon">Cerrar sesión</button>
             </>
           ) : (
-            <Link to="/login" className="text-carbon">Login</Link>
+            <Link to="/login" className="text-carbon" onClick={() => setMenuOpen(false)}>Login</Link>
           )}
+          <button
+            onClick={() => { setIsOpen(true); setMenuOpen(false) }}
+            className="flex items-center gap-2 text-carbon"
+          >
+            <ShoppingCart size={20} />
+            <span>Carrito {cartCount > 0 && `(${cartCount})`}</span>
+          </button>
         </nav>
       )}
     </header>

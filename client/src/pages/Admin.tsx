@@ -109,7 +109,7 @@ export default function Admin() {
       <div className="max-w-7xl mx-auto px-4 py-8">
         <h1 className="text-3xl font-bold mb-8 font-heading">Panel de Administración</h1>
 
-        <div className="flex gap-2 mb-6 overflow-x-auto">
+        <div className="flex gap-2 mb-6 overflow-x-auto overscroll-x-contain scroll-snap-x">
           {tabs.map(tab => (
             <button
               key={tab.id}
@@ -124,7 +124,7 @@ export default function Admin() {
         </div>
 
         {activeTab === 'pedidos' && (
-          <div className="bg-surface rounded-lg shadow overflow-x-auto">
+          <div className="bg-surface rounded-lg shadow overflow-x-auto overscroll-x-contain scrollable-table">
             <table className="w-full">
               <thead className="bg-bg-secondary">
                 <tr>
@@ -259,7 +259,7 @@ function SolicitudesManager() {
           <p className="text-text-muted text-lg">No hay solicitudes pendientes.</p>
         </div>
       ) : (
-        <div className="bg-surface rounded-lg shadow overflow-x-auto">
+        <div className="bg-surface rounded-lg shadow overflow-x-auto overscroll-x-contain scrollable-table">
           <table className="w-full">
             <thead className="bg-bg-secondary">
               <tr>
@@ -399,7 +399,7 @@ function StatsManager() {
 
       <h2 className="text-2xl font-bold font-heading mb-6">Platos más pedidos</h2>
 
-      <div className="bg-surface rounded-lg shadow overflow-x-auto">
+      <div className="bg-surface rounded-lg shadow overflow-x-auto overscroll-x-contain scrollable-table">
         <table className="w-full">
           <thead className="bg-bg-secondary">
             <tr>
@@ -827,7 +827,7 @@ function CategoriasManager() {
         </form>
       )}
 
-      <div className="bg-surface rounded-lg shadow overflow-x-auto">
+      <div className="bg-surface rounded-lg shadow overflow-x-auto overscroll-x-contain scrollable-table">
         <table className="w-full">
           <thead className="bg-bg-secondary">
             <tr>
@@ -1036,7 +1036,7 @@ function PlatosManager({ pageNum = 1 }: { pageNum?: number }) {
         </form>
       )}
 
-      <div className="bg-surface rounded-lg shadow overflow-x-auto">
+      <div className="bg-surface rounded-lg shadow overflow-x-auto overscroll-x-contain scrollable-table">
         <table className="w-full">
           <thead className="bg-bg-secondary">
             <tr>

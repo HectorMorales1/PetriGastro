@@ -236,7 +236,7 @@ export default function CartDrawer() {
                   {fechaSeleccionada && (
                     <>
                       <label className="block text-sm text-text-muted">Selecciona hora:</label>
-                      <div className="grid grid-cols-3 gap-2">
+                      <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
                         {getHorariosParaFecha(fechaSeleccionada).map(h => (
                           <button
                             key={h.id}
