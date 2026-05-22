@@ -142,34 +142,34 @@ export default function Header() {
         <div className="flex flex-col p-4 gap-1 overflow-y-auto" style={{ maxHeight: 'calc(100vh - 70px)' }}>
           {isHome ? (
             <>
-              <a href="#inicio" onClick={() => setMenuOpen(false)} className="flex items-center gap-3 py-3 px-4 rounded-xl text-carbon bg-white/5 hover:bg-white/10 transition font-medium">
+              <a href="#inicio" onClick={() => setMenuOpen(false)} className="flex items-center gap-3 py-3 px-4 rounded-xl text-carbon bg-white/10 hover:bg-white/20 transition font-medium">
                 <Home size={20} className="text-accent" />
                 Inicio
               </a>
-              <a href="#proceso" onClick={() => setMenuOpen(false)} className="flex items-center gap-3 py-3 px-4 rounded-xl text-carbon bg-white/5 hover:bg-white/10 transition font-medium">
+              <a href="#proceso" onClick={() => setMenuOpen(false)} className="flex items-center gap-3 py-3 px-4 rounded-xl text-carbon bg-white/10 hover:bg-white/20 transition font-medium">
                 <Info size={20} className="text-accent" />
                 Cómo Funciona
               </a>
-              <a href="#menu" onClick={() => setMenuOpen(false)} className="flex items-center gap-3 py-3 px-4 rounded-xl text-carbon bg-white/5 hover:bg-white/10 transition font-medium">
+              <a href="#menu" onClick={() => setMenuOpen(false)} className="flex items-center gap-3 py-3 px-4 rounded-xl text-carbon bg-white/10 hover:bg-white/20 transition font-medium">
                 <Utensils size={20} className="text-accent" />
                 Menú
               </a>
-              <a href="#chef" onClick={() => setMenuOpen(false)} className="flex items-center gap-3 py-3 px-4 rounded-xl text-carbon bg-white/5 hover:bg-white/10 transition font-medium">
+              <a href="#chef" onClick={() => setMenuOpen(false)} className="flex items-center gap-3 py-3 px-4 rounded-xl text-carbon bg-white/10 hover:bg-white/20 transition font-medium">
                 <ChefHat size={20} className="text-accent" />
                 El Chef
               </a>
-              <a href="#testimonios" onClick={() => setMenuOpen(false)} className="flex items-center gap-3 py-3 px-4 rounded-xl text-carbon bg-white/5 hover:bg-white/10 transition font-medium">
+              <a href="#testimonios" onClick={() => setMenuOpen(false)} className="flex items-center gap-3 py-3 px-4 rounded-xl text-carbon bg-white/10 hover:bg-white/20 transition font-medium">
                 <MessageCircle size={20} className="text-accent" />
                 Clientes
               </a>
             </>
           ) : (
             <>
-              <Link to="/" onClick={() => setMenuOpen(false)} className="flex items-center gap-3 py-3 px-4 rounded-xl text-carbon bg-white/5 hover:bg-white/10 transition font-medium">
+              <Link to="/" onClick={() => setMenuOpen(false)} className="flex items-center gap-3 py-3 px-4 rounded-xl text-carbon bg-white/10 hover:bg-white/20 transition font-medium">
                 <Home size={20} className="text-accent" />
                 Inicio
               </Link>
-              <Link to="/menu" onClick={() => setMenuOpen(false)} className="flex items-center gap-3 py-3 px-4 rounded-xl text-carbon bg-white/5 hover:bg-white/10 transition font-medium">
+              <Link to="/menu" onClick={() => setMenuOpen(false)} className="flex items-center gap-3 py-3 px-4 rounded-xl text-carbon bg-white/10 hover:bg-white/20 transition font-medium">
                 <Utensils size={20} className="text-accent" />
                 Menú
               </Link>
@@ -201,12 +201,12 @@ export default function Header() {
                 <User size={20} className="text-accent" />
                 <span className="font-medium">{user.nombre}</span>
               </div>
-              <Link to="/mis-pedidos" onClick={() => setMenuOpen(false)} className="flex items-center gap-3 py-3 px-4 rounded-xl text-carbon bg-white/5 hover:bg-white/10 transition font-medium">
+              <Link to="/mis-pedidos" onClick={() => setMenuOpen(false)} className="flex items-center gap-3 py-3 px-4 rounded-xl text-carbon bg-white/10 hover:bg-white/20 transition font-medium">
                 <Package size={20} className="text-accent" />
                 Mis Pedidos
               </Link>
               {user.rol === 'admin' && (
-                <Link to="/admin" onClick={() => setMenuOpen(false)} className="flex items-center gap-3 py-3 px-4 rounded-xl text-carbon bg-white/5 hover:bg-white/10 transition font-medium">
+                <Link to="/admin" onClick={() => setMenuOpen(false)} className="flex items-center gap-3 py-3 px-4 rounded-xl text-carbon bg-white/10 hover:bg-white/20 transition font-medium">
                   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-accent">
                     <path d="M12 20V10" /><path d="M18 20V4" /><path d="M6 20v-4" />
                   </svg>
@@ -219,7 +219,7 @@ export default function Header() {
               </button>
             </>
           ) : (
-            <Link to="/login" onClick={() => setMenuOpen(false)} className="flex items-center gap-3 py-3 px-4 rounded-xl text-carbon bg-white/5 hover:bg-white/10 transition font-medium">
+            <Link to="/login" onClick={() => setMenuOpen(false)} className="flex items-center gap-3 py-3 px-4 rounded-xl text-carbon bg-white/10 hover:bg-white/20 transition font-medium">
               <User size={20} className="text-accent" />
               Iniciar sesión
             </Link>
