@@ -19,7 +19,7 @@ tiempo se desactive la sesion del navegador
 
 - que se actualicen las tablas cuando hay cun pedido nuevo 
 
-- 
+- que al clicar sobre un plato salga un la informacion del plato, ingredientes, descripcion etc
 
 
 

@@ -22,7 +22,7 @@ const app = express()
 
 app.set('trust proxy', 1)
 
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')))
+
 
 const crypto = require('crypto')
 
@@ -39,9 +39,9 @@ app.use(helmet({
       defaultSrc: ["'self'"],
       scriptSrc: ["'self'", `'nonce-${nonce}'`, "https://js.stripe.com"],
       styleSrc: ["'self'", `'nonce-${nonce}'`, "https://fonts.googleapis.com"],
-      imgSrc: ["'self'", "data:", "https://*.supabase.co", "https://images.unsplash.com"],
+      imgSrc: ["'self'", "data:", "https://res.cloudinary.com", "https://images.unsplash.com"],
       fontSrc: ["'self'", "https://fonts.gstatic.com"],
-      connectSrc: ["'self'", "https://*.supabase.co"],
+      connectSrc: ["'self'"],
       frameSrc: ["'none'"],
       objectSrc: ["'none'"]
     }
