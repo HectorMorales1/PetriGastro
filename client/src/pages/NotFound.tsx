@@ -9,7 +9,7 @@ export default function NotFound() {
         <title>404 - Página no encontrada | PetriGastro</title>
       </Helmet>
 
-      <div className="min-h-[60vh] flex flex-col items-center justify-center px-4 text-center">
+      <div className="min-h-[60vh] flex flex-col items-center justify-center px-4 text-center" role="alert">
         <h1 className="text-6xl sm:text-8xl font-bold text-accent mb-4">404</h1>
         <h2 className="text-2xl font-semibold mb-4">Página no encontrada</h2>
         <p className="text-gray-600 dark:text-gray-400 mb-8 max-w-md">

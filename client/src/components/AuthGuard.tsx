@@ -12,8 +12,9 @@ export default function AuthGuard({ requiredRole }: AuthGuardProps) {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-[80vh]">
+      <div className="flex items-center justify-center min-h-[80vh]" role="status" aria-live="polite">
         <Loader2 className="animate-spin text-accent" size={40} />
+        <span className="sr-only">Cargando...</span>
       </div>
     )
   }

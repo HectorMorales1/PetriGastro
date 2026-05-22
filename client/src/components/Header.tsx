@@ -1,14 +1,16 @@
 import { Link, useLocation } from 'react-router-dom'
-import { ShoppingCart, User, Menu, X, LogOut, Package, Home, Info, Utensils, ChefHat, MessageCircle } from 'lucide-react'
+import { ShoppingCart, User, Menu, X, LogOut, Package, Home, Info, Utensils, ChefHat, MessageCircle, Sun, Moon } from 'lucide-react'
 import { useState, useEffect, useMemo } from 'react'
 import { useCart } from '../context/CartContext'
 import { useAuth } from '../context/AuthContext'
+import { useTheme } from '../context/ThemeContext'
 
 export default function Header() {
   const [menuOpen, setMenuOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
   const { cart, setIsOpen } = useCart()
   const { user, logout } = useAuth()
+  const { theme, toggleTheme } = useTheme()
   const location = useLocation()
   const isHome = location.pathname === '/'
 
@@ -97,16 +99,25 @@ export default function Header() {
               <span>Login</span>
             </Link>
           )}
+
+          <button
+            onClick={toggleTheme}
+            className="p-2 hover:bg-gray-100 rounded-full transition"
+            aria-label={theme === 'dark' ? 'Activar modo claro' : 'Activar modo oscuro'}
+          >
+            {theme === 'dark' ? <Sun size={20} className="text-carbon" /> : <Moon size={20} className="text-carbon" />}
+          </button>
           
           <button
             onClick={() => setIsOpen(true)}
             className="relative p-2 hover:bg-gray-100 rounded-full transition"
-            aria-label="Ver carrito"
+            aria-label={`Ver carrito${cartCount > 0 ? `, ${cartCount} productos` : ''}`}
           >
             <ShoppingCart size={20} className="text-carbon" />
             {cartCount > 0 && (
               <span 
                 className="absolute -top-1 -right-1 text-white text-xs w-5 h-5 rounded-full flex items-center justify-center font-bold bg-accent"
+                aria-hidden="true"
               >
                 {cartCount}
               </span>
@@ -118,6 +129,7 @@ export default function Header() {
           className="md:hidden p-2"
           onClick={() => setMenuOpen(!menuOpen)}
           aria-label="Menú"
+          aria-expanded={menuOpen}
         >
           {menuOpen ? <X size={24} /> : <Menu size={24} />}
         </button>

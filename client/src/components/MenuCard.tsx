@@ -28,7 +28,7 @@ function MenuCard({ plato }: MenuCardProps) {
             loading="lazy"
           />
         ) : (
-          <div className="w-full h-full flex items-center justify-center text-text-muted">
+          <div className="w-full h-full flex items-center justify-center text-text-muted" role="img" aria-label="Sin imagen disponible">
             Sin imagen
           </div>
         )}
@@ -50,7 +50,8 @@ function MenuCard({ plato }: MenuCardProps) {
           <button
             onClick={handleAdd}
             disabled={!plato.disponible}
-            aria-label={`Añadir ${plato.nombre} al carrito`}
+            aria-label={`${!plato.disponible ? 'No disponible - ' : ''}Añadir ${plato.nombre} al carrito`}
+            title={!plato.disponible ? 'Plato no disponible' : ''}
             className={`flex items-center gap-2 px-5 py-2.5 rounded-full font-medium transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed ${
               added 
                 ? 'bg-verde-oliva text-white' 

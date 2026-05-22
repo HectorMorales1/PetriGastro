@@ -37,14 +37,14 @@ export default function VerificarEmail() {
       <div className="min-h-screen flex items-center justify-center px-4">
         <div className="bg-surface rounded-lg shadow-lg p-8 max-w-md w-full text-center">
           {status === 'loading' && (
-            <div className="py-8 space-y-4">
+            <div className="py-8 space-y-4" role="status" aria-live="polite">
               <Loader2 className="animate-spin text-accent mx-auto" size={48} />
               <p className="text-text-muted">Verificando tu correo...</p>
             </div>
           )}
 
           {status === 'success' && (
-            <div className="py-8 space-y-4">
+            <div className="py-8 space-y-4" role="alert" aria-live="assertive">
               <CheckCircle className="text-success mx-auto" size={48} />
               <h2 className="text-2xl font-bold text-carbon">¡Correo verificado!</h2>
               <p className="text-text-muted">{message}</p>
@@ -59,7 +59,7 @@ export default function VerificarEmail() {
           )}
 
           {status === 'error' && (
-            <div className="py-8 space-y-4">
+            <div className="py-8 space-y-4" role="alert" aria-live="assertive">
               <XCircle className="text-error mx-auto" size={48} />
               <h2 className="text-2xl font-bold text-carbon">Error de verificación</h2>
               <p className="text-text-muted">{message}</p>

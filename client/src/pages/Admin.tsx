@@ -3,6 +3,7 @@ import { Loader2, Plus, Trash2, Calendar, X, CheckCircle, XCircle } from 'lucide
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { Helmet } from 'react-helmet-async'
 import { useAuth } from '../context/AuthContext'
+import { useToast } from '../context/ToastContext'
 import { platosApi, pedidosApi, categoriasApi, fechasApi, configApi, uploadApi, usuariosApi } from '../services/api'
 
 const ITEMS_PER_PAGE = 10
@@ -15,6 +16,7 @@ function Paginacion({ currentPage, totalPages, onPageChange }) {
         onClick={() => onPageChange(currentPage - 1)}
         disabled={currentPage <= 1}
         className="px-3 py-1 rounded border border-border disabled:opacity-30 hover:bg-bg-secondary"
+        aria-label="Página anterior"
       >
         Anterior
       </button>
@@ -28,6 +30,8 @@ function Paginacion({ currentPage, totalPages, onPageChange }) {
               className={`w-8 h-8 rounded text-sm font-medium ${
                 p === currentPage ? 'bg-accent text-white' : 'hover:bg-bg-secondary'
               }`}
+              aria-label={`Ir a página ${p}`}
+              aria-current={p === currentPage ? 'page' : undefined}
             >
               {p}
             </button>
@@ -37,6 +41,7 @@ function Paginacion({ currentPage, totalPages, onPageChange }) {
         onClick={() => onPageChange(currentPage + 1)}
         disabled={currentPage >= totalPages}
         className="px-3 py-1 rounded border border-border disabled:opacity-30 hover:bg-bg-secondary"
+        aria-label="Página siguiente"
       >
         Siguiente
       </button>
@@ -52,7 +57,7 @@ export default function Admin() {
 
   if (!user || user.rol !== 'admin') {
     return (
-      <div className="text-center py-12">
+      <div className="text-center py-12" role="alert">
         <h1 className="text-2xl font-bold">Acceso denegado</h1>
         <p className="mt-2">No tienes permisos para acceder a esta página.</p>
       </div>
@@ -109,10 +114,12 @@ export default function Admin() {
       <div className="max-w-7xl mx-auto px-4 py-8">
         <h1 className="text-3xl font-bold mb-8 font-heading">Panel de Administración</h1>
 
-        <div className="flex gap-2 mb-6 overflow-x-auto overscroll-x-contain snap-x snap-mandatory">
+        <div className="flex gap-2 mb-6 overflow-x-auto overscroll-x-contain snap-x snap-mandatory" role="tablist" aria-label="Secciones de administración">
           {tabs.map(tab => (
             <button
               key={tab.id}
+              role="tab"
+              aria-selected={activeTab === tab.id}
               onClick={() => setActiveTab(tab.id)}
               className={`px-4 py-2 rounded-lg whitespace-nowrap transition ${
                 activeTab === tab.id ? 'bg-accent text-white' : 'bg-bg-secondary'
@@ -168,6 +175,7 @@ export default function Admin() {
                         value={pedido.estado}
                         onChange={(e) => updatePedidoMutation.mutate({ id: pedido.id, estado: e.target.value })}
                         className="text-sm border border-border rounded px-2 py-1 bg-bg-secondary w-full"
+                        aria-label={`Estado del pedido #${pedido.id}`}
                       >
                         <option value="pendiente">Pendiente</option>
                         <option value="confirmado">Confirmado</option>
@@ -209,6 +217,7 @@ export default function Admin() {
 
 function SolicitudesManager() {
   const queryClient = useQueryClient()
+  const { addToast } = useToast()
   const [rechazarModal, setRechazarModal] = useState<{ id: number; nombre: string } | null>(null)
   const [motivoRechazo, setMotivoRechazo] = useState('')
 
@@ -224,7 +233,7 @@ function SolicitudesManager() {
       queryClient.invalidateQueries({ queryKey: ['solicitudes'] })
     },
     onError: (error: { response?: { data?: { message?: string } } }) => {
-      alert(error.response?.data?.message || 'Error al aprobar la solicitud')
+      addToast(error.response?.data?.message || 'Error al aprobar la solicitud', 'error')
     }
   })
 
@@ -236,12 +245,12 @@ function SolicitudesManager() {
       setMotivoRechazo('')
     },
     onError: (error: { response?: { data?: { message?: string } } }) => {
-      alert(error.response?.data?.message || 'Error al rechazar la solicitud')
+      addToast(error.response?.data?.message || 'Error al rechazar la solicitud', 'error')
     }
   })
 
   if (isLoading) {
-    return <div className="flex items-center justify-center py-12"><Loader2 className="animate-spin text-accent" size={40} /></div>
+    return <div className="flex items-center justify-center py-12" role="status" aria-live="polite"><Loader2 className="animate-spin text-accent" size={40} /><span className="sr-only">Cargando solicitudes...</span></div>
   }
 
   return (
@@ -315,15 +324,16 @@ function SolicitudesManager() {
       )}
 
       {rechazarModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50" role="dialog" aria-modal="true" aria-labelledby="rechazar-title">
           <div className="bg-surface rounded-lg shadow-xl p-6 max-w-md w-full space-y-4">
-            <h3 className="text-lg font-semibold">Rechazar solicitud</h3>
+            <h3 id="rechazar-title" className="text-lg font-semibold">Rechazar solicitud</h3>
             <p className="text-text-muted text-sm">
               ¿Estás seguro de rechazar la solicitud de <strong>{rechazarModal.nombre}</strong>?
             </p>
             <div>
-              <label className="block text-sm font-medium mb-1">Motivo del rechazo (opcional)</label>
+              <label htmlFor="motivo-rechazo" className="block text-sm font-medium mb-1">Motivo del rechazo (opcional)</label>
               <textarea
+                id="motivo-rechazo"
                 value={motivoRechazo}
                 onChange={(e) => setMotivoRechazo(e.target.value)}
                 className="w-full px-3 py-2 border border-border rounded-lg bg-bg-secondary"
@@ -362,7 +372,7 @@ function StatsManager() {
   })
 
   if (isLoading) {
-    return <div className="flex items-center justify-center py-12"><Loader2 className="animate-spin text-accent" size={40} /></div>
+    return <div className="flex items-center justify-center py-12" role="status" aria-live="polite"><Loader2 className="animate-spin text-accent" size={40} /><span className="sr-only">Cargando estadísticas...</span></div>
   }
 
   const { platos = [], totales = { pedidos: 0, ingresos: 0 } } = data || {}
@@ -447,6 +457,7 @@ function StatsManager() {
 
 function FechasManager() {
   const queryClient = useQueryClient()
+  const { addToast } = useToast()
   const [showAddForm, setShowAddForm] = useState(false)
   const [editingFecha, setEditingFecha] = useState<{ id: number; activo: boolean; horarios: string[] } | null>(null)
   const [showAllFechas, setShowAllFechas] = useState(false)
@@ -466,7 +477,7 @@ function FechasManager() {
       setNewFecha({ fecha: '', horarios: ['12:00', '13:00', '19:00', '20:00', '21:00'] })
     },
     onError: (error: { response?: { data?: { message?: string } } }) => {
-      alert(error.response?.data?.message || 'Error al crear la fecha')
+      addToast(error.response?.data?.message || 'Error al crear la fecha', 'error')
     }
   })
 
@@ -527,7 +538,7 @@ function FechasManager() {
   }
 
   if (loadingFechas) {
-    return <div className="flex items-center justify-center py-12"><Loader2 className="animate-spin text-accent" size={40} /></div>
+    return <div className="flex items-center justify-center py-12" role="status" aria-live="polite"><Loader2 className="animate-spin text-accent" size={40} /><span className="sr-only">Cargando fechas...</span></div>
   }
 
   const fechasFiltradas = showAllFechas ? fechas : fechas.filter(f => f.activo)
@@ -759,7 +770,7 @@ function CategoriasManager() {
   }
 
   if (isLoading) {
-    return <div className="flex items-center justify-center py-12"><Loader2 className="animate-spin text-accent" size={40} /></div>
+    return <div className="flex items-center justify-center py-12" role="status" aria-live="polite"><Loader2 className="animate-spin text-accent" size={40} /><span className="sr-only">Cargando categorías...</span></div>
   }
 
   const iconos = ['🍽️', '🍕', '🍔', '🌮', '🍣', '🥗', '🍷', '☕', '🍰', '🥘']
@@ -866,6 +877,7 @@ function CategoriasManager() {
 
 function PlatosManager({ pageNum = 1 }: { pageNum?: number }) {
   const queryClient = useQueryClient()
+  const { addToast } = useToast()
   const [showForm, setShowForm] = useState(false)
   const [platoPage, setPlatoPage] = useState(pageNum)
   const [uploading, setUploading] = useState(false)
@@ -904,7 +916,7 @@ function PlatosManager({ pageNum = 1 }: { pageNum?: number }) {
     } catch (error: unknown) {
       const err = error as { response?: { data?: { message?: string } } }
       const msg = err.response?.data?.message || 'Error al subir la imagen'
-      alert(msg)
+      addToast(msg, 'error')
     }
     setUploading(false)
   }
@@ -949,7 +961,7 @@ function PlatosManager({ pageNum = 1 }: { pageNum?: number }) {
   const totalPlatoPages = Math.ceil(platos.length / ITEMS_PER_PAGE)
 
   if (isLoading) {
-    return <div className="flex items-center justify-center py-12"><Loader2 className="animate-spin text-accent" size={40} /></div>
+    return <div className="flex items-center justify-center py-12" role="status" aria-live="polite"><Loader2 className="animate-spin text-accent" size={40} /><span className="sr-only">Cargando platos...</span></div>
   }
 
   return (
@@ -1002,7 +1014,7 @@ function PlatosManager({ pageNum = 1 }: { pageNum?: number }) {
                 <div className="mt-2 relative w-24 h-24 rounded-lg overflow-hidden border border-border">
                   <img 
                     src={previewImg || form.imagen_url} 
-                    alt="Preview" 
+                    alt={form.nombre ? `Vista previa de ${form.nombre}` : 'Vista previa de la imagen'} 
                     className="w-full h-full object-cover"
                   />
                   <button
@@ -1061,6 +1073,9 @@ function PlatosManager({ pageNum = 1 }: { pageNum?: number }) {
                     onClick={() => toggleField(plato, 'disponible')}
                     className={`w-8 h-5 rounded-full transition relative ${plato.disponible ? 'bg-accent' : 'bg-text-muted'}`}
                     title={plato.disponible ? 'Disponible' : 'No disponible'}
+                    role="switch"
+                    aria-checked={plato.disponible}
+                    aria-label={`${plato.nombre} ${plato.disponible ? 'disponible' : 'no disponible'}`}
                   >
                     <span className={`absolute top-0.5 w-4 h-4 rounded-full bg-white transition ${plato.disponible ? 'left-4' : 'left-0.5'}`} />
                   </button>
@@ -1070,6 +1085,9 @@ function PlatosManager({ pageNum = 1 }: { pageNum?: number }) {
                     onClick={() => toggleField(plato, 'destacado')}
                     className={`w-8 h-5 rounded-full transition relative ${plato.destacado ? 'bg-accent' : 'bg-text-muted'}`}
                     title={plato.destacado ? 'Destacado' : 'No destacado'}
+                    role="switch"
+                    aria-checked={plato.destacado}
+                    aria-label={`${plato.nombre} ${plato.destacado ? 'destacado' : 'no destacado'}`}
                   >
                     <span className={`absolute top-0.5 w-4 h-4 rounded-full bg-white transition ${plato.destacado ? 'left-4' : 'left-0.5'}`} />
                   </button>

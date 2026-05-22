@@ -24,13 +24,13 @@ function Footer() {
               Sabores que cuentan historias. Comida artesanal para llevar.
             </p>
             <div className="flex gap-4">
-              <a href="#" className="p-2 rounded-full hover:bg-accent/20 transition" aria-label="Red social 1">
+              <a href="#" className="p-2 rounded-full hover:bg-accent/20 transition" aria-label="Instagram">
                 <Globe size={20} />
               </a>
-              <a href="#" className="p-2 rounded-full hover:bg-accent/20 transition" aria-label="Red social 2">
+              <a href="#" className="p-2 rounded-full hover:bg-accent/20 transition" aria-label="Telegram">
                 <Send size={20} />
               </a>
-              <a href="#" className="p-2 rounded-full hover:bg-accent/20 transition" aria-label="Red social 3">
+              <a href="#" className="p-2 rounded-full hover:bg-accent/20 transition" aria-label="Facebook">
                 <ExternalLink size={20} />
               </a>
             </div>
@@ -66,7 +66,7 @@ function Footer() {
                 href="tel:+34600123456" 
                 className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-white text-sm font-medium w-fit transition hover:scale-105 bg-accent"
               >
-                <Phone size={16} />
+                <Phone size={16} aria-hidden="true" />
                 Llamar
               </a>
               <div className="flex items-center gap-3 mt-2">
@@ -86,7 +86,7 @@ function Footer() {
             © {new Date().getFullYear()} PetriGastro. Todos los derechos reservados.
           </p>
           <p className="text-text-muted text-sm mt-2">
-            Hecho con <span className="text-accent">♥</span> en Madrid
+            Hecho con <span className="text-accent" aria-hidden="true">♥</span> en Madrid
           </p>
         </div>
       </div>

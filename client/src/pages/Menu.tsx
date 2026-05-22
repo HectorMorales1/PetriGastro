@@ -66,8 +66,10 @@ export default function Menu() {
         <div className="flex flex-col md:flex-row gap-4 mb-8">
           <div className="relative flex-1">
             <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-text-muted" size={20} />
+            <label htmlFor="search-menu" className="sr-only">Buscar platos</label>
             <input
-              type="text"
+              id="search-menu"
+              type="search"
               placeholder="Buscar platos..."
               value={busqueda}
               onChange={(e) => setBusqueda(e.target.value)}
@@ -86,8 +88,10 @@ export default function Menu() {
           </div>
         </div>
 
-        <div className="flex gap-2 overflow-x-auto pb-4 mb-8 scrollbar-hide">
+        <div className="flex gap-2 overflow-x-auto pb-4 mb-8 scrollbar-hide" role="tablist" aria-label="Filtrar por categoría">
           <button
+            role="tab"
+            aria-selected={categoriaActiva === 'todas'}
             onClick={() => setCategoriaActiva('todas')}
             className={`px-5 py-2.5 rounded-full whitespace-nowrap font-medium transition-all duration-200 ${
               categoriaActiva === 'todas' 
@@ -100,6 +104,8 @@ export default function Menu() {
           {categoriasFiltradas.map(cat => (
             <button
               key={cat.id}
+              role="tab"
+              aria-selected={categoriaActiva === cat.nombre}
               onClick={() => setCategoriaActiva(cat.nombre)}
               className={`px-5 py-2.5 rounded-full whitespace-nowrap font-medium transition-all duration-200 ${
                 categoriaActiva === cat.nombre 
@@ -114,8 +120,9 @@ export default function Menu() {
         </div>
 
         {isLoading ? (
-          <div className="flex items-center justify-center py-12">
+          <div className="flex items-center justify-center py-12" role="status" aria-live="polite">
             <Loader2 className="animate-spin text-accent" size={40} />
+            <span className="sr-only">Cargando platos...</span>
           </div>
         ) : (
           <>
@@ -124,7 +131,7 @@ export default function Menu() {
                 {platos.map(plato => <MenuCard key={plato.id} plato={plato} />)}
               </div>
             ) : (
-              <div className="text-center py-12">
+              <div className="text-center py-12" role="status">
                 <p className="text-text-muted text-lg">
                   No se encontraron platos que coincidan con tu búsqueda.
                 </p>

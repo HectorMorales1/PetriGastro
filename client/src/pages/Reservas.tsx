@@ -63,7 +63,7 @@ export default function Reservas() {
 
       <div className="max-w-2xl mx-auto px-4 py-12">
         {enviado ? (
-          <div className="bg-success/20 border border-success/40 text-success px-6 py-4 rounded-lg text-center">
+          <div className="bg-success/20 border border-success/40 text-success px-6 py-4 rounded-lg text-center" role="alert" aria-live="assertive">
             <h3 className="text-xl font-bold mb-2">¡Reserva enviada!</h3>
             <p>Te contactaremos para confirmar tu reserva.</p>
             <button
@@ -83,6 +83,7 @@ export default function Reservas() {
                 value={formData.nombre}
                 onChange={handleChange}
                 className="w-full px-4 py-3 border border-border rounded-lg bg-bg-secondary"
+                autoComplete="name"
                 required
               />
             </div>
@@ -96,6 +97,7 @@ export default function Reservas() {
                   value={formData.email}
                   onChange={handleChange}
                   className="w-full px-4 py-3 border border-border rounded-lg bg-bg-secondary"
+                  autoComplete="email"
                   required
                 />
               </div>
@@ -107,6 +109,7 @@ export default function Reservas() {
                   value={formData.telefono}
                   onChange={handleChange}
                   className="w-full px-4 py-3 border border-border rounded-lg bg-bg-secondary"
+                  autoComplete="tel"
                   required
                 />
               </div>

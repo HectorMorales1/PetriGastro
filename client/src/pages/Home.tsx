@@ -68,6 +68,14 @@ function ScrollVideo() {
   }, [isVisible])
 
   useEffect(() => {
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    if (prefersReducedMotion) {
+      setCurrentFrame(0)
+      setLoaded(true)
+      setProgress(1)
+      return
+    }
+
     const handleScroll = () => {
       if (!sectionRef.current) return
       const rect = sectionRef.current.getBoundingClientRect()
@@ -107,7 +115,7 @@ function ScrollVideo() {
         />
         
         {!loaded && (
-            <div className="bg-accent absolute inset-0 flex items-center justify-center">
+            <div className="bg-accent absolute inset-0 flex items-center justify-center" role="status" aria-live="polite">
             <div className="text-white text-center">
               <div className="w-8 h-8 border-2 border-white/30 border-t-white rounded-full animate-spin mx-auto mb-4" />
               <p>Cargando animación...</p>
@@ -257,17 +265,25 @@ function LoginModal({ isOpen, onClose, onLoginSuccess }) {
     }
   }
 
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && isOpen) onClose()
+    }
+    window.addEventListener('keydown', handleKeyDown)
+    return () => window.removeEventListener('keydown', handleKeyDown)
+  }, [isOpen, onClose])
+
   if (!isOpen) return null
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4" style={{ background: 'rgba(0,0,0,0.6)' }}>
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4" style={{ background: 'rgba(0,0,0,0.6)' }} role="dialog" aria-modal="true" aria-labelledby="login-modal-title">
       <div className="w-full max-w-md rounded-xl shadow-2xl overflow-hidden bg-surface">
         <div className="p-8 text-center bg-accent">
-          <svg className="w-16 h-16 mx-auto mb-4" viewBox="0 0 100 100" fill="none">
+          <svg className="w-16 h-16 mx-auto mb-4" viewBox="0 0 100 100" fill="none" aria-hidden="true">
             <circle cx="50" cy="50" r="45" className="fill-carbon"/>
             <path d="M30 50 Q50 30 70 50 Q50 70 30 50" className="fill-accent"/>
           </svg>
-          <h2 className="text-2xl font-bold text-white mb-2">PetriGastro</h2>
+          <h2 id="login-modal-title" className="text-2xl font-bold text-white mb-2">PetriGastro</h2>
           <p className="text-white/80 text-sm">Acceso {isRegisterMode ? 'Restringido' : 'al sistema'}</p>
         </div>
 
@@ -282,8 +298,9 @@ function LoginModal({ isOpen, onClose, onLoginSuccess }) {
                   onChange={(e) => setEmail(e.target.value)}
                   className={`w-full px-4 py-3 rounded-lg border-2 ${emailError ? 'border-red-500' : 'border-border'} focus:border-accent focus:ring-4 focus:ring-accent/15 outline-none transition-all bg-bg-secondary`}
                   placeholder="tu@correo.com"
+                  autoComplete="email"
                 />
-                {emailError && <p className="text-red-500 text-xs mt-2">Email requerido</p>}
+                {emailError && <p className="text-red-500 text-xs mt-2" role="alert">Email requerido</p>}
               </div>
               
               <div className="mb-6">
@@ -294,8 +311,9 @@ function LoginModal({ isOpen, onClose, onLoginSuccess }) {
                   onChange={(e) => setPassword(e.target.value)}
                   className={`w-full px-4 py-3 rounded-lg border-2 ${passError ? 'border-red-500' : 'border-border'} focus:border-accent focus:ring-4 focus:ring-accent/15 outline-none transition-all bg-bg-secondary`}
                   placeholder="Ingresa tu contraseña"
+                  autoComplete="current-password"
                 />
-                {passError && <p className="text-red-500 text-xs mt-2">Contraseña requerida</p>}
+                {passError && <p className="text-red-500 text-xs mt-2" role="alert">Contraseña requerida</p>}
               </div>
               
               <button 
@@ -332,6 +350,7 @@ function LoginModal({ isOpen, onClose, onLoginSuccess }) {
                   onChange={(e) => setRegName(e.target.value)}
                   className="w-full px-4 py-3 rounded-lg border-2 border-border focus:border-accent focus:ring-4 focus:ring-accent/15 outline-none transition-all bg-bg-secondary"
                   placeholder="Tu nombre"
+                  autoComplete="given-name"
                   required
                 />
               </div>
@@ -344,6 +363,7 @@ function LoginModal({ isOpen, onClose, onLoginSuccess }) {
                   onChange={(e) => setRegLastName(e.target.value)}
                   className="w-full px-4 py-3 rounded-lg border-2 border-border focus:border-accent focus:ring-4 focus:ring-accent/15 outline-none transition-all bg-bg-secondary"
                   placeholder="Tus apellidos"
+                  autoComplete="family-name"
                   required
                 />
               </div>
@@ -356,6 +376,7 @@ function LoginModal({ isOpen, onClose, onLoginSuccess }) {
                   onChange={(e) => setRegEmail(e.target.value)}
                   className="w-full px-4 py-3 rounded-lg border-2 border-border focus:border-accent focus:ring-4 focus:ring-accent/15 outline-none transition-all bg-bg-secondary"
                   placeholder="tu@correo.com"
+                  autoComplete="email"
                   required
                 />
               </div>
@@ -368,6 +389,7 @@ function LoginModal({ isOpen, onClose, onLoginSuccess }) {
                   onChange={(e) => setRegPassword(e.target.value)}
                   className="w-full px-4 py-3 rounded-lg border-2 border-border focus:border-accent focus:ring-4 focus:ring-accent/15 outline-none transition-all bg-bg-secondary"
                   placeholder="Mínimo 8 caracteres"
+                  autoComplete="new-password"
                   minLength={8}
                   required
                 />
@@ -381,12 +403,13 @@ function LoginModal({ isOpen, onClose, onLoginSuccess }) {
                   onChange={(e) => setRegConfirmPassword(e.target.value)}
                   className="w-full px-4 py-3 rounded-lg border-2 border-border focus:border-accent focus:ring-4 focus:ring-accent/15 outline-none transition-all bg-bg-secondary"
                   placeholder="Repite la contraseña"
+                  autoComplete="new-password"
                   required
                 />
               </div>
 
               {error && (
-                <div className="mb-4 p-3 rounded-lg bg-error/10 text-error text-sm">
+                <div className="mb-4 p-3 rounded-lg bg-error/10 text-error text-sm" role="alert">
                   {error}
                 </div>
               )}
@@ -403,7 +426,7 @@ function LoginModal({ isOpen, onClose, onLoginSuccess }) {
               </button>
 
               {registerSuccess && (
-                <div className="mt-4 p-4 rounded-lg text-white text-center bg-success">
+                <div className="mt-4 p-4 rounded-lg text-white text-center bg-success" role="alert" aria-live="polite">
                   {registerMessage}
                 </div>
               )}
@@ -424,6 +447,7 @@ function LoginModal({ isOpen, onClose, onLoginSuccess }) {
         <button 
           onClick={onClose}
           className="absolute top-4 right-4 w-8 h-8 flex items-center justify-center rounded-full text-white/80 hover:text-white hover:bg-white/20 transition"
+          aria-label="Cerrar"
         >
           <X size={24} />
         </button>
@@ -439,6 +463,7 @@ export default function Home() {
   const [lightboxOpen, setLightboxOpen] = useState(false)
   const [lightboxIndex, setLightboxIndex] = useState(0)
   const [loginOpen, setLoginOpen] = useState(false)
+  const [carouselPaused, setCarouselPaused] = useState(false)
   const { cart } = useCart()
   const { user, logout } = useAuth()
 
@@ -482,11 +507,12 @@ export default function Home() {
   }, [testimonialPages.length])
 
   useEffect(() => {
+    if (carouselPaused) return
     const interval = setInterval(() => {
       setCurrentSlide(prev => (prev >= testimonialPages.length - 1 ? 0 : prev + 1))
     }, 5000)
     return () => clearInterval(interval)
-  }, [testimonialPages.length])
+  }, [testimonialPages.length, carouselPaused])
 
   const prevSlide = () => {
     setCurrentSlide(prev => (prev <= 0 ? testimonialPages.length - 1 : prev - 1))
@@ -552,7 +578,14 @@ export default function Home() {
       </Helmet>
 
       {/* Scroll Progress */}
-      <div className="fixed top-0 left-0 w-full h-1 bg-accent/30 z-[100]">
+      <div
+        className="fixed top-0 left-0 w-full h-1 bg-accent/30 z-[100]"
+        role="progressbar"
+        aria-valuenow={Math.round(scrollProgress)}
+        aria-valuemin={0}
+        aria-valuemax={100}
+        aria-label="Progreso de la página"
+      >
         <div 
           className="h-full bg-accent transition-all duration-150" 
           style={{ width: `${scrollProgress}%` }}
@@ -660,7 +693,7 @@ export default function Home() {
                       {step.num}
                     </div>
                     <div className="w-14 h-14 rounded-full bg-bg-secondary flex items-center justify-center mt-4 mb-4">
-                      <step.icon className="text-accent" size={28} />
+                      <step.icon className="text-accent" size={28} aria-hidden="true" />
                     </div>
                     <h3 className="text-xl font-semibold mb-2 text-carbon">{step.title}</h3>
                     <p className="text-text-muted text-sm">{step.desc}</p>
@@ -680,8 +713,9 @@ export default function Home() {
               <p className="text-text-muted mt-4 max-w-2xl mx-auto">Selección de nuestras mejores creaciones, hechas con alma</p>
             </div>
             {loadingDestacados ? (
-              <div className="flex items-center justify-center py-12">
+              <div className="flex items-center justify-center py-12" role="status" aria-live="polite">
                 <Loader2 className="animate-spin text-accent" size={40} />
+                <span className="sr-only">Cargando platos destacados...</span>
               </div>
             ) : destacados.length > 0 ? (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
@@ -757,10 +791,19 @@ export default function Home() {
               <h2 className="text-4xl font-bold font-heading text-carbon">Lo que dicen<br/>nuestros clientes</h2>
             </div>
 
-            <div className="relative overflow-hidden">
+            <div
+              className="relative overflow-hidden"
+              aria-roledescription="carousel"
+              aria-label="Testimonios de clientes"
+              onMouseEnter={() => setCarouselPaused(true)}
+              onMouseLeave={() => setCarouselPaused(false)}
+              onFocus={() => setCarouselPaused(true)}
+              onBlur={() => setCarouselPaused(false)}
+            >
               <div 
                 className="flex transition-transform duration-500 ease-out"
                 style={{ transform: `translateX(-${currentSlide * 100}%)` }}
+                aria-live="polite"
               >
                 {testimonialPages.map((page, pageIndex) => (
                   <div key={pageIndex} className="w-full flex-shrink-0 px-2">
@@ -855,6 +898,7 @@ export default function Home() {
           <button 
             className="absolute top-4 right-4 p-2 text-white hover:bg-white/20 rounded-full"
             onClick={closeLightbox}
+            aria-label="Cerrar galería"
           >
             <X size={24} />
           </button>
@@ -862,13 +906,14 @@ export default function Home() {
           <button 
             className="absolute left-4 p-3 text-white hover:bg-white/20 rounded-full"
             onClick={(e) => { e.stopPropagation(); prevLightbox() }}
+            aria-label="Imagen anterior"
           >
             <ChevronLeft size={32} />
           </button>
 
           <img 
             src={galleryImages[lightboxIndex].replace('w=300&h=300', 'w=1200&h=800')} 
-            alt={`Plato ${lightboxIndex + 1}`}
+            alt={`Plato gourmet ${lightboxIndex + 1}`}
             className="max-h-[80vh] max-w-[90vw] rounded-lg"
             onClick={(e) => e.stopPropagation()}
           />
@@ -876,6 +921,7 @@ export default function Home() {
           <button 
             className="absolute right-4 p-3 text-white hover:bg-white/20 rounded-full"
             onClick={(e) => { e.stopPropagation(); nextLightbox() }}
+            aria-label="Siguiente imagen"
           >
             <ChevronRight size={32} />
           </button>

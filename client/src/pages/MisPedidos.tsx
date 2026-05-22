@@ -56,7 +56,7 @@ export default function MisPedidos() {
   }
 
   if (isLoading) {
-    return <div className="flex justify-center py-12"><Loader2 className="animate-spin text-accent" size={40} /></div>
+    return <div className="flex justify-center py-12" role="status" aria-live="polite"><Loader2 className="animate-spin text-accent" size={40} /><span className="sr-only">Cargando pedidos...</span></div>
   }
 
   return (
@@ -119,12 +119,13 @@ export default function MisPedidos() {
                     {pedido.calificacion ? (
                       <div className="border-t border-border pt-4 mt-4">
                         <p className="text-sm font-medium mb-2">Tu valoración:</p>
-                        <div className="flex items-center gap-1 mb-2">
+                        <div className="flex items-center gap-1 mb-2" aria-label={`Valoración: ${pedido.calificacion} de 5 estrellas`}>
                           {[1, 2, 3, 4, 5].map(star => (
                             <Star
                               key={star}
                               size={20}
                               className={star <= pedido.calificacion ? 'text-yellow-400 fill-yellow-400' : 'text-gray-300'}
+                              aria-hidden="true"
                             />
                           ))}
                         </div>
@@ -135,12 +136,15 @@ export default function MisPedidos() {
                     ) : selectedPedido === pedido.id ? (
                       <div className="border-t border-border pt-4 mt-4">
                         <p className="text-sm font-medium mb-2">Valora tu pedido:</p>
-                        <div className="flex items-center gap-1 mb-3">
+                        <div className="flex items-center gap-1 mb-3" role="radiogroup" aria-label="Valoración">
                           {[1, 2, 3, 4, 5].map(star => (
                             <button
                               key={star}
                               onClick={() => setRating(star)}
                               className="focus:outline-none"
+                              aria-label={`${star} de 5 estrellas`}
+                              role="radio"
+                              aria-checked={star <= rating}
                             >
                               <Star
                                 size={28}
@@ -149,7 +153,9 @@ export default function MisPedidos() {
                             </button>
                           ))}
                         </div>
+                        <label htmlFor="feedback-comment" className="sr-only">Comentario</label>
                         <textarea
+                          id="feedback-comment"
                           value={comment}
                           onChange={(e) => setComment(e.target.value)}
                           placeholder="Tu comentario (opcional)"

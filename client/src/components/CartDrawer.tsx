@@ -88,7 +88,12 @@ export default function CartDrawer() {
   if (!isOpen) return null
 
   return (
-    <div className="fixed inset-0 z-50 flex justify-end">
+    <div
+      className="fixed inset-0 z-50 flex justify-end"
+      role="dialog"
+      aria-modal="true"
+      aria-label="Carrito de compras"
+    >
       <div
         className="absolute inset-0 bg-black/50"
         onClick={() => setIsOpen(false)}
@@ -99,6 +104,7 @@ export default function CartDrawer() {
           <button
             onClick={() => setIsOpen(false)}
             className="p-2 hover:bg-bg-secondary rounded-full"
+            aria-label="Cerrar carrito"
           >
             <X size={20} />
           </button>
@@ -106,7 +112,7 @@ export default function CartDrawer() {
 
         <div className="flex-1 overflow-y-auto p-4">
           {cart.length === 0 ? (
-            <p className="text-center text-text-muted">Tu carrito está vacío</p>
+            <p className="text-center text-text-muted" role="status">Tu carrito está vacío</p>
           ) : (
             <div className="space-y-4">
               {cart.map(item => (
@@ -123,19 +129,22 @@ export default function CartDrawer() {
                       <button
                         onClick={() => updateQuantity(item.id, item.cantidad - 1)}
                         className="p-1 bg-bg-tertiary rounded"
+                        aria-label={`Reducir cantidad de ${item.nombre}`}
                       >
                         <Minus size={16} />
                       </button>
-                      <span className="w-8 text-center">{item.cantidad}</span>
+                      <span className="w-8 text-center" aria-live="polite">{item.cantidad}</span>
                       <button
                         onClick={() => updateQuantity(item.id, item.cantidad + 1)}
                         className="p-1 bg-bg-tertiary rounded"
+                        aria-label={`Aumentar cantidad de ${item.nombre}`}
                       >
                         <Plus size={16} />
                       </button>
                       <button
                         onClick={() => removeItem(item.id)}
                         className="ml-auto text-error hover:opacity-80"
+                        aria-label={`Eliminar ${item.nombre} del carrito`}
                       >
                         <Trash2 size={18} />
                       </button>
@@ -150,7 +159,7 @@ export default function CartDrawer() {
         {cart.length > 0 && (
           <div className="p-4 border-t border-border">
             {submitted ? (
-              <div className="text-center py-4 space-y-4">
+              <div className="text-center py-4 space-y-4" role="alert" aria-live="assertive">
                 <div className="bg-green-100 rounded-full p-4 w-16 h-16 mx-auto flex items-center justify-center">
                   <ShoppingBag className="text-green-600" size={32} />
                 </div>
@@ -246,6 +255,8 @@ export default function CartDrawer() {
                                 ? 'bg-accent text-white'
                                 : 'bg-bg-tertiary text-text hover:bg-border'
                             }`}
+                            aria-pressed={horaSeleccionada === h.hora}
+                            aria-label={`${typeof h.hora === 'string' ? h.hora.slice(0, 5) : h.hora}`}
                           >
                             {typeof h.hora === 'string' ? h.hora.slice(0, 5) : h.hora}
                           </button>
@@ -256,7 +267,7 @@ export default function CartDrawer() {
                 </div>
 
                 {error && (
-                  <p className="text-error text-sm mb-2">{error}</p>
+                  <p className="text-error text-sm mb-2" role="alert">{error}</p>
                 )}
 
                 <button
@@ -272,7 +283,7 @@ export default function CartDrawer() {
                 </button>
 
                 <button
-                  onClick={clearCart}
+                  onClick={() => { if (window.confirm('¿Vaciar el carrito? Se perderán todos los productos añadidos.')) clearCart() }}
                   className="w-full mt-2 text-text-muted hover:text-error text-sm"
                 >
                   Vaciar carrito

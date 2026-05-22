@@ -21,7 +21,7 @@ export function ToastProvider({ children }: { children: ReactNode }) {
     setToasts(prev => [...prev, { id, message, type }])
     setTimeout(() => {
       setToasts(prev => prev.filter(t => t.id !== id))
-    }, 3000)
+    }, 5000)
   }, [])
 
   const removeToast = useCallback((id) => {
@@ -35,6 +35,8 @@ export function ToastProvider({ children }: { children: ReactNode }) {
         {toasts.map(toast => (
           <div
             key={toast.id}
+            role="alert"
+            aria-live="polite"
             className={`px-4 py-3 rounded-lg shadow-lg flex items-center gap-3 animate-fade-in ${
               toast.type === 'success' ? 'bg-green-500 text-white' :
               toast.type === 'error' ? 'bg-red-500 text-white' :
@@ -42,7 +44,7 @@ export function ToastProvider({ children }: { children: ReactNode }) {
             }`}
           >
             <span>{toast.message}</span>
-            <button onClick={() => removeToast(toast.id)} className="hover:opacity-80">
+            <button onClick={() => removeToast(toast.id)} className="hover:opacity-80" aria-label="Cerrar notificación">
               ×
             </button>
           </div>

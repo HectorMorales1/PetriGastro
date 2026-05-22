@@ -93,12 +93,12 @@ export default function Login() {
 
           <div className="bg-surface rounded-lg shadow-lg p-8">
             {error && (
-              <div className="bg-error/10 border border-error/30 text-error px-4 py-3 rounded mb-4 text-sm">
+              <div className="bg-error/10 border border-error/30 text-error px-4 py-3 rounded mb-4 text-sm" role="alert">
                 {error}
               </div>
             )}
             {successMessage && (
-              <div className="bg-success/10 border border-success/30 text-success px-4 py-3 rounded mb-4 text-sm">
+              <div className="bg-success/10 border border-success/30 text-success px-4 py-3 rounded mb-4 text-sm" role="alert" aria-live="polite">
                 {successMessage}
               </div>
             )}
@@ -113,6 +113,7 @@ export default function Login() {
                     onChange={(e) => setEmail(e.target.value)}
                     className="w-full px-4 py-3 border border-border rounded-lg bg-bg-secondary text-carbon focus:border-accent focus:ring-2 focus:ring-accent/20 outline-none transition"
                     placeholder="tu@correo.com"
+                    autoComplete="email"
                     required
                   />
                 </div>
@@ -124,6 +125,7 @@ export default function Login() {
                     onChange={(e) => setPassword(e.target.value)}
                     className="w-full px-4 py-3 border border-border rounded-lg bg-bg-secondary text-carbon focus:border-accent focus:ring-2 focus:ring-accent/20 outline-none transition"
                     placeholder="••••••••"
+                    autoComplete="current-password"
                     required
                   />
                 </div>
@@ -169,6 +171,7 @@ export default function Login() {
                         onChange={(e) => setNombre(e.target.value)}
                         className="w-full px-4 py-3 border border-border rounded-lg bg-bg-secondary text-carbon focus:border-accent focus:ring-2 focus:ring-accent/20 outline-none transition"
                         placeholder="Juan"
+                        autoComplete="given-name"
                         required
                       />
                     </div>
@@ -180,6 +183,7 @@ export default function Login() {
                         onChange={(e) => setApellidos(e.target.value)}
                         className="w-full px-4 py-3 border border-border rounded-lg bg-bg-secondary text-carbon focus:border-accent focus:ring-2 focus:ring-accent/20 outline-none transition"
                         placeholder="García López"
+                        autoComplete="family-name"
                         required
                       />
                     </div>
@@ -192,31 +196,34 @@ export default function Login() {
                       onChange={(e) => setRegEmail(e.target.value)}
                       className="w-full px-4 py-3 border border-border rounded-lg bg-bg-secondary text-carbon focus:border-accent focus:ring-2 focus:ring-accent/20 outline-none transition"
                       placeholder="tu@correo.com"
+                      autoComplete="email"
                       required
                     />
                   </div>
                   <div>
                     <label className="block text-sm font-medium mb-1.5 text-carbon">Contraseña</label>
-                    <input
-                      type="password"
-                      value={regPassword}
-                      onChange={(e) => setRegPassword(e.target.value)}
-                      className="w-full px-4 py-3 border border-border rounded-lg bg-bg-secondary text-carbon focus:border-accent focus:ring-2 focus:ring-accent/20 outline-none transition"
-                      placeholder="Mínimo 8 caracteres"
-                      minLength={8}
-                      required
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium mb-1.5 text-carbon">Confirmar contraseña</label>
-                    <input
-                      type="password"
-                      value={confirmPassword}
-                      onChange={(e) => setConfirmPassword(e.target.value)}
-                      className="w-full px-4 py-3 border border-border rounded-lg bg-bg-secondary text-carbon focus:border-accent focus:ring-2 focus:ring-accent/20 outline-none transition"
-                      placeholder="Repite la contraseña"
-                      required
-                    />
+                  <input
+                    type="password"
+                    value={regPassword}
+                    onChange={(e) => setRegPassword(e.target.value)}
+                    className="w-full px-4 py-3 border border-border rounded-lg bg-bg-secondary text-carbon focus:border-accent focus:ring-2 focus:ring-accent/20 outline-none transition"
+                    placeholder="Mínimo 8 caracteres"
+                    autoComplete="new-password"
+                    minLength={8}
+                    required
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium mb-1.5 text-carbon">Confirmar contraseña</label>
+                  <input
+                    type="password"
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
+                    className="w-full px-4 py-3 border border-border rounded-lg bg-bg-secondary text-carbon focus:border-accent focus:ring-2 focus:ring-accent/20 outline-none transition"
+                    placeholder="Repite la contraseña"
+                    autoComplete="new-password"
+                    required
+                  />
                   </div>
                   <button
                     type="submit"
