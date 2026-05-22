@@ -125,7 +125,7 @@ export default function Header() {
 
       {menuOpen && (
         <div className="fixed inset-0 z-[60] md:hidden" onClick={() => setMenuOpen(false)}>
-          <div className="absolute inset-0 bg-black/100 backdrop-blur-md" />
+          <div className="absolute inset-0 bg-black/100" />
         </div>
       )}
 
