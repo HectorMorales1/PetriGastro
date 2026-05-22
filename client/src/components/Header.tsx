@@ -124,12 +124,12 @@ export default function Header() {
       </div>
 
       {menuOpen && (
-        <div className="fixed inset-0 z-40 md:hidden" onClick={() => setMenuOpen(false)}>
-          <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" />
+        <div className="fixed inset-0 z-[60] md:hidden" onClick={() => setMenuOpen(false)}>
+          <div className="absolute inset-0 bg-black/70 backdrop-blur-md" />
         </div>
       )}
 
-      <nav className={`fixed top-0 right-0 z-50 h-full w-72 bg-[#1A1A1A] border-l border-white/10 shadow-2xl transform transition-all duration-300 md:hidden ${
+      <nav className={`fixed top-0 right-0 z-[70] h-full w-72 bg-[#1A1A1A] border-l border-white/10 shadow-2xl transform transition-all duration-300 md:hidden ${
         menuOpen ? 'translate-x-0' : 'translate-x-full'
       }`}>
         <div className="flex items-center justify-between p-4 border-b border-white/10">

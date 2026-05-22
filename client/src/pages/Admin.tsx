@@ -384,16 +384,16 @@ function StatsManager() {
         </div>
       </div>
 
-      <div className="flex items-center gap-4 mb-6">
-        <label className="text-sm font-medium">Filtrar por estado:</label>
+      <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-4 mb-6">
+        <label className="text-sm font-medium whitespace-nowrap">Filtrar por estado:</label>
         <select
           value={statsFilter}
           onChange={(e) => setStatsFilter(e.target.value)}
-          className="px-3 py-2 border border-border rounded-lg bg-bg-secondary"
+          className="w-full sm:w-auto px-3 py-2 border border-border rounded-lg bg-bg-secondary text-sm"
         >
           <option value="all">Todos</option>
-          <option value="pendientes">Sin preparar (pendiente, confirmado, preparando, preparado)</option>
-          <option value="terminados">Terminados (entregado)</option>
+          <option value="pendientes">Sin preparar</option>
+          <option value="terminados">Terminados</option>
         </select>
       </div>
 
