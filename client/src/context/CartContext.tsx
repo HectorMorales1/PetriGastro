@@ -17,7 +17,6 @@ const CartContext = createContext<CartContextType | null>(null)
 
 export function CartProvider({ children }: { children: ReactNode }) {
   const [cart, setCart] = useState<CartItem[]>(() => {
-  const [cart, setCart] = useState(() => {
     const stored = safeGetItem('petriCart')
     if (!stored) return []
     try {
