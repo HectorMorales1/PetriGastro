@@ -129,7 +129,7 @@ export default function Header() {
         </div>
       )}
 
-      <nav className={`fixed top-0 right-0 z-[70] h-full w-72 bg-[#1A1A1A] border-l border-white/10 shadow-2xl transform transition-all duration-300 md:hidden ${
+      <nav className={`fixed top-0 right-0 z-[70] h-full w-72 bg-black border-l border-white/10 shadow-2xl transform transition-all duration-300 md:hidden ${
         menuOpen ? 'translate-x-0' : 'translate-x-full'
       }`}>
         <div className="flex items-center justify-between p-4 border-b border-white/10">
