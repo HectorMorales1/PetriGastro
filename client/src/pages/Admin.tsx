@@ -109,7 +109,7 @@ export default function Admin() {
       <div className="max-w-7xl mx-auto px-4 py-8">
         <h1 className="text-3xl font-bold mb-8 font-heading">Panel de Administración</h1>
 
-        <div className="flex gap-2 mb-6 overflow-x-auto overscroll-x-contain scroll-snap-x">
+        <div className="flex gap-2 mb-6 overflow-x-auto overscroll-x-contain snap-x snap-mandatory">
           {tabs.map(tab => (
             <button
               key={tab.id}
@@ -124,8 +124,8 @@ export default function Admin() {
         </div>
 
         {activeTab === 'pedidos' && (
-          <div className="bg-surface rounded-lg shadow overflow-x-auto overscroll-x-contain scrollable-table">
-            <table className="w-full">
+          <div className="bg-surface rounded-lg shadow overflow-x-auto overscroll-x-contain">
+            <table className="w-full responsive-table">
               <thead className="bg-bg-secondary">
                 <tr>
                   <th className="px-4 py-3 text-left">ID</th>
@@ -140,10 +140,10 @@ export default function Admin() {
               <tbody>
                 {paginatedPedidos.map(pedido => (
                   <tr key={pedido.id} className="border-t border-border">
-                    <td className="px-4 py-3">#{pedido.id}</td>
-                    <td className="px-4 py-3">{pedido.usuario_nombre || 'Cliente'}</td>
-                    <td className="px-4 py-3">{Number(pedido.total || 0).toFixed(2)}€</td>
-                    <td className="px-4 py-3">
+                    <td className="px-4 py-3" data-label="ID">#{pedido.id}</td>
+                    <td className="px-4 py-3" data-label="Cliente">{pedido.usuario_nombre || 'Cliente'}</td>
+                    <td className="px-4 py-3" data-label="Total">{Number(pedido.total || 0).toFixed(2)}€</td>
+                    <td className="px-4 py-3" data-label="Estado">
                       <span className={`px-2 py-1 rounded text-xs ${
                         pedido.estado === 'pendiente' ? 'bg-yellow-100 text-yellow-800' :
                         pedido.estado === 'confirmado' ? 'bg-blue-100 text-blue-800' :
@@ -155,15 +155,15 @@ export default function Admin() {
                         {pedido.estado}
                       </span>
                     </td>
-                    <td className="px-4 py-3">
+                    <td className="px-4 py-3" data-label="Recogida">
                       {pedido.fecha_recogida ? (
                         <span className="text-accent font-medium">
                           {new Date(pedido.fecha_recogida).toLocaleDateString('es-ES', { weekday: 'short', day: 'numeric', month: 'short' })}
                         </span>
                       ) : <span className="text-text-muted">-</span>}
                     </td>
-                    <td className="px-4 py-3 text-text-muted text-sm">{new Date(pedido.created_at).toLocaleDateString()}</td>
-                    <td className="px-4 py-3 space-y-1">
+                    <td className="px-4 py-3 text-text-muted text-sm" data-label="Pedido">{new Date(pedido.created_at).toLocaleDateString()}</td>
+                    <td className="px-4 py-3 space-y-1" data-label="Acciones">
                       <select
                         value={pedido.estado}
                         onChange={(e) => updatePedidoMutation.mutate({ id: pedido.id, estado: e.target.value })}
@@ -259,8 +259,8 @@ function SolicitudesManager() {
           <p className="text-text-muted text-lg">No hay solicitudes pendientes.</p>
         </div>
       ) : (
-        <div className="bg-surface rounded-lg shadow overflow-x-auto overscroll-x-contain scrollable-table">
-          <table className="w-full">
+        <div className="bg-surface rounded-lg shadow overflow-x-auto overscroll-x-contain">
+          <table className="w-full responsive-table">
             <thead className="bg-bg-secondary">
               <tr>
                 <th className="px-4 py-3 text-left">Nombre</th>
@@ -272,18 +272,18 @@ function SolicitudesManager() {
             <tbody>
               {solicitudes.map((sol: { id: number; nombre: string; apellidos: string; email: string; fecha_solicitud: string }) => (
                 <tr key={sol.id} className="border-t border-border">
-                  <td className="px-4 py-3 font-medium">
+                  <td className="px-4 py-3 font-medium" data-label="Nombre">
                     {sol.nombre} {sol.apellidos}
                   </td>
-                  <td className="px-4 py-3 text-text-muted">{sol.email}</td>
-                  <td className="px-4 py-3 text-text-muted text-sm">
+                  <td className="px-4 py-3 text-text-muted" data-label="Email">{sol.email}</td>
+                  <td className="px-4 py-3 text-text-muted text-sm" data-label="Solicitado">
                     {sol.fecha_solicitud
                       ? new Date(sol.fecha_solicitud).toLocaleDateString('es-ES', {
                           day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit'
                         })
                       : '-'}
                   </td>
-                  <td className="px-4 py-3">
+                  <td className="px-4 py-3" data-label="Acciones">
                     <div className="flex items-center justify-center gap-2">
                       <button
                         onClick={() => {
@@ -399,8 +399,8 @@ function StatsManager() {
 
       <h2 className="text-2xl font-bold font-heading mb-6">Platos más pedidos</h2>
 
-      <div className="bg-surface rounded-lg shadow overflow-x-auto overscroll-x-contain scrollable-table">
-        <table className="w-full">
+      <div className="bg-surface rounded-lg shadow overflow-x-auto overscroll-x-contain">
+        <table className="w-full responsive-table">
           <thead className="bg-bg-secondary">
             <tr>
               <th className="px-4 py-3 text-left">Plato</th>
@@ -413,7 +413,7 @@ function StatsManager() {
           <tbody>
             {platos.map((plato: { id: number; imagen_url: string; nombre: string; precio: number; total_vendido: number; num_pedidos: number }) => (
               <tr key={plato.id} className="border-t border-border">
-                <td className="px-4 py-3">
+                <td className="px-4 py-3" data-label="Plato">
                   <div className="flex items-center gap-3">
                     {plato.imagen_url ? (
                       <img src={plato.imagen_url} alt={plato.nombre} className="w-10 h-10 rounded object-cover" />
@@ -423,14 +423,14 @@ function StatsManager() {
                     <span className="font-medium">{plato.nombre}</span>
                   </div>
                 </td>
-                <td className="px-4 py-3 text-center">{plato.num_pedidos}</td>
-                <td className="px-4 py-3 text-center">
+                <td className="px-4 py-3 text-center" data-label="Veces pedido">{plato.num_pedidos}</td>
+                <td className="px-4 py-3 text-center" data-label="Total">
                   <span className="inline-flex items-center px-2 py-1 rounded-full bg-accent/20 text-accent font-medium">
                     {plato.total_vendido} uds
                   </span>
                 </td>
-                <td className="px-4 py-3 text-right">{Number(plato.precio || 0).toFixed(2)}€</td>
-                <td className="px-4 py-3 text-right font-medium text-accent">
+                <td className="px-4 py-3 text-right" data-label="Precio">{Number(plato.precio || 0).toFixed(2)}€</td>
+                <td className="px-4 py-3 text-right font-medium text-accent" data-label="Ingresos">
                   {(plato.total_vendido * Number(plato.precio)).toFixed(2)}€
                 </td>
               </tr>
@@ -827,8 +827,8 @@ function CategoriasManager() {
         </form>
       )}
 
-      <div className="bg-surface rounded-lg shadow overflow-x-auto overscroll-x-contain scrollable-table">
-        <table className="w-full">
+      <div className="bg-surface rounded-lg shadow overflow-x-auto overscroll-x-contain">
+        <table className="w-full responsive-table">
           <thead className="bg-bg-secondary">
             <tr>
               <th className="px-4 py-3 text-left">Icono</th>
@@ -840,10 +840,10 @@ function CategoriasManager() {
           <tbody>
             {categorias.map(cat => (
               <tr key={cat.id} className="border-t border-border">
-                <td className="px-4 py-3 text-2xl">{cat.icono}</td>
-                <td className="px-4 py-3 font-medium">{cat.nombre}</td>
-                <td className="px-4 py-3 text-text-muted">{cat.orden || 0}</td>
-                <td className="px-4 py-3 text-center">
+                <td className="px-4 py-3 text-2xl" data-label="Icono">{cat.icono}</td>
+                <td className="px-4 py-3 font-medium" data-label="Nombre">{cat.nombre}</td>
+                <td className="px-4 py-3 text-text-muted" data-label="Orden">{cat.orden || 0}</td>
+                <td className="px-4 py-3 text-center" data-label="Acciones">
                   <button
                     onClick={() => { if (confirm('¿Eliminar esta categoría?')) deleteMutation.mutate(cat.id) }}
                     className="text-error hover:opacity-80 transition"
@@ -1036,8 +1036,8 @@ function PlatosManager({ pageNum = 1 }: { pageNum?: number }) {
         </form>
       )}
 
-      <div className="bg-surface rounded-lg shadow overflow-x-auto overscroll-x-contain scrollable-table">
-        <table className="w-full">
+      <div className="bg-surface rounded-lg shadow overflow-x-auto overscroll-x-contain">
+        <table className="w-full responsive-table">
           <thead className="bg-bg-secondary">
             <tr>
               <th className="px-4 py-3 text-left">ID</th>
@@ -1052,11 +1052,11 @@ function PlatosManager({ pageNum = 1 }: { pageNum?: number }) {
           <tbody>
             {paginatedPlatos.map(plato => (
               <tr key={plato.id} className="border-t border-border">
-                <td className="px-4 py-3">#{plato.id}</td>
-                <td className="px-4 py-3 font-medium">{plato.nombre}</td>
-                <td className="px-4 py-3 text-text-muted">{plato.categoria || '-'}</td>
-                <td className="px-4 py-3">{Number(plato.precio || 0).toFixed(2)}€</td>
-                <td className="px-4 py-3 text-center">
+                <td className="px-4 py-3" data-label="ID">#{plato.id}</td>
+                <td className="px-4 py-3 font-medium" data-label="Nombre">{plato.nombre}</td>
+                <td className="px-4 py-3 text-text-muted" data-label="Categoría">{plato.categoria || '-'}</td>
+                <td className="px-4 py-3" data-label="Precio">{Number(plato.precio || 0).toFixed(2)}€</td>
+                <td className="px-4 py-3" data-label="Disponible">
                   <button
                     onClick={() => toggleField(plato, 'disponible')}
                     className={`w-8 h-5 rounded-full transition relative ${plato.disponible ? 'bg-accent' : 'bg-text-muted'}`}
@@ -1065,7 +1065,7 @@ function PlatosManager({ pageNum = 1 }: { pageNum?: number }) {
                     <span className={`absolute top-0.5 w-4 h-4 rounded-full bg-white transition ${plato.disponible ? 'left-4' : 'left-0.5'}`} />
                   </button>
                 </td>
-                <td className="px-4 py-3 text-center">
+                <td className="px-4 py-3" data-label="Destacado">
                   <button
                     onClick={() => toggleField(plato, 'destacado')}
                     className={`w-8 h-5 rounded-full transition relative ${plato.destacado ? 'bg-accent' : 'bg-text-muted'}`}
@@ -1074,7 +1074,7 @@ function PlatosManager({ pageNum = 1 }: { pageNum?: number }) {
                     <span className={`absolute top-0.5 w-4 h-4 rounded-full bg-white transition ${plato.destacado ? 'left-4' : 'left-0.5'}`} />
                   </button>
                 </td>
-                <td className="px-4 py-3 text-center">
+                <td className="px-4 py-3 text-center" data-label="Acciones">
                   <button
                     onClick={() => { if (confirm('¿Eliminar este plato?')) deleteMutation.mutate(plato.id) }}
                     className="text-error hover:opacity-80 transition text-sm"

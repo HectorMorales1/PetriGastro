@@ -184,23 +184,51 @@ button, a {
   touch-action: manipulation;
 }
 
-.scrollable-table {
-  -webkit-overflow-scrolling: touch;
-  overscroll-behavior-x: contain;
-}
-
 @media (max-width: 767px) {
-  .scrollable-table table {
-    min-width: 600px;
+  table.responsive-table thead {
+    display: none;
   }
-  
-  .scrollable-table::after {
-    content: '← Desliza para ver más →';
-    display: block;
-    text-align: center;
-    font-size: 0.75rem;
+
+  table.responsive-table tr {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 0.75rem;
+    border: 1px solid var(--color-border);
+    border-radius: 0.75rem;
+    padding: 0.75rem;
+    background: var(--color-surface);
+  }
+
+  table.responsive-table td {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.5rem 0;
+    border-bottom: 1px solid var(--color-border);
+    gap: 0.5rem;
+  }
+
+  table.responsive-table td:last-child {
+    border-bottom: none;
+  }
+
+  table.responsive-table td::before {
+    content: attr(data-label);
+    font-weight: 600;
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
     color: var(--color-text-muted);
-    padding: 0.25rem;
-    opacity: 0.6;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
+  table.responsive-table td[data-label="Acciones"]::before {
+    display: none;
+  }
+
+  table.responsive-table td[data-label="Acciones"] {
+    justify-content: flex-end;
+    gap: 0.5rem;
   }
 }

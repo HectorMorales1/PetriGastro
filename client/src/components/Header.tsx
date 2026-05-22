@@ -1,5 +1,5 @@
 import { Link, useLocation } from 'react-router-dom'
-import { ShoppingCart, User, Menu, X, LogOut, Package } from 'lucide-react'
+import { ShoppingCart, User, Menu, X, LogOut, Package, Home, Info, Utensils, ChefHat, MessageCircle } from 'lucide-react'
 import { useState, useEffect, useMemo } from 'react'
 import { useCart } from '../context/CartContext'
 import { useAuth } from '../context/AuthContext'
@@ -124,36 +124,108 @@ export default function Header() {
       </div>
 
       {menuOpen && (
-        <nav className="md:hidden bg-[#1E1E1E] border-t border-border p-4 flex flex-col gap-4 shadow-lg">
-          {navLinks.map(link => (
-            <a 
-              key={link.to + link.label}
-              href={link.to}
-              onClick={() => setMenuOpen(false)}
-              className="font-medium text-carbon"
-            >
-              {link.label}
-            </a>
-          ))}
-          {user ? (
+        <div className="fixed inset-0 z-40 md:hidden" onClick={() => setMenuOpen(false)}>
+          <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" />
+        </div>
+      )}
+
+      <nav className={`fixed top-0 right-0 z-50 h-full w-72 bg-[#1A1A1A] border-l border-white/10 shadow-2xl transform transition-all duration-300 md:hidden ${
+        menuOpen ? 'translate-x-0' : 'translate-x-full'
+      }`}>
+        <div className="flex items-center justify-between p-4 border-b border-white/10">
+          <span className="font-bold text-lg text-carbon">Menú</span>
+          <button onClick={() => setMenuOpen(false)} className="p-2 hover:bg-white/10 rounded-full transition text-carbon">
+            <X size={22} />
+          </button>
+        </div>
+
+        <div className="flex flex-col p-4 gap-1 overflow-y-auto" style={{ maxHeight: 'calc(100vh - 70px)' }}>
+          {isHome ? (
             <>
-              <span className="font-medium text-carbon">{user.nombre}</span>
-              {user.rol === 'admin' && <Link to="/admin" onClick={() => setMenuOpen(false)} className="text-carbon">Admin</Link>}
-              <Link to="/mis-pedidos" onClick={() => setMenuOpen(false)} className="text-carbon">Mis Pedidos</Link>
-              <button onClick={logout} className="text-left text-carbon">Cerrar sesión</button>
+              <a href="#inicio" onClick={() => setMenuOpen(false)} className="flex items-center gap-3 py-3 px-4 rounded-xl text-carbon hover:bg-white/10 transition font-medium">
+                <Home size={20} className="text-accent" />
+                Inicio
+              </a>
+              <a href="#proceso" onClick={() => setMenuOpen(false)} className="flex items-center gap-3 py-3 px-4 rounded-xl text-carbon hover:bg-white/10 transition font-medium">
+                <Info size={20} className="text-accent" />
+                Cómo Funciona
+              </a>
+              <a href="#menu" onClick={() => setMenuOpen(false)} className="flex items-center gap-3 py-3 px-4 rounded-xl text-carbon hover:bg-white/10 transition font-medium">
+                <Utensils size={20} className="text-accent" />
+                Menú
+              </a>
+              <a href="#chef" onClick={() => setMenuOpen(false)} className="flex items-center gap-3 py-3 px-4 rounded-xl text-carbon hover:bg-white/10 transition font-medium">
+                <ChefHat size={20} className="text-accent" />
+                El Chef
+              </a>
+              <a href="#testimonios" onClick={() => setMenuOpen(false)} className="flex items-center gap-3 py-3 px-4 rounded-xl text-carbon hover:bg-white/10 transition font-medium">
+                <MessageCircle size={20} className="text-accent" />
+                Clientes
+              </a>
             </>
           ) : (
-            <Link to="/login" className="text-carbon" onClick={() => setMenuOpen(false)}>Login</Link>
+            <>
+              <Link to="/" onClick={() => setMenuOpen(false)} className="flex items-center gap-3 py-3 px-4 rounded-xl text-carbon hover:bg-white/10 transition font-medium">
+                <Home size={20} className="text-accent" />
+                Inicio
+              </Link>
+              <Link to="/menu" onClick={() => setMenuOpen(false)} className="flex items-center gap-3 py-3 px-4 rounded-xl text-carbon hover:bg-white/10 transition font-medium">
+                <Utensils size={20} className="text-accent" />
+                Menú
+              </Link>
+            </>
           )}
+
+          <div className="h-px bg-white/10 my-3" />
+
           <button
             onClick={() => { setIsOpen(true); setMenuOpen(false) }}
-            className="flex items-center gap-2 text-carbon"
+            className="flex items-center gap-3 py-3 px-4 rounded-xl bg-accent/10 text-accent hover:bg-accent/20 transition font-semibold"
           >
-            <ShoppingCart size={20} />
+            <div className="relative">
+              <ShoppingCart size={20} />
+              {cartCount > 0 && (
+                <span className="absolute -top-2 -right-2 text-white text-[10px] w-4 h-4 rounded-full flex items-center justify-center font-bold bg-accent">
+                  {cartCount}
+                </span>
+              )}
+            </div>
             <span>Carrito {cartCount > 0 && `(${cartCount})`}</span>
           </button>
-        </nav>
-      )}
+
+          <div className="h-px bg-white/10 my-3" />
+
+          {user ? (
+            <>
+              <div className="flex items-center gap-3 py-3 px-4 text-carbon">
+                <User size={20} className="text-accent" />
+                <span className="font-medium">{user.nombre}</span>
+              </div>
+              <Link to="/mis-pedidos" onClick={() => setMenuOpen(false)} className="flex items-center gap-3 py-3 px-4 rounded-xl text-carbon hover:bg-white/10 transition font-medium">
+                <Package size={20} className="text-accent" />
+                Mis Pedidos
+              </Link>
+              {user.rol === 'admin' && (
+                <Link to="/admin" onClick={() => setMenuOpen(false)} className="flex items-center gap-3 py-3 px-4 rounded-xl text-carbon hover:bg-white/10 transition font-medium">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-accent">
+                    <path d="M12 20V10" /><path d="M18 20V4" /><path d="M6 20v-4" />
+                  </svg>
+                  Admin
+                </Link>
+              )}
+              <button onClick={() => { logout(); setMenuOpen(false) }} className="flex items-center gap-3 py-3 px-4 rounded-xl text-error hover:bg-error/10 transition font-medium w-full text-left">
+                <LogOut size={20} />
+                Cerrar sesión
+              </button>
+            </>
+          ) : (
+            <Link to="/login" onClick={() => setMenuOpen(false)} className="flex items-center gap-3 py-3 px-4 rounded-xl text-carbon hover:bg-white/10 transition font-medium">
+              <User size={20} className="text-accent" />
+              Iniciar sesión
+            </Link>
+          )}
+        </div>
+      </nav>
     </header>
   )
 }
