@@ -48,11 +48,11 @@ const getById = asyncHandler(async (req: Request, res: Response) => {
 })
 
 const create = asyncHandler(async (req: Request, res: Response) => {
-  const { nombre, descripcion, precio, categoria_id, imagen_url, disponible, destacado } = req.body
+  const { nombre, descripcion, ingredientes, precio, categoria_id, imagen_url, disponible, destacado } = req.body
 
   const result = await pool.query(
-    'INSERT INTO platos (nombre, descripcion, precio, categoria_id, imagen_url, disponible, destacado) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *',
-    [nombre, descripcion, precio, categoria_id, imagen_url, disponible ?? true, destacado ?? false]
+    'INSERT INTO platos (nombre, descripcion, ingredientes, precio, categoria_id, imagen_url, disponible, destacado) VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *',
+    [nombre, descripcion, ingredientes || '', precio, categoria_id, imagen_url, disponible ?? true, destacado ?? false]
   )
 
   res.status(201).json(result.rows[0])
@@ -60,19 +60,20 @@ const create = asyncHandler(async (req: Request, res: Response) => {
 
 const update = asyncHandler(async (req: Request, res: Response) => {
   const { id } = req.params
-  const { nombre, descripcion, precio, categoria_id, imagen_url, disponible, destacado } = req.body
+  const { nombre, descripcion, ingredientes, precio, categoria_id, imagen_url, disponible, destacado } = req.body
 
   const result = await pool.query(
     `UPDATE platos SET
       nombre = COALESCE($1, nombre),
       descripcion = COALESCE($2, descripcion),
-      precio = COALESCE($3, precio),
-      categoria_id = COALESCE($4, categoria_id),
-      imagen_url = COALESCE($5, imagen_url),
-      disponible = COALESCE($6, disponible),
-      destacado = COALESCE($7, destacado)
-    WHERE id = $8 RETURNING *`,
-    [nombre, descripcion, precio, categoria_id, imagen_url, disponible, destacado, id]
+      ingredientes = COALESCE($3, ingredientes),
+      precio = COALESCE($4, precio),
+      categoria_id = COALESCE($5, categoria_id),
+      imagen_url = COALESCE($6, imagen_url),
+      disponible = COALESCE($7, disponible),
+      destacado = COALESCE($8, destacado)
+    WHERE id = $9 RETURNING *`,
+    [nombre, descripcion, ingredientes, precio, categoria_id, imagen_url, disponible, destacado, id]
   )
 
   if (result.rows.length === 0) {

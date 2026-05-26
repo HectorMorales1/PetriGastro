@@ -54,7 +54,7 @@ Se auditaron **23 archivos**. Se encontraron **6 problemas sistémicos** que afe
 
 **Opción recomendada**: Usar `text-carbon` (#1C1917) sobre `bg-accent` en todos los botones primarios.
 
-**Archivos afectados**: Header.tsx, Home.tsx, Login.tsx, Menu.tsx, CartDrawer.tsx, Admin.tsx, MisPedidos.tsx, NotFound.tsx, Reservas.tsx, VerificarEmail.tsx, HeroSection.tsx, ScrollVideo.tsx.
+**Archivos afectados**: Header.tsx, Home.tsx, Login.tsx, Menu.tsx, CartDrawer.tsx, Admin.tsx, MisPedidos.tsx, NotFound.tsx, VerificarEmail.tsx, HeroSection.tsx, ScrollVideo.tsx.
 
 **Cambio**: Buscar `bg-accent text-white` y reemplazar por `bg-accent text-carbon` en TODOS los botones y CTAs.
 
@@ -182,7 +182,7 @@ Estrellas (línea 127):
 | `client/src/pages/Admin.tsx` | C2: tabs, botones, acciones → `text-carbon`. C3: stats, fechas → `text-carbon`. C6: badges → variables CSS |
 | `client/src/pages/MisPedidos.tsx` | C2: botones → `text-carbon`. C3: precios accent → `text-carbon`. C6: estrellas → `text-accent` |
 | `client/src/pages/NotFound.tsx` | C2: botón gold → `text-carbon` |
-| `client/src/pages/Reservas.tsx` | C2: botón gold → `text-carbon` |
+
 | `client/src/pages/VerificarEmail.tsx` | C2: botones gold → `text-carbon`. C3: spinner accent |
 | `client/src/components/HeroSection.tsx` | C2: botón gold → `text-carbon`. C3: badge accent → `text-carbon` |
 | `client/src/components/AuthGuard.tsx` | C3: spinner accent → mantener (decorativo) |

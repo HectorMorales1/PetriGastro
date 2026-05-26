@@ -51,7 +51,29 @@ const getMisPedidos = asyncHandler(async (req: Request, res: Response) => {
     WHERE p.usuario_id = $1
     ORDER BY p.created_at DESC
   `, [(req as Request & { user?: { id: number } }).user!.id])
-  res.json(result.rows)
+
+  const pedidos = result.rows
+  if (pedidos.length > 0) {
+    const ids = pedidos.map((p: { id: number }) => p.id)
+    const itemsResult = await pool.query(`
+      SELECT pd.pedido_id, pd.cantidad, pd.precio_unitario, pl.nombre, pl.imagen_url
+      FROM pedido_detalles pd
+      JOIN platos pl ON pd.plato_id = pl.id
+      WHERE pd.pedido_id = ANY($1::int[])
+      ORDER BY pd.pedido_id
+    `, [ids])
+    const itemsByPedido: Record<number, unknown[]> = {}
+    for (const item of itemsResult.rows) {
+      const pid = (item as { pedido_id: number }).pedido_id
+      if (!itemsByPedido[pid]) itemsByPedido[pid] = []
+      itemsByPedido[pid].push(item)
+    }
+    for (const pedido of pedidos) {
+      (pedido as { items: unknown[] }).items = itemsByPedido[(pedido as { id: number }).id] || []
+    }
+  }
+
+  res.json(pedidos)
 })
 
 export = { create, getByPedido, getMisPedidos }

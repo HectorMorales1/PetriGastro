@@ -6,5 +6,5 @@
 server/dist/
 server/uploads/
 
-PENDIENTES.md
-AGENTS
+# Root node_modules (only contains concurrently)
+node_modules/

@@ -23,7 +23,6 @@ Tras aplicar los cambios, ejecutar en la BD:
 DELETE FROM pedido_feedback;
 DELETE FROM pedido_detalles;
 DELETE FROM pedidos;
-DELETE FROM reservas;
 DELETE FROM usuarios;
 ```
 Y luego re-ejecutar `server/migrate.js` o los INSERT para recrear usuarios con el hash correcto.
