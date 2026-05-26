@@ -10,6 +10,7 @@ interface LayoutProps {
 export default function Layout({ children }: LayoutProps) {
   const location = useLocation()
   const isLogin = location.pathname === '/login'
+  const isAdmin = location.pathname === '/admin'
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -17,7 +18,7 @@ export default function Layout({ children }: LayoutProps) {
       <main id="main-content" className="flex-1 pt-16" tabIndex={-1}>
         {children}
       </main>
-      {!isLogin && <Footer />}
+      {!isLogin && !isAdmin && <Footer />}
     </div>
   )
 }

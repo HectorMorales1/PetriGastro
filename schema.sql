@@ -103,24 +103,7 @@ CREATE TABLE IF NOT EXISTS pedido_feedback (
 INSERT INTO pedido_feedback (pedido_id, usuario_id, calificacion, comentario) VALUES
 (1, 2, 5, 'Todo excelente, muy buena comida');
 
--- 7. RESERVAS
-CREATE TABLE IF NOT EXISTS reservas (
-    id        SERIAL PRIMARY KEY,
-    nombre    VARCHAR(100) NOT NULL,
-    email     VARCHAR(255) NOT NULL,
-    telefono  VARCHAR(20) NOT NULL,
-    fecha     DATE NOT NULL,
-    hora      TIME NOT NULL,
-    personas  INTEGER NOT NULL CHECK (personas >= 1),
-    notas     TEXT,
-    estado    VARCHAR(20) NOT NULL DEFAULT 'pendiente'
-              CHECK (estado IN ('pendiente', 'confirmado', 'cancelado'))
-);
-
-INSERT INTO reservas (nombre, email, telefono, fecha, hora, personas, notas, estado) VALUES
-('Juan Pérez', 'juan@email.com', '612345678', CURRENT_DATE + 2, '21:00', 4, 'Alergia a frutos secos', 'pendiente');
-
--- 8. FECHAS_DISPONIBLES
+-- 7. FECHAS_DISPONIBLES
 CREATE TABLE IF NOT EXISTS fechas_disponibles (
     id     SERIAL PRIMARY KEY,
     fecha  DATE NOT NULL UNIQUE,

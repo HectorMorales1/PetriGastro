@@ -51,7 +51,7 @@ export default function VerificarEmail() {
               <p className="text-text-muted">Ahora tu solicitud está pendiente de aprobación por el administrador.</p>
               <Link
                 to="/login"
-                className="inline-block mt-4 px-6 py-3 bg-accent text-white rounded-lg font-semibold hover:opacity-90 transition"
+                className="inline-block mt-4 px-6 py-3 bg-accent text-carbon rounded-lg font-semibold hover:opacity-90 transition"
               >
                 Ir al inicio de sesión
               </Link>
@@ -65,7 +65,7 @@ export default function VerificarEmail() {
               <p className="text-text-muted">{message}</p>
               <Link
                 to="/login"
-                className="inline-block mt-4 px-6 py-3 bg-accent text-white rounded-lg font-semibold hover:opacity-90 transition"
+                className="inline-block mt-4 px-6 py-3 bg-accent text-carbon rounded-lg font-semibold hover:opacity-90 transition"
               >
                 Volver al inicio de sesión
               </Link>

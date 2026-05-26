@@ -85,9 +85,7 @@ function Footer() {
           <p className="text-text-muted">
             © {new Date().getFullYear()} PetriGastro. Todos los derechos reservados.
           </p>
-          <p className="text-text-muted text-sm mt-2">
-            Hecho con <span className="text-accent" aria-hidden="true">♥</span> en Madrid
-          </p>
+
         </div>
       </div>
     </footer>
