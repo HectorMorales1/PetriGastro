@@ -4,6 +4,7 @@ import { Helmet } from 'react-helmet-async'
 import { Star, Loader2 } from 'lucide-react'
 import { feedbackApi } from '../services/api'
 import { useAuth } from '../context/AuthContext'
+import { getEstadoColor } from '../utils/estadoPedido'
 
 interface PedidoConFeedback {
   id: number
@@ -25,7 +26,8 @@ export default function MisPedidos() {
 
   const { data: pedidos = [], isLoading } = useQuery({
     queryKey: ['misPedidos'],
-    queryFn: feedbackApi.getMisPedidos
+    queryFn: feedbackApi.getMisPedidos,
+    refetchInterval: 15000
   })
 
   const createFeedbackMutation = useMutation({
@@ -41,18 +43,6 @@ export default function MisPedidos() {
 
   const handleSubmitFeedback = (pedido_id: number) => {
     createFeedbackMutation.mutate({ pedido_id, calificacion: rating, comentario: comment })
-  }
-
-  const getEstadoColor = (estado: string) => {
-    switch (estado) {
-      case 'pendiente': return 'bg-yellow-100 text-yellow-800'
-      case 'confirmado': return 'bg-blue-100 text-blue-800'
-      case 'preparando': return 'bg-orange-100 text-orange-800'
-      case 'preparado': return 'bg-purple-100 text-purple-800'
-      case 'entregado': return 'bg-green-100 text-green-800'
-      case 'cancelado': return 'bg-red-100 text-red-800'
-      default: return 'bg-gray-100 text-gray-800'
-    }
   }
 
   if (isLoading) {
@@ -72,7 +62,7 @@ export default function MisPedidos() {
         {pedidos.length === 0 ? (
           <div className="text-center py-12">
             <p className="text-text-muted text-lg">No tienes pedidos todavía.</p>
-            <a href="/menu" className="text-accent hover:underline mt-4 inline-block">
+            <a href="/menu" className="text-carbon hover:text-accent underline mt-4 inline-block">
               Ver el menú
             </a>
           </div>
@@ -93,7 +83,7 @@ export default function MisPedidos() {
                       })}
                     </p>
                     {pedido.fecha_recogida && (
-                      <p className="text-accent text-sm">
+                      <p className="text-carbon text-sm">
                         Recogida: {new Date(pedido.fecha_recogida).toLocaleDateString('es-ES', {
                           weekday: 'long',
                           day: 'numeric',
@@ -103,7 +93,7 @@ export default function MisPedidos() {
                     )}
                   </div>
                   <div className="text-right">
-                    <p className="text-2xl font-bold text-accent">{Number(pedido.total).toFixed(2)}€</p>
+                    <p className="text-2xl font-bold text-carbon">{Number(pedido.total).toFixed(2)}€</p>
                     <span className={`px-2 py-1 rounded text-xs ${getEstadoColor(pedido.estado)}`}>
                       {pedido.estado}
                     </span>
@@ -124,7 +114,7 @@ export default function MisPedidos() {
                             <Star
                               key={star}
                               size={20}
-                              className={star <= pedido.calificacion ? 'text-yellow-400 fill-yellow-400' : 'text-gray-300'}
+                               className={star <= pedido.calificacion ? 'text-accent fill-accent' : 'text-text-muted'}
                               aria-hidden="true"
                             />
                           ))}
@@ -148,7 +138,7 @@ export default function MisPedidos() {
                             >
                               <Star
                                 size={28}
-                                className={star <= rating ? 'text-yellow-400 fill-yellow-400 hover:scale-110 transition' : 'text-gray-300 hover:text-yellow-300 transition'}
+                                className={star <= rating ? 'text-accent fill-accent hover:scale-110 transition' : 'text-text-muted hover:text-accent transition'}
                               />
                             </button>
                           ))}
@@ -166,7 +156,7 @@ export default function MisPedidos() {
                           <button
                             onClick={() => handleSubmitFeedback(pedido.id)}
                             disabled={createFeedbackMutation.isPending}
-                            className="px-4 py-2 bg-accent text-white rounded-lg hover:opacity-90 disabled:opacity-50"
+                            className="px-4 py-2 bg-accent text-carbon rounded-lg hover:opacity-90 disabled:opacity-50"
                           >
                             {createFeedbackMutation.isPending ? 'Enviando...' : 'Enviar'}
                           </button>
@@ -181,7 +171,7 @@ export default function MisPedidos() {
                     ) : (
                       <button
                         onClick={() => setSelectedPedido(pedido.id)}
-                        className="mt-4 px-4 py-2 bg-accent text-white rounded-lg hover:opacity-90"
+                        className="mt-4 px-4 py-2 bg-accent text-carbon rounded-lg hover:opacity-90"
                       >
                         Valorar pedido
                       </button>

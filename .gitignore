@@ -2,6 +2,9 @@
 # Environment file
 .env
 
+# TypeScript build output
+server/dist/
+server/uploads/
 
 PENDIENTES.md
 AGENTS

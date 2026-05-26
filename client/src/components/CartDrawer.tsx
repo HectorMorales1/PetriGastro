@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo, useCallback } from 'react'
-import { X, Minus, Plus, Trash2, Loader2, ShoppingBag, Calendar } from 'lucide-react'
+import { X, Minus, Plus, Trash2, Loader2, ShoppingBag, Calendar, ImageOff } from 'lucide-react'
 import { useCart } from '../context/CartContext'
 import { useToast } from '../context/ToastContext'
 import { pedidosApi, fechasApi } from '../services/api'
@@ -31,10 +31,18 @@ export default function CartDrawer() {
     }
   }, [isOpen, addToast])
 
-  const fechasActivas = useMemo(
-    () => fechas.filter(f => f.activo && f.horarios?.length > 0),
-    [fechas]
-  )
+  const fechasActivas = useMemo(() => {
+    const hoy = new Date()
+    hoy.setHours(0, 0, 0, 0)
+    const manana = new Date(hoy)
+    manana.setDate(manana.getDate() + 1)
+    return fechas.filter(f => {
+      if (!f.activo || !f.horarios?.length) return false
+      const fechaDate = new Date(f.fecha)
+      fechaDate.setHours(0, 0, 0, 0)
+      return fechaDate >= manana
+    })
+  }, [fechas])
 
   const formatFecha = useCallback((fechaStr: string) => {
     const fecha = new Date(fechaStr)
@@ -79,8 +87,9 @@ export default function CartDrawer() {
       clearCart()
       setFechaSeleccionada('')
       setHoraSeleccionada('')
-    } catch (err) {
-      setError(err.response?.data?.message || 'Error al procesar el pedido')
+    } catch (err: unknown) {
+      const error = err as { response?: { data?: { message?: string } } }
+      setError(error.response?.data?.message || 'Error al procesar el pedido')
     }
     setSubmitting(false)
   }, [fechaSeleccionada, horaSeleccionada, cart, clearCart])
@@ -117,14 +126,9 @@ export default function CartDrawer() {
             <div className="space-y-4">
               {cart.map(item => (
                 <div key={item.id} className="flex gap-4 border-b border-border pb-4">
-                  <div className="w-20 h-20 bg-bg-tertiary rounded-lg flex-shrink-0">
-                    {item.imagen_url && (
-                      <img src={item.imagen_url} alt={item.nombre} className="w-full h-full object-cover rounded-lg" />
-                    )}
-                  </div>
                   <div className="flex-1">
                     <h3 className="font-semibold">{item.nombre}</h3>
-                    <p className="text-accent font-bold">{Number(item.precio).toFixed(2)}€</p>
+                    <p className="text-carbon font-bold">{Number(item.precio).toFixed(2)}€</p>
                     <div className="flex items-center gap-2 mt-2">
                       <button
                         onClick={() => updateQuantity(item.id, item.cantidad - 1)}
@@ -176,7 +180,7 @@ export default function CartDrawer() {
                     {pedidoInfo.fecha_recogida && (
                       <div className="flex justify-between">
                         <span className="text-text-muted">Fecha de recogida:</span>
-                        <span className="font-medium text-accent">
+                        <span className="font-medium text-carbon">
                           {new Date(pedidoInfo.fecha_recogida).toLocaleDateString('es-ES', { 
                             weekday: 'long', day: 'numeric', month: 'long' 
                           })}
@@ -191,7 +195,7 @@ export default function CartDrawer() {
                     )}
                     <div className="flex justify-between pt-2 border-t border-border">
                       <span className="text-text-muted">Total:</span>
-                      <span className="font-bold text-accent">{Number(pedidoInfo.total).toFixed(2)}€</span>
+                      <span className="font-bold text-carbon">{Number(pedidoInfo.total).toFixed(2)}€</span>
                     </div>
                   </div>
                 )}
@@ -203,7 +207,7 @@ export default function CartDrawer() {
                 </div>
                 <button
                   onClick={() => { setSubmitted(false); setPedidoInfo(null) }}
-                  className="w-full py-3 bg-accent text-white rounded-lg font-medium hover:opacity-90"
+                  className="w-full py-3 bg-accent text-carbon rounded-lg font-medium hover:opacity-90"
                 >
                   Hacer otro pedido
                 </button>
@@ -212,7 +216,7 @@ export default function CartDrawer() {
               <>
                 <div className="flex justify-between mb-4 text-lg font-bold">
                   <span>Total:</span>
-                  <span className="text-accent">{total.toFixed(2)}€</span>
+                  <span className="text-carbon">{total.toFixed(2)}€</span>
                 </div>
 
                 <div className="mb-4 space-y-3">
@@ -252,7 +256,7 @@ export default function CartDrawer() {
                             onClick={() => setHoraSeleccionada(h.hora)}
                             className={`py-2 px-3 rounded-lg text-sm transition ${
                               horaSeleccionada === h.hora
-                                ? 'bg-accent text-white'
+                                ? 'bg-accent text-carbon'
                                 : 'bg-bg-tertiary text-text hover:bg-border'
                             }`}
                             aria-pressed={horaSeleccionada === h.hora}
@@ -273,7 +277,7 @@ export default function CartDrawer() {
                 <button
                   onClick={handleApiCheckout}
                   disabled={submitting}
-                  className="w-full bg-accent text-white py-3 rounded-lg font-semibold hover:opacity-90 transition disabled:opacity-50 flex items-center justify-center gap-2"
+                  className="w-full bg-accent text-carbon py-3 rounded-lg font-semibold hover:opacity-90 transition disabled:opacity-50 flex items-center justify-center gap-2"
                 >
                   {submitting ? (
                     <><Loader2 className="animate-spin" size={20} /> Procesando...</>

@@ -36,8 +36,12 @@ export interface Categoria {
   icono: string
 }
 
-export interface CartItem extends Plato {
+export interface CartItem {
+  id: number
+  nombre: string
+  precio: number
   cantidad: number
+  categoria_id: number
 }
 
 export interface Pedido {
@@ -48,18 +52,6 @@ export interface Pedido {
   notas: string
   estado: 'pendiente' | 'confirmado' | 'preparando' | 'preparado' | 'entregado' | 'cancelado'
   created_at: string
-}
-
-export interface Reserva {
-  id: number
-  nombre: string
-  email: string
-  telefono: string
-  fecha: string
-  hora: string
-  personas: number
-  notas: string
-  estado: 'pendiente' | 'confirmado' | 'cancelado'
 }
 
 export interface Testimonial {

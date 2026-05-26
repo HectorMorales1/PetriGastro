@@ -10,24 +10,17 @@ import { queryClient } from './services/api'
 import Layout from './components/Layout'
 import CartDrawer from './components/CartDrawer'
 import AuthGuard from './components/AuthGuard'
+import ScrollToTop from './components/ScrollToTop'
+import ErrorBoundary from './components/ErrorBoundary'
+import LoadingSpinner from './components/LoadingSpinner'
 
 const Home = lazy(() => import('./pages/Home'))
 const Menu = lazy(() => import('./pages/Menu'))
 const Login = lazy(() => import('./pages/Login'))
 const VerificarEmail = lazy(() => import('./pages/VerificarEmail'))
 const MisPedidos = lazy(() => import('./pages/MisPedidos'))
-
 const Admin = lazy(() => import('./pages/Admin'))
 const NotFound = lazy(() => import('./pages/NotFound'))
-
-function LoadingSpinner() {
-  return (
-    <div className="flex items-center justify-center min-h-[50vh]" role="status" aria-live="polite">
-      <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2" style={{ borderColor: '#C4785A' }}></div>
-      <span className="sr-only">Cargando...</span>
-    </div>
-  )
-}
 
 function App() {
   return (
@@ -38,22 +31,25 @@ function App() {
             <CartProvider>
               <ToastProvider>
                 <BrowserRouter>
+                  <ScrollToTop />
                   <Layout>
-                    <Suspense fallback={<LoadingSpinner />}>
-                      <Routes>
-                        <Route path="/login" element={<Login />} />
-                        <Route path="/verificar" element={<VerificarEmail />} />
-                        <Route element={<AuthGuard />}>
-                          <Route path="/" element={<Home />} />
-                          <Route path="/menu" element={<Menu />} />
-                          <Route path="/mis-pedidos" element={<MisPedidos />} />
-                          <Route path="*" element={<NotFound />} />
-                        </Route>
-                        <Route element={<AuthGuard requiredRole="admin" />}>
-                          <Route path="/admin" element={<Admin />} />
-                        </Route>
-                      </Routes>
-                    </Suspense>
+                    <ErrorBoundary>
+                      <Suspense fallback={<LoadingSpinner />}>
+                        <Routes>
+                          <Route path="/login" element={<Login />} />
+                          <Route path="/verificar" element={<VerificarEmail />} />
+                          <Route element={<AuthGuard />}>
+                            <Route path="/" element={<Home />} />
+                            <Route path="/menu" element={<Menu />} />
+                            <Route path="/mis-pedidos" element={<MisPedidos />} />
+                            <Route path="*" element={<NotFound />} />
+                          </Route>
+                          <Route element={<AuthGuard requiredRole="admin" />}>
+                            <Route path="/admin" element={<Admin />} />
+                          </Route>
+                        </Routes>
+                      </Suspense>
+                    </ErrorBoundary>
                   </Layout>
                   <CartDrawer />
                 </BrowserRouter>

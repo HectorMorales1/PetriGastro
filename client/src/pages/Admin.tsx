@@ -1,10 +1,12 @@
-import { useState } from 'react'
-import { Loader2, Plus, Trash2, Calendar, X, CheckCircle, XCircle } from 'lucide-react'
+import { useState, Fragment } from 'react'
+import { Loader2, Plus, Trash2, Calendar, X, CheckCircle, XCircle, Pencil } from 'lucide-react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { Helmet } from 'react-helmet-async'
 import { useAuth } from '../context/AuthContext'
 import { useToast } from '../context/ToastContext'
 import { platosApi, pedidosApi, categoriasApi, fechasApi, configApi, uploadApi, usuariosApi } from '../services/api'
+import { Plato } from '../types'
+import { getEstadoColor } from '../utils/estadoPedido'
 
 const ITEMS_PER_PAGE = 10
 
@@ -28,7 +30,7 @@ function Paginacion({ currentPage, totalPages, onPageChange }) {
             <button
               onClick={() => onPageChange(p)}
               className={`w-8 h-8 rounded text-sm font-medium ${
-                p === currentPage ? 'bg-accent text-white' : 'hover:bg-bg-secondary'
+                p === currentPage ? 'bg-accent text-carbon' : 'hover:bg-bg-secondary'
               }`}
               aria-label={`Ir a página ${p}`}
               aria-current={p === currentPage ? 'page' : undefined}
@@ -54,6 +56,7 @@ export default function Admin() {
   const queryClient = useQueryClient()
   const [activeTab, setActiveTab] = useState('pedidos')
   const [pedidoPage, setPedidoPage] = useState(1)
+  const [expandedPedido, setExpandedPedido] = useState<number | null>(null)
 
   if (!user || user.rol !== 'admin') {
     return (
@@ -66,7 +69,8 @@ export default function Admin() {
 
   const { data: pedidosResp = { data: [], pagination: { total: 0, totalPages: 0 } } } = useQuery({
     queryKey: ['pedidos', pedidoPage],
-    queryFn: () => pedidosApi.getAll({ page: pedidoPage, limit: ITEMS_PER_PAGE })
+    queryFn: () => pedidosApi.getAll({ page: pedidoPage, limit: ITEMS_PER_PAGE }),
+    refetchInterval: 30000
   })
 
   const pedidos = pedidosResp.data || []
@@ -82,12 +86,15 @@ export default function Admin() {
   const { data: solicitudes = [] } = useQuery({
     queryKey: ['solicitudes'],
     queryFn: usuariosApi.getSolicitudes,
-    refetchInterval: 30000
+    refetchInterval: 60000
   })
 
   const updatePedidoMutation = useMutation({
-    mutationFn: ({ id, estado }) => pedidosApi.updateEstado(id, estado),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['pedidos'] })
+    mutationFn: ({ id, estado }: { id: number; estado: string }) => pedidosApi.updateEstado(id, estado),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['pedidos'] })
+      queryClient.invalidateQueries({ queryKey: ['misPedidos'] })
+    }
   })
 
   const solicitudesPendientes = solicitudes.length
@@ -98,6 +105,7 @@ export default function Admin() {
     { id: 'fechas', label: 'Fechas' },
     { id: 'platos', label: 'Platos' },
     { id: 'categorias', label: 'Categorías' },
+    { id: 'usuarios', label: 'Usuarios' },
     { id: 'solicitudes', label: `Solicitudes${solicitudesPendientes > 0 ? ` (${solicitudesPendientes})` : ''}` }
   ]
 
@@ -122,7 +130,7 @@ export default function Admin() {
               aria-selected={activeTab === tab.id}
               onClick={() => setActiveTab(tab.id)}
               className={`px-4 py-2 rounded-lg whitespace-nowrap transition ${
-                activeTab === tab.id ? 'bg-accent text-white' : 'bg-bg-secondary'
+                activeTab === tab.id ? 'bg-accent text-carbon' : 'bg-bg-secondary'
               }`}
             >
               {tab.label}
@@ -146,54 +154,84 @@ export default function Admin() {
               </thead>
               <tbody>
                 {paginatedPedidos.map(pedido => (
-                  <tr key={pedido.id} className="border-t border-border">
-                    <td className="px-4 py-3" data-label="ID">#{pedido.id}</td>
-                    <td className="px-4 py-3" data-label="Cliente">{pedido.usuario_nombre || 'Cliente'}</td>
-                    <td className="px-4 py-3" data-label="Total">{Number(pedido.total || 0).toFixed(2)}€</td>
-                    <td className="px-4 py-3" data-label="Estado">
-                      <span className={`px-2 py-1 rounded text-xs ${
-                        pedido.estado === 'pendiente' ? 'bg-yellow-100 text-yellow-800' :
-                        pedido.estado === 'confirmado' ? 'bg-blue-100 text-blue-800' :
-                        pedido.estado === 'preparado' ? 'bg-purple-100 text-purple-800' :
-                        pedido.estado === 'preparando' ? 'bg-orange-100 text-orange-800' :
-                        pedido.estado === 'entregado' ? 'bg-green-100 text-green-800' :
-                        'bg-red-100 text-red-800'
-                      }`}>
-                        {pedido.estado}
-                      </span>
-                    </td>
-                    <td className="px-4 py-3" data-label="Recogida">
-                      {pedido.fecha_recogida ? (
-                        <span className="text-accent font-medium">
-                          {new Date(pedido.fecha_recogida).toLocaleDateString('es-ES', { weekday: 'short', day: 'numeric', month: 'short' })}
+                  <Fragment key={pedido.id}>
+                    <tr className="border-t border-border">
+                      <td className="px-4 py-3" data-label="ID">#{pedido.id}</td>
+                      <td className="px-4 py-3" data-label="Cliente">{pedido.usuario_nombre || 'Cliente'}</td>
+                      <td className="px-4 py-3" data-label="Total">{Number(pedido.total || 0).toFixed(2)}€</td>
+                      <td className="px-4 py-3" data-label="Estado">
+                        <span className={`px-2 py-1 rounded text-xs ${getEstadoColor(pedido.estado)}`}>
+                          {pedido.estado}
                         </span>
-                      ) : <span className="text-text-muted">-</span>}
-                    </td>
-                    <td className="px-4 py-3 text-text-muted text-sm" data-label="Pedido">{new Date(pedido.created_at).toLocaleDateString()}</td>
-                    <td className="px-4 py-3 space-y-1" data-label="Acciones">
-                      <select
-                        value={pedido.estado}
-                        onChange={(e) => updatePedidoMutation.mutate({ id: pedido.id, estado: e.target.value })}
-                        className="text-sm border border-border rounded px-2 py-1 bg-bg-secondary w-full"
-                        aria-label={`Estado del pedido #${pedido.id}`}
-                      >
-                        <option value="pendiente">Pendiente</option>
-                        <option value="confirmado">Confirmado</option>
-                        <option value="preparando">Preparando</option>
-                        <option value="preparado">Preparado</option>
-                        <option value="entregado">Entregado</option>
-                        <option value="cancelado">Cancelado</option>
-                      </select>
-                      {pedido.estado === 'preparando' && (
-                        <button
-                          onClick={() => updatePedidoMutation.mutate({ id: pedido.id, estado: 'preparado' })}
-                          className="w-full text-xs px-2 py-1 rounded bg-purple-100 text-purple-800 font-medium hover:bg-purple-200 transition"
+                      </td>
+                      <td className="px-4 py-3" data-label="Recogida">
+                        {pedido.fecha_recogida ? (
+                          <span className="text-carbon font-medium">
+                            {new Date(pedido.fecha_recogida).toLocaleDateString('es-ES', { weekday: 'short', day: 'numeric', month: 'short' })}
+                          </span>
+                        ) : <span className="text-text-muted">-</span>}
+                      </td>
+                      <td className="px-4 py-3 text-text-muted text-sm" data-label="Pedido">{new Date(pedido.created_at).toLocaleDateString()}</td>
+                      <td className="px-4 py-3 space-y-1" data-label="Acciones">
+                        <select
+                          value={pedido.estado}
+                          onChange={(e) => updatePedidoMutation.mutate({ id: pedido.id, estado: e.target.value })}
+                          className="text-sm border border-border rounded px-2 py-1 bg-bg-secondary w-full"
+                          aria-label={`Estado del pedido #${pedido.id}`}
                         >
-                          ✓ Marcar preparado
+                          <option value="pendiente">Pendiente</option>
+                          <option value="confirmado">Confirmado</option>
+                          <option value="preparando">Preparando</option>
+                          <option value="preparado">Preparado</option>
+                          <option value="entregado">Entregado</option>
+                          <option value="cancelado">Cancelado</option>
+                        </select>
+                        {pedido.estado === 'preparando' && (
+                          <button
+                            onClick={() => updatePedidoMutation.mutate({ id: pedido.id, estado: 'preparado' })}
+                            className="w-full text-xs px-2 py-1 rounded bg-purple-100 text-purple-800 font-medium hover:bg-purple-200 transition"
+                          >
+                            ✓ Marcar preparado
+                          </button>
+                        )}
+                        <button
+                          onClick={() => setExpandedPedido(expandedPedido === pedido.id ? null : pedido.id)}
+                          className="w-full text-xs px-2 py-1 rounded bg-bg-secondary text-text-muted font-medium hover:bg-border transition mt-1"
+                        >
+                          {expandedPedido === pedido.id ? '▲ Ocultar platos' : '▼ Ver platos'}
                         </button>
-                      )}
-                    </td>
-                  </tr>
+                      </td>
+                    </tr>
+                    {expandedPedido === pedido.id && pedido.items && pedido.items.length > 0 && (
+                      <tr className="bg-bg-secondary">
+                        <td colSpan={7} className="px-6 py-3">
+                          <div className="text-sm">
+                            <p className="font-medium mb-2 text-carbon">Platos del pedido:</p>
+                            <table className="w-full text-xs">
+                              <thead>
+                                <tr className="border-b border-border">
+                                  <th className="text-left py-1 pr-4 text-text-muted">Plato</th>
+                                  <th className="text-right py-1 px-4 text-text-muted">Cant.</th>
+                                  <th className="text-right py-1 px-4 text-text-muted">Precio ud.</th>
+                                  <th className="text-right py-1 pl-4 text-text-muted">Subtotal</th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                {pedido.items.map((item: { nombre: string; cantidad: number; precio_unitario: string }, idx: number) => (
+                                  <tr key={idx} className="border-b border-border/50">
+                                    <td className="py-1 pr-4 text-carbon">{item.nombre}</td>
+                                    <td className="text-right py-1 px-4 text-carbon">x{item.cantidad}</td>
+                                    <td className="text-right py-1 px-4 text-carbon">{Number(item.precio_unitario).toFixed(2)}€</td>
+                                    <td className="text-right py-1 pl-4 text-carbon font-medium">{(item.cantidad * Number(item.precio_unitario)).toFixed(2)}€</td>
+                                  </tr>
+                                ))}
+                              </tbody>
+                            </table>
+                          </div>
+                        </td>
+                      </tr>
+                    )}
+                  </Fragment>
                 ))}
               </tbody>
             </table>
@@ -208,6 +246,8 @@ export default function Admin() {
         {activeTab === 'platos' && <PlatosManager />}
 
         {activeTab === 'categorias' && <CategoriasManager />}
+
+        {activeTab === 'usuarios' && <UsuariosManager />}
 
         {activeTab === 'solicitudes' && <SolicitudesManager />}
       </div>
@@ -227,14 +267,9 @@ function SolicitudesManager() {
     refetchInterval: 15000
   })
 
-  const aprobarMutation = useMutation({
-    mutationFn: (id: number) => usuariosApi.aprobar(id),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['solicitudes'] })
-    },
-    onError: (error: { response?: { data?: { message?: string } } }) => {
-      addToast(error.response?.data?.message || 'Error al aprobar la solicitud', 'error')
-    }
+  const { data: categorias = [] } = useQuery({
+    queryKey: ['categorias'],
+    queryFn: categoriasApi.getAll
   })
 
   const rechazarMutation = useMutation({
@@ -257,7 +292,7 @@ function SolicitudesManager() {
     <div>
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-2xl font-bold font-heading">Solicitudes de Acceso</h2>
-        <span className="px-3 py-1 rounded-full bg-accent/20 text-accent text-sm font-medium">
+        <span className="px-3 py-1 rounded-full bg-accent/20 text-carbon text-sm font-medium">
           {solicitudes.length} pendiente{solicitudes.length !== 1 ? 's' : ''}
         </span>
       </div>
@@ -381,15 +416,15 @@ function StatsManager() {
     <div>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
         <div className="bg-surface p-6 rounded-lg shadow text-center">
-          <div className="text-3xl font-bold text-accent">{totales.pedidos}</div>
+          <div className="text-3xl font-bold text-carbon">{totales.pedidos}</div>
           <div className="text-text-muted">Pedidos Totales</div>
         </div>
         <div className="bg-surface p-6 rounded-lg shadow text-center">
-          <div className="text-3xl font-bold text-accent">{Number(totales.ingresos || 0).toFixed(2)}€</div>
+          <div className="text-3xl font-bold text-carbon">{Number(totales.ingresos || 0).toFixed(2)}€</div>
           <div className="text-text-muted">Ingresos Totales</div>
         </div>
         <div className="bg-surface p-6 rounded-lg shadow text-center">
-          <div className="text-3xl font-bold text-accent">{platos.length}</div>
+          <div className="text-3xl font-bold text-carbon">{platos.length}</div>
           <div className="text-text-muted">Platos diferentes</div>
         </div>
       </div>
@@ -435,12 +470,12 @@ function StatsManager() {
                 </td>
                 <td className="px-4 py-3 text-center" data-label="Veces pedido">{plato.num_pedidos}</td>
                 <td className="px-4 py-3 text-center" data-label="Total">
-                  <span className="inline-flex items-center px-2 py-1 rounded-full bg-accent/20 text-accent font-medium">
+                  <span className="inline-flex items-center px-2 py-1 rounded-full bg-accent/20 text-carbon font-medium">
                     {plato.total_vendido} uds
                   </span>
                 </td>
                 <td className="px-4 py-3 text-right" data-label="Precio">{Number(plato.precio || 0).toFixed(2)}€</td>
-                <td className="px-4 py-3 text-right font-medium text-accent" data-label="Ingresos">
+                <td className="px-4 py-3 text-right font-medium text-carbon" data-label="Ingresos">
                   {(plato.total_vendido * Number(plato.precio)).toFixed(2)}€
                 </td>
               </tr>
@@ -549,7 +584,7 @@ function FechasManager() {
         <h2 className="text-2xl font-bold font-heading">Gestión de Fechas</h2>
         <button
           onClick={() => setShowAddForm(!showAddForm)}
-          className="px-4 py-2 rounded-lg bg-accent text-white font-medium hover:opacity-90 transition flex items-center gap-2"
+          className="px-4 py-2 rounded-lg bg-accent text-carbon font-medium hover:opacity-90 transition flex items-center gap-2"
         >
           <Plus size={20} />
           {showAddForm ? 'Cancelar' : 'Añadir Fecha'}
@@ -581,7 +616,7 @@ function FechasManager() {
                     onClick={() => toggleHorarioInNewFecha(hora)}
                     className={`px-3 py-1.5 rounded-lg text-sm transition ${
                       newFecha.horarios.includes(hora)
-                        ? 'bg-accent text-white'
+                        ? 'bg-accent text-carbon'
                         : 'bg-bg-secondary text-text-muted'
                     }`}
                   >
@@ -594,7 +629,7 @@ function FechasManager() {
           <button
             type="submit"
             disabled={createFechaMutation.isPending || newFecha.horarios.length === 0}
-            className="px-6 py-2 rounded-lg bg-accent text-white font-medium hover:opacity-90 transition disabled:opacity-50"
+            className="px-6 py-2 rounded-lg bg-accent text-carbon font-medium hover:opacity-90 transition disabled:opacity-50"
           >
             {createFechaMutation.isPending ? 'Creando...' : 'Crear Fecha'}
           </button>
@@ -622,7 +657,7 @@ function FechasManager() {
             <p className="text-text-muted mb-4">No hay fechas disponibles.</p>
             <button
               onClick={() => setShowAddForm(true)}
-              className="text-accent hover:underline"
+              className="text-carbon hover:text-accent underline"
             >
               Añadir primera fecha
             </button>
@@ -634,7 +669,7 @@ function FechasManager() {
                 {editingFecha?.id === fecha.id ? (
                   <form onSubmit={handleEditFecha} className="space-y-3">
                     <div className="flex justify-between items-center">
-                      <h4 className="font-bold text-accent">
+                      <h4 className="font-bold text-carbon">
                         {new Date(fecha.fecha).toLocaleDateString('es-ES', { weekday: 'long', day: 'numeric', month: 'long' })}
                       </h4>
                       <div className="flex gap-2">
@@ -648,7 +683,7 @@ function FechasManager() {
                         <button
                           type="submit"
                           disabled={updateFechaMutation.isPending || editingFecha.horarios.length === 0}
-                          className="px-3 py-1 rounded bg-accent text-white text-sm disabled:opacity-50"
+                          className="px-3 py-1 rounded bg-accent text-carbon text-sm disabled:opacity-50"
                         >
                           Guardar
                         </button>
@@ -662,7 +697,7 @@ function FechasManager() {
                           onClick={() => toggleHorarioInEdit(hora)}
                           className={`px-3 py-1.5 rounded-lg text-sm transition ${
                             editingFecha.horarios.includes(hora)
-                              ? 'bg-accent text-white'
+                              ? 'bg-accent text-carbon'
                               : 'bg-bg-secondary text-text-muted'
                           }`}
                         >
@@ -674,7 +709,7 @@ function FechasManager() {
                 ) : (
                   <div className="flex justify-between items-start">
                     <div>
-                      <h4 className={`font-bold ${fecha.activo ? 'text-accent' : 'text-text-muted'}`}>
+                      <h4 className={`font-bold ${fecha.activo ? 'text-carbon' : 'text-text-muted'}`}>
                         {new Date(fecha.fecha).toLocaleDateString('es-ES', { weekday: 'long', day: 'numeric', month: 'long' })}
                       </h4>
                       <div className="flex flex-wrap gap-1 mt-2">
@@ -702,7 +737,7 @@ function FechasManager() {
                         className="p-2 rounded hover:bg-bg-secondary text-text-muted hover:text-accent"
                         title="Editar horarios"
                       >
-                        <X size={18} />
+                        <Pencil size={18} />
                       </button>
                       <button
                         onClick={() => toggleFechaMutation.mutate({ id: fecha.id, activo: !fecha.activo })}
@@ -730,12 +765,6 @@ function FechasManager() {
         )}
       </div>
 
-      <div className="mt-6 p-4 bg-blue-50 rounded-lg border border-blue-200">
-        <p className="text-sm text-blue-800">
-          <strong>Nota:</strong> Las fechas inactivas no serán visibles para los clientes. 
-          Solo las fechas activas con al menos un horario disponible aparecerán en la selección de pedido.
-        </p>
-      </div>
     </div>
   )
 }
@@ -764,7 +793,7 @@ function CategoriasManager() {
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['categorias'] })
   })
 
-  const handleCreate = (e) => {
+  const handleCreate = (e: React.FormEvent) => {
     e.preventDefault()
     createMutation.mutate(form)
   }
@@ -781,7 +810,7 @@ function CategoriasManager() {
         <h2 className="text-2xl font-bold font-heading">Gestión de Categorías</h2>
         <button
           onClick={() => setShowForm(!showForm)}
-          className="px-4 py-2 rounded-lg bg-accent text-white font-medium hover:opacity-90 transition flex items-center gap-2"
+          className="px-4 py-2 rounded-lg bg-accent text-carbon font-medium hover:opacity-90 transition flex items-center gap-2"
         >
           <Plus size={20} />
           {showForm ? 'Cancelar' : 'Nueva Categoría'}
@@ -831,7 +860,7 @@ function CategoriasManager() {
           <button
             type="submit"
             disabled={createMutation.isPending || !form.nombre}
-            className="px-6 py-2 rounded-lg bg-accent text-white font-medium hover:opacity-90 transition disabled:opacity-50"
+            className="px-6 py-2 rounded-lg bg-accent text-carbon font-medium hover:opacity-90 transition disabled:opacity-50"
           >
             {createMutation.isPending ? 'Creando...' : 'Crear Categoría'}
           </button>
@@ -882,6 +911,11 @@ function PlatosManager({ pageNum = 1 }: { pageNum?: number }) {
   const [platoPage, setPlatoPage] = useState(pageNum)
   const [uploading, setUploading] = useState(false)
   const [previewImg, setPreviewImg] = useState('')
+  const [editingPlato, setEditingPlato] = useState<Plato | null>(null)
+  const [editForm, setEditForm] = useState({
+    nombre: '', descripcion: '', precio: '', categoria_id: '',
+    imagen_url: '', disponible: true, destacado: false
+  })
   const [form, setForm] = useState({
     nombre: '', descripcion: '', precio: '', categoria_id: '',
     imagen_url: '', disponible: true, destacado: false
@@ -921,6 +955,28 @@ function PlatosManager({ pageNum = 1 }: { pageNum?: number }) {
     setUploading(false)
   }
 
+  const handleEditImageSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+
+    const reader = new FileReader()
+    reader.onload = (event) => {
+      setPreviewImg(event.target?.result as string)
+    }
+    reader.readAsDataURL(file)
+
+    setUploading(true)
+    try {
+      const result = await uploadApi.imagen(file)
+      setEditForm(prev => ({ ...prev, imagen_url: result.url }))
+    } catch (error: unknown) {
+      const err = error as { response?: { data?: { message?: string } } }
+      const msg = err.response?.data?.message || 'Error al subir la imagen'
+      addToast(msg, 'error')
+    }
+    setUploading(false)
+  }
+
   const createMutation = useMutation({
     mutationFn: (data: Record<string, unknown>) => platosApi.create(data),
     onSuccess: () => {
@@ -934,6 +990,16 @@ function PlatosManager({ pageNum = 1 }: { pageNum?: number }) {
   const updateMutation = useMutation({
     mutationFn: ({ id, data }: { id: number; data: Partial<{ disponible: boolean; destacado: boolean }> }) => platosApi.update(id, data),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['platos'] })
+  })
+
+  const editMutation = useMutation({
+    mutationFn: ({ id, data }: { id: number; data: Record<string, unknown> }) => platosApi.update(id, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['platos'] })
+      setEditingPlato(null)
+      setEditForm({ nombre: '', descripcion: '', precio: '', categoria_id: '', imagen_url: '', disponible: true, destacado: false })
+      setPreviewImg('')
+    }
   })
 
   const deleteMutation = useMutation({
@@ -950,8 +1016,21 @@ function PlatosManager({ pageNum = 1 }: { pageNum?: number }) {
     })
   }
 
+  const handleEdit = (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!editingPlato) return
+    editMutation.mutate({
+      id: editingPlato.id,
+      data: {
+        ...editForm,
+        precio: parseFloat(editForm.precio),
+        categoria_id: parseInt(editForm.categoria_id)
+      }
+    })
+  }
+
   const toggleField = (plato: { id: number; [key: string]: unknown }, field: string) => {
-    updateMutation.mutate({ id: plato.id, data: { ...plato, [field]: !plato[field] } })
+    updateMutation.mutate({ id: plato.id, data: { [field]: !plato[field] } as Partial<{ disponible: boolean; destacado: boolean }> })
   }
 
   const paginatedPlatos = platos.slice(
@@ -970,7 +1049,7 @@ function PlatosManager({ pageNum = 1 }: { pageNum?: number }) {
         <h2 className="text-2xl font-bold font-heading">Gestión de Platos</h2>
         <button
           onClick={() => setShowForm(!showForm)}
-          className="px-4 py-2 rounded-lg bg-accent text-white font-medium hover:opacity-90 transition"
+          className="px-4 py-2 rounded-lg bg-accent text-carbon font-medium hover:opacity-90 transition"
         >
           {showForm ? 'Cancelar' : 'Nuevo Plato'}
         </button>
@@ -1042,8 +1121,90 @@ function PlatosManager({ pageNum = 1 }: { pageNum?: number }) {
             </div>
           </div>
           <button type="submit" disabled={createMutation.isPending}
-            className="px-6 py-2 rounded-lg bg-accent text-white font-medium hover:opacity-90 transition disabled:opacity-50">
+            className="px-6 py-2 rounded-lg bg-accent text-carbon font-medium hover:opacity-90 transition disabled:opacity-50">
             {createMutation.isPending ? 'Creando...' : 'Crear Plato'}
+          </button>
+        </form>
+      )}
+
+      {editingPlato && (
+        <form onSubmit={handleEdit} className="bg-surface p-6 rounded-lg shadow mb-8 space-y-4 border-2 border-accent">
+          <div className="flex justify-between items-center">
+            <h3 className="text-lg font-semibold">Editando: {editingPlato.nombre}</h3>
+            <button
+              type="button"
+              onClick={() => { setEditingPlato(null); setEditForm({ nombre: '', descripcion: '', precio: '', categoria_id: '', imagen_url: '', disponible: true, destacado: false }); setPreviewImg('') }}
+              className="px-3 py-1 rounded bg-bg-secondary text-sm"
+            >
+              Cancelar
+            </button>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div>
+              <label className="block text-sm font-medium mb-1">Nombre *</label>
+              <input type="text" value={editForm.nombre} onChange={(e) => setEditForm({ ...editForm, nombre: e.target.value })}
+                className="w-full px-3 py-2 border border-border rounded-lg bg-bg-secondary" required />
+            </div>
+            <div>
+              <label className="block text-sm font-medium mb-1">Precio *</label>
+              <input type="number" step="0.01" min="0" value={editForm.precio} onChange={(e) => setEditForm({ ...editForm, precio: e.target.value })}
+                className="w-full px-3 py-2 border border-border rounded-lg bg-bg-secondary" required />
+            </div>
+            <div>
+              <label className="block text-sm font-medium mb-1">Categoría *</label>
+              <select value={editForm.categoria_id} onChange={(e) => setEditForm({ ...editForm, categoria_id: e.target.value })}
+                className="w-full px-3 py-2 border border-border rounded-lg bg-bg-secondary" required>
+                <option value="">Seleccionar</option>
+                {categorias.map(c => <option key={c.id} value={c.id}>{c.nombre}</option>)}
+              </select>
+            </div>
+            <div className="md:col-span-2">
+              <label className="block text-sm font-medium mb-1">Descripción</label>
+              <textarea value={editForm.descripcion} onChange={(e) => setEditForm({ ...editForm, descripcion: e.target.value })}
+                className="w-full px-3 py-2 border border-border rounded-lg bg-bg-secondary" rows={2} />
+            </div>
+            <div>
+              <label className="block text-sm font-medium mb-1">Imagen</label>
+              <input 
+                type="file" 
+                accept="image/*"
+                onChange={handleEditImageSelect}
+                className="w-full px-3 py-2 border border-border rounded-lg bg-bg-secondary file:mr-4 file:py-1 file:px-3 file:rounded-lg file:border-0 file:bg-accent file:text-white file:cursor-pointer"
+              />
+              {(previewImg || editForm.imagen_url) && (
+                <div className="mt-2 relative w-24 h-24 rounded-lg overflow-hidden border border-border">
+                  <img 
+                    src={previewImg || editForm.imagen_url} 
+                    alt="Vista previa de la imagen" 
+                    className="w-full h-full object-cover"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => { setEditForm({ ...editForm, imagen_url: '' }); setPreviewImg('') }}
+                    className="absolute top-1 right-1 bg-error text-white rounded-full p-1 hover:opacity-90"
+                  >
+                    <X size={12} />
+                  </button>
+                </div>
+              )}
+              {uploading && <p className="text-sm text-text-muted mt-1">Subiendo imagen...</p>}
+            </div>
+            <div className="flex items-end gap-6 pb-2">
+              <label className="flex items-center gap-2 cursor-pointer">
+                <input type="checkbox" checked={editForm.disponible} onChange={(e) => setEditForm({ ...editForm, disponible: e.target.checked })}
+                  className="w-4 h-4 rounded border-border accent-accent" />
+                <span className="text-sm font-medium">Disponible</span>
+              </label>
+              <label className="flex items-center gap-2 cursor-pointer">
+                <input type="checkbox" checked={editForm.destacado} onChange={(e) => setEditForm({ ...editForm, destacado: e.target.checked })}
+                  className="w-4 h-4 rounded border-border accent-accent" />
+                <span className="text-sm font-medium">Destacado</span>
+              </label>
+            </div>
+          </div>
+          <button type="submit" disabled={editMutation.isPending}
+            className="px-6 py-2 rounded-lg bg-accent text-carbon font-medium hover:opacity-90 transition disabled:opacity-50">
+            {editMutation.isPending ? 'Guardando...' : 'Guardar Cambios'}
           </button>
         </form>
       )}
@@ -1071,7 +1232,7 @@ function PlatosManager({ pageNum = 1 }: { pageNum?: number }) {
                 <td className="px-4 py-3" data-label="Disponible">
                   <button
                     onClick={() => toggleField(plato, 'disponible')}
-                    className={`w-8 h-5 rounded-full transition relative ${plato.disponible ? 'bg-accent' : 'bg-text-muted'}`}
+                    className={`w-8 h-5 rounded-full transition relative ${plato.disponible ? 'bg-accent' : 'bg-gray-300 dark:bg-gray-600'}`}
                     title={plato.disponible ? 'Disponible' : 'No disponible'}
                     role="switch"
                     aria-checked={plato.disponible}
@@ -1083,7 +1244,7 @@ function PlatosManager({ pageNum = 1 }: { pageNum?: number }) {
                 <td className="px-4 py-3" data-label="Destacado">
                   <button
                     onClick={() => toggleField(plato, 'destacado')}
-                    className={`w-8 h-5 rounded-full transition relative ${plato.destacado ? 'bg-accent' : 'bg-text-muted'}`}
+                    className={`w-8 h-5 rounded-full transition relative ${plato.destacado ? 'bg-accent' : 'bg-gray-300 dark:bg-gray-600'}`}
                     title={plato.destacado ? 'Destacado' : 'No destacado'}
                     role="switch"
                     aria-checked={plato.destacado}
@@ -1093,13 +1254,34 @@ function PlatosManager({ pageNum = 1 }: { pageNum?: number }) {
                   </button>
                 </td>
                 <td className="px-4 py-3 text-center" data-label="Acciones">
-                  <button
-                    onClick={() => { if (confirm('¿Eliminar este plato?')) deleteMutation.mutate(plato.id) }}
-                    className="text-error hover:opacity-80 transition text-sm"
-                    disabled={deleteMutation.isPending}
-                  >
-                    Eliminar
-                  </button>
+                  <div className="flex items-center justify-center gap-2">
+                    <button
+                      onClick={() => {
+                        setEditingPlato(plato)
+                        setEditForm({
+                          nombre: plato.nombre,
+                          descripcion: plato.descripcion || '',
+                          precio: String(plato.precio),
+                          categoria_id: String(plato.categoria_id),
+                          imagen_url: plato.imagen_url || '',
+                          disponible: plato.disponible,
+                          destacado: plato.destacado
+                        })
+                        setPreviewImg(plato.imagen_url || '')
+                      }}
+                       className="text-carbon hover:text-accent transition text-sm flex items-center gap-1"
+                    >
+                      <Pencil size={14} />
+                      Editar
+                    </button>
+                    <button
+                      onClick={() => { if (confirm('¿Eliminar este plato?')) deleteMutation.mutate(plato.id) }}
+                      className="text-error hover:opacity-80 transition text-sm"
+                      disabled={deleteMutation.isPending}
+                    >
+                      Eliminar
+                    </button>
+                  </div>
                 </td>
               </tr>
             ))}
@@ -1108,6 +1290,129 @@ function PlatosManager({ pageNum = 1 }: { pageNum?: number }) {
         <Paginacion currentPage={platoPage} totalPages={totalPlatoPages} onPageChange={setPlatoPage} />
         {platos.length === 0 && !isLoading && (
           <p className="text-center py-8 text-text-muted">No hay platos registrados.</p>
+        )}
+      </div>
+    </div>
+  )
+}
+
+function UsuariosManager() {
+  const queryClient = useQueryClient()
+  const { addToast } = useToast()
+
+  const { data: usuariosResp, isLoading, isError, error } = useQuery({
+    queryKey: ['usuarios'],
+    queryFn: () => usuariosApi.getAll({ limit: 100 })
+  })
+  const usuarios = usuariosResp?.data ?? []
+
+  const updateRolMutation = useMutation({
+    mutationFn: ({ id, rol }: { id: number; rol: string }) => usuariosApi.updateRol(id, rol),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['usuarios'] })
+      addToast('Rol actualizado correctamente', 'success')
+    },
+    onError: () => addToast('Error al cambiar el rol', 'error')
+  })
+
+  const deleteUserMutation = useMutation({
+    mutationFn: (id: number) => usuariosApi.delete(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['usuarios'] })
+      addToast('Usuario eliminado correctamente', 'success')
+    },
+    onError: () => addToast('Error al eliminar el usuario', 'error')
+  })
+
+  if (isLoading) {
+    return <div className="flex items-center justify-center py-12" role="status" aria-live="polite"><Loader2 className="animate-spin text-accent" size={40} /><span className="sr-only">Cargando usuarios...</span></div>
+  }
+
+  if (isError) {
+    return (
+      <div className="text-center py-12" role="alert">
+        <p className="text-error text-lg font-medium">Error al cargar usuarios</p>
+        <p className="text-text-muted mt-2">{(error as { message?: string })?.message || 'Intenta recargar la página'}</p>
+        <button onClick={() => window.location.reload()} className="mt-4 px-4 py-2 bg-accent text-carbon rounded-lg hover:opacity-90">
+          Recargar
+        </button>
+      </div>
+    )
+  }
+
+  return (
+    <div>
+      <h2 className="text-2xl font-bold font-heading mb-6">Gestión de Usuarios</h2>
+
+      <div className="bg-surface rounded-lg shadow overflow-x-auto overscroll-x-contain">
+        <table className="w-full responsive-table">
+          <thead className="bg-bg-secondary">
+            <tr>
+              <th className="px-4 py-3 text-left">Nombre</th>
+              <th className="px-4 py-3 text-left">Email</th>
+              <th className="px-4 py-3 text-left">Rol</th>
+              <th className="px-4 py-3 text-left">Estado</th>
+              <th className="px-4 py-3 text-center">Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            {usuarios.map((user: { id: number; nombre: string; apellidos: string; email: string; rol: string; estado_solicitud: string }) => (
+              <tr key={user.id} className="border-t border-border">
+                <td className="px-4 py-3 font-medium" data-label="Nombre">
+                  {user.nombre} {user.apellidos}
+                </td>
+                <td className="px-4 py-3 text-text-muted" data-label="Email">{user.email}</td>
+                <td className="px-4 py-3" data-label="Rol">
+                  <span className={`px-2 py-0.5 rounded text-xs font-medium ${
+                    user.rol === 'admin' ? 'bg-purple-100 text-purple-800' : 'bg-blue-100 text-blue-800'
+                  }`}>
+                    {user.rol}
+                  </span>
+                </td>
+                <td className="px-4 py-3" data-label="Estado">
+                  <span className={`px-2 py-0.5 rounded text-xs font-medium ${
+                    user.estado_solicitud === 'aprobado' || !user.estado_solicitud
+                      ? 'bg-green-100 text-green-800'
+                      : user.estado_solicitud === 'pendiente'
+                      ? 'bg-yellow-100 text-yellow-800'
+                      : 'bg-red-100 text-red-800'
+                  }`}>
+                    {user.estado_solicitud || 'aprobado'}
+                  </span>
+                </td>
+                <td className="px-4 py-3 text-center" data-label="Acciones">
+                  <div className="flex items-center justify-center gap-2">
+                    <button
+                      onClick={() => {
+                        const newRol = user.rol === 'admin' ? 'cliente' : 'admin'
+                        if (confirm(`¿Cambiar el rol de ${user.nombre} ${user.apellidos} a "${newRol}"?`)) {
+                          updateRolMutation.mutate({ id: user.id, rol: newRol })
+                        }
+                      }}
+                      disabled={updateRolMutation.isPending}
+                      className="px-3 py-1.5 rounded-lg bg-accent/20 text-carbon font-medium text-sm hover:bg-accent/30 transition disabled:opacity-50"
+                    >
+                      Cambiar Rol
+                    </button>
+                    <button
+                      onClick={() => {
+                        if (confirm(`¿Eliminar al usuario ${user.nombre} ${user.apellidos}? Esta acción no se puede deshacer.`)) {
+                          deleteUserMutation.mutate(user.id)
+                        }
+                      }}
+                      disabled={deleteUserMutation.isPending}
+                      className="px-3 py-1.5 rounded-lg bg-error/20 text-error font-medium text-sm hover:bg-error/30 transition disabled:opacity-50"
+                    >
+                      Borrar
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+        {usuarios.length === 0 && !isLoading && (
+          <p className="text-center py-8 text-text-muted">No hay usuarios registrados.</p>
         )}
       </div>
     </div>
