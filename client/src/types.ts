@@ -22,6 +22,7 @@ export interface Plato {
   id: number
   nombre: string
   descripcion: string
+  ingredientes?: string
   precio: number
   categoria_id: number
   categoria?: string

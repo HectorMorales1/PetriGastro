@@ -16,6 +16,8 @@ yarn-error.log*
 # Build
 dist/
 build/
+uploads/*
+!uploads/.gitkeep
 
 # IDE
 .vscode/
