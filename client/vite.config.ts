@@ -22,9 +22,7 @@ export default defineConfig({
         ]
       },
       workbox: {
-        // Registramos solo los assets principales generados por Vite
         globPatterns: ['assets/**/*.{js,css}', 'index.html'],
-        // Reemplazamos la propiedad conflictiva por 'globIgnores' tal como pide Workbox
         globIgnores: ['**/*.gz', 'node_modules/**/*'],
         runtimeCaching: [
           {
@@ -60,10 +58,18 @@ export default defineConfig({
     chunkSizeWarningLimit: 300,
     rollupOptions: {
       output: {
-        manualChunks: {
-          vendor: ['react', 'react-dom', 'react-router-dom'],
-          ui: ['lucide-react'],
-          query: ['@tanstack/react-query']
+        manualChunks(id) {
+          if (id.includes('node_modules')) {
+            if (id.includes('react') || id.includes('react-dom') || id.includes('react-router-dom')) {
+              return 'vendor';
+            }
+            if (id.includes('lucide-react')) {
+              return 'ui';
+            }
+            if (id.includes('@tanstack/react-query')) {
+              return 'query';
+            }
+          }
         }
       }
     }
