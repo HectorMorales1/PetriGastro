@@ -57,7 +57,16 @@ export default defineConfig({
     compression({ algorithm: 'gzip', ext: '.gz' })
   ],
   build: {
-    chunkSizeWarningLimit: 1000
+    chunkSizeWarningLimit: 300,
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          vendor: ['react', 'react-dom', 'react-router-dom'],
+          ui: ['lucide-react'],
+          query: ['@tanstack/react-query']
+        }
+      }
+    }
   },
   server: {
     port: 5173,

@@ -1,14 +1,19 @@
 import axios from 'axios'
 import { QueryClient } from '@tanstack/react-query'
-import { safeGetItem } from '../utils/storage'
+import { safeGetItem, safeSetItem, safeRemoveItem } from '../utils/storage'
 
 export const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/api'
 
 const AUTH_ROUTES = ['/auth/login', '/auth/register']
 
-;['petri_user', 'petriCart', 'petri_theme', 'petri_token', 'petri_refresh_token'].forEach(key => {
+;['petri_user', 'petriCart', 'petri_theme'].forEach(key => {
   if (safeGetItem(key) === null) {
     localStorage.removeItem(key)
+  }
+})
+;['petri_token', 'petri_refresh_token'].forEach(key => {
+  if (safeGetItem(key, 'session') === null) {
+    sessionStorage.removeItem(key)
   }
 })
 
@@ -17,7 +22,7 @@ export const api = axios.create({
 })
 
 api.interceptors.request.use((config) => {
-  const token = safeGetItem('petri_token')
+  const token = safeGetItem('petri_token', 'session')
   if (token) {
     config.headers.Authorization = `Bearer ${token.trim()}`
   }
@@ -35,7 +40,7 @@ api.interceptors.response.use(
       }
       originalRequest._retry = true
       try {
-        const refreshToken = safeGetItem('petri_refresh_token')
+        const refreshToken = safeGetItem('petri_refresh_token', 'session')
         if (refreshToken) {
           const response = await fetch(`${API_URL}/auth/refresh`, {
             method: 'POST',
@@ -45,18 +50,19 @@ api.interceptors.response.use(
           if (response.ok) {
             const data = await response.json()
             if (data.token) {
-              localStorage.setItem('petri_token', data.token)
-              localStorage.setItem('petri_refresh_token', data.refreshToken || '')
+              safeSetItem('petri_token', data.token, 'session')
+              safeSetItem('petri_refresh_token', data.refreshToken || '', 'session')
               originalRequest.headers.Authorization = `Bearer ${data.token}`
               return api(originalRequest)
             }
           }
         }
       } catch (e) {
+        console.error('Error al refrescar token:', e)
       }
-      localStorage.removeItem('petri_token')
-      localStorage.removeItem('petri_refresh_token')
-      localStorage.removeItem('petri_user')
+      safeRemoveItem('petri_token', 'session')
+      safeRemoveItem('petri_refresh_token', 'session')
+      safeRemoveItem('petri_user')
       window.location.href = '/login'
     }
     return Promise.reject(error)
@@ -97,22 +103,20 @@ export const pedidosApi = {
   updateEstado: (id, estado) => api.put(`/pedidos/${id}/estado`, { estado }).then(r => r.data)
 }
 
-export const reservasApi = {
-  create: (data) => api.post('/reservas', data).then(r => r.data),
-  getAll: () => api.get('/reservas').then(r => r.data)
-}
-
 export const authApi = {
   login: (email, password) => api.post('/auth/login', { email, password }).then(r => r.data),
   register: (nombre, apellidos, email, password) => api.post('/auth/register', { nombre, apellidos, email, password }).then(r => r.data),
-  verificarEmail: (token) => api.get(`/auth/verificar?token=${token}`).then(r => r.data)
+  verificarEmail: (token) => api.get(`/auth/verificar?token=${token}`).then(r => r.data),
+  invalidateSessions: () => api.post('/auth/invalidate-sessions').then(r => r.data)
 }
 
 export const usuariosApi = {
   getSolicitudes: () => api.get('/usuarios/solicitudes').then(r => r.data),
   getAll: (params?) => api.get('/usuarios', { params }).then(r => r.data),
   aprobar: (id) => api.put(`/usuarios/${id}/aprobar`).then(r => r.data),
-  rechazar: (id, motivo) => api.put(`/usuarios/${id}/rechazar`, { motivo }).then(r => r.data)
+  rechazar: (id, motivo) => api.put(`/usuarios/${id}/rechazar`, { motivo }).then(r => r.data),
+  delete: (id: number) => api.delete(`/usuarios/${id}`).then(r => r.data),
+  updateRol: (id: number, rol: string) => api.put(`/usuarios/${id}/rol`, { rol }).then(r => r.data)
 }
 
 export const fechasApi = {

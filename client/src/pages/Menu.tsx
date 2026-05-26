@@ -1,14 +1,112 @@
 import { useState, useEffect, useCallback } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { Helmet } from 'react-helmet-async'
-import { Search, X, Loader2 } from 'lucide-react'
+import { Search, X, Loader2, ImageOff, Plus, Check } from 'lucide-react'
 import MenuCard from '../components/MenuCard'
 import { categoriasApi, platosApi } from '../services/api'
+import { useCart } from '../context/CartContext'
+import type { Plato } from '../types'
+
+function PlatoDetailModal({ plato, onClose }: { plato: Plato; onClose: () => void }) {
+  const { addItem } = useCart()
+  const [added, setAdded] = useState(false)
+  const [imgError, setImgError] = useState(false)
+
+  const handleAdd = () => {
+    addItem(plato)
+    setAdded(true)
+    setTimeout(() => setAdded(false), 2000)
+  }
+
+  return (
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center p-4"
+      onClick={onClose}
+      role="dialog"
+      aria-modal="true"
+      aria-label={`Detalle de ${plato.nombre}`}
+    >
+      <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" />
+      <div
+        className="relative bg-surface rounded-2xl overflow-hidden max-w-lg w-full max-h-[90vh] overflow-y-auto shadow-2xl"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <button
+          onClick={onClose}
+          className="absolute top-4 right-4 z-10 w-10 h-10 flex items-center justify-center bg-black/40 hover:bg-black/60 rounded-full text-white transition-colors"
+          aria-label="Cerrar"
+        >
+          <X size={20} />
+        </button>
+
+        <div className="aspect-video bg-bg-tertiary relative">
+          {plato.imagen_url && !imgError ? (
+            <img
+              src={plato.imagen_url}
+              alt={plato.nombre}
+              className="w-full h-full object-cover"
+              onError={() => setImgError(true)}
+            />
+          ) : (
+            <div className="w-full h-full flex flex-col items-center justify-center text-text-muted gap-2">
+              <ImageOff size={40} className="opacity-50" />
+              <span className="text-sm">Sin imagen</span>
+            </div>
+          )}
+        </div>
+
+        <div className="p-6 space-y-4">
+          <div>
+            <h2 className="text-2xl font-bold font-heading mb-1">{plato.nombre}</h2>
+            {plato.categoria && (
+              <span className="inline-block px-3 py-1 bg-bg-tertiary rounded-full text-xs font-medium text-text-muted">
+                {plato.categoria}
+              </span>
+            )}
+          </div>
+
+          <p className="text-text-muted leading-relaxed">
+            {plato.descripcion || 'Sin descripción disponible.'}
+          </p>
+
+          <div className="flex items-center justify-between pt-4 border-t border-border">
+            <span className="text-3xl font-bold text-accent">
+              {Number(plato.precio).toFixed(2)}€
+            </span>
+            <button
+              onClick={handleAdd}
+              disabled={!plato.disponible}
+              title={!plato.disponible ? 'Plato no disponible' : ''}
+              className={`flex items-center gap-2 px-6 py-3 rounded-full font-medium transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed ${
+                added
+                  ? 'bg-verde-oliva text-white'
+                  : 'bg-accent text-carbon hover:scale-105'
+              }`}
+            >
+              {added ? (
+                <>
+                  <Check size={18} />
+                  <span>Añadido</span>
+                </>
+              ) : (
+                <>
+                  <Plus size={18} />
+                  <span>Añadir al carrito</span>
+                </>
+              )}
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}
 
 export default function Menu() {
   const [categoriaActiva, setCategoriaActiva] = useState('todas')
   const [busqueda, setBusqueda] = useState('')
   const [debouncedSearch, setDebouncedSearch] = useState('')
+  const [selectedPlato, setSelectedPlato] = useState<Plato | null>(null)
 
   const { data: categorias = [] } = useQuery({
     queryKey: ['categorias'],
@@ -95,7 +193,7 @@ export default function Menu() {
             onClick={() => setCategoriaActiva('todas')}
             className={`px-5 py-2.5 rounded-full whitespace-nowrap font-medium transition-all duration-200 ${
               categoriaActiva === 'todas' 
-                ? 'bg-accent text-white shadow-md' 
+                ? 'bg-accent text-carbon shadow-md' 
                 : 'bg-bg-secondary hover:bg-bg-tertiary'
             }`}
           >
@@ -109,10 +207,9 @@ export default function Menu() {
               onClick={() => setCategoriaActiva(cat.nombre)}
               className={`px-5 py-2.5 rounded-full whitespace-nowrap font-medium transition-all duration-200 ${
                 categoriaActiva === cat.nombre 
-                  ? 'bg-accent text-white shadow-md' 
+? 'bg-accent text-carbon shadow-md' 
                   : 'bg-bg-secondary hover:bg-bg-tertiary'
-              }`}
-            >
+            }`} >
               {cat.icono && <span className="mr-1">{cat.icono}</span>}
               {cat.nombre}
             </button>
@@ -128,7 +225,11 @@ export default function Menu() {
           <>
             {platos.length > 0 ? (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {platos.map(plato => <MenuCard key={plato.id} plato={plato} />)}
+                {platos.map(plato => (
+                  <div key={plato.id} onClick={() => setSelectedPlato(plato)} className="cursor-pointer">
+                    <MenuCard plato={plato} />
+                  </div>
+                ))}
               </div>
             ) : (
               <div className="text-center py-12" role="status">
@@ -137,7 +238,7 @@ export default function Menu() {
                 </p>
                 <button 
                   onClick={clearSearch}
-                  className="mt-4 text-accent hover:underline"
+                  className="mt-4 text-carbon hover:underline"
                 >
                   Ver todos los platos
                 </button>
@@ -146,6 +247,10 @@ export default function Menu() {
           </>
         )}
       </div>
+
+      {selectedPlato && (
+        <PlatoDetailModal plato={selectedPlato} onClose={() => setSelectedPlato(null)} />
+      )}
     </>
   )
 }

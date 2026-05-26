@@ -21,7 +21,7 @@ export default function Login() {
   const { login, register } = useAuth()
   const from = location.state?.from?.pathname || '/'
 
-  const handleLogin = async (e) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
     setError('')
     setSuccessMessage('')
@@ -43,7 +43,7 @@ export default function Login() {
     }
   }
 
-  const handleRegister = async (e) => {
+  const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault()
     setError('')
     setSuccessMessage('')
@@ -132,7 +132,7 @@ export default function Login() {
                 <button
                   type="submit"
                   disabled={loading}
-                  className="w-full bg-accent text-white py-3 rounded-lg font-semibold hover:opacity-90 transition disabled:opacity-50 flex items-center justify-center gap-2"
+                  className="w-full bg-accent text-carbon py-3 rounded-lg font-semibold hover:opacity-90 transition disabled:opacity-50 flex items-center justify-center gap-2"
                 >
                   {loading ? (
                     <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
@@ -155,7 +155,7 @@ export default function Login() {
                   <p className="text-text-muted">{successMessage}</p>
                   <button
                     onClick={() => { setIsRegisterMode(false); setSuccessMessage('') }}
-                    className="text-accent font-medium hover:underline"
+                    className="text-carbon font-medium hover:underline"
                   >
                     Volver al inicio de sesión
                   </button>
@@ -228,7 +228,7 @@ export default function Login() {
                   <button
                     type="submit"
                     disabled={loading}
-                    className="w-full bg-accent text-white py-3 rounded-lg font-semibold hover:opacity-90 transition disabled:opacity-50 flex items-center justify-center gap-2"
+                    className="w-full bg-accent text-carbon py-3 rounded-lg font-semibold hover:opacity-90 transition disabled:opacity-50 flex items-center justify-center gap-2"
                   >
                     {loading ? (
                       <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
@@ -248,7 +248,7 @@ export default function Login() {
                 <button
                   type="button"
                   onClick={() => { setIsRegisterMode(true); setError(''); setSuccessMessage('') }}
-                  className="w-full text-accent font-medium hover:underline text-sm text-center"
+                  className="w-full text-carbon font-medium hover:underline text-sm text-center"
                 >
                   ¿No tienes cuenta? Solicita acceso aquí
                 </button>
@@ -256,7 +256,7 @@ export default function Login() {
                 <button
                   type="button"
                   onClick={() => { setIsRegisterMode(false); setError(''); setSuccessMessage('') }}
-                  className="w-full text-accent font-medium hover:underline text-sm text-center"
+                  className="w-full text-carbon font-medium hover:underline text-sm text-center"
                 >
                   ¿Ya tienes cuenta? Inicia sesión
                 </button>

@@ -32,7 +32,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
     localStorage.setItem('petriCart', JSON.stringify(cart))
   }, [cart])
 
-  const addItem = (plato) => {
+  const addItem = (plato: Plato) => {
     setCart(prev => {
       const existing = prev.find(item => item.id === plato.id)
       if (existing) {
@@ -42,16 +42,16 @@ export function CartProvider({ children }: { children: ReactNode }) {
             : item
         )
       }
-      return [...prev, { ...plato, cantidad: 1 }]
+      return [...prev, { id: plato.id, nombre: plato.nombre, precio: plato.precio, cantidad: 1, categoria_id: plato.categoria_id } as CartItem]
     })
     setIsOpen(true)
   }
 
-  const removeItem = (id) => {
+  const removeItem = (id: number) => {
     setCart(prev => prev.filter(item => item.id !== id))
   }
 
-  const updateQuantity = (id, cantidad) => {
+  const updateQuantity = (id: number, cantidad: number) => {
     if (cantidad <= 0) {
       removeItem(id)
       return
