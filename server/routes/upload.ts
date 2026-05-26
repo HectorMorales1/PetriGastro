@@ -1,6 +1,7 @@
 import express, { Request, Response, NextFunction } from 'express'
 import multer, { FileFilterCallback } from 'multer'
 import cloudinary from '../config/cloudinary'
+import logger from '../config/logger'
 import { authMiddleware, adminMiddleware } from '../middleware/auth'
 
 const router = express.Router()
@@ -23,11 +24,12 @@ router.post('/imagen', authMiddleware, adminMiddleware, (req: Request, res: Resp
   upload.single('imagen')(req, res, (err: unknown) => {
     const multerError = err as (Error & { code?: string })
     if (err) {
-      if (multerError.code === 'LIMIT_FILE_SIZE') {
-        res.status(400).json({ message: 'La imagen es demasiado grande. Máximo 5MB' })
-        return
+      const messages: Record<string, string> = {
+        LIMIT_FILE_SIZE: 'La imagen es demasiado grande. Máximo 5MB',
+        LIMIT_FILE_COUNT: 'Demasiados archivos',
+        LIMIT_UNEXPECTED_FILE: 'Tipo de archivo no esperado'
       }
-      res.status(400).json({ message: multerError.message })
+      res.status(400).json({ message: messages[multerError.code || ''] || 'Error al subir el archivo' })
       return
     }
     next()
@@ -55,7 +57,7 @@ router.post('/imagen', authMiddleware, adminMiddleware, (req: Request, res: Resp
 
     res.json({ url: result.secure_url })
   } catch (error) {
-    console.error('Error subiendo a Cloudinary:', error)
+    logger.error({ err: error, context: 'upload' }, 'Error subiendo a Cloudinary')
     res.status(500).json({ message: 'Error al subir la imagen' })
   }
 })

@@ -104,7 +104,7 @@ export default function CartDrawer() {
       aria-label="Carrito de compras"
     >
       <div
-        className="absolute inset-0 bg-black/50"
+        className="absolute inset-0 bg-black/90"
         onClick={() => setIsOpen(false)}
       />
       <div className="relative w-full max-w-md bg-surface h-full shadow-xl flex flex-col">

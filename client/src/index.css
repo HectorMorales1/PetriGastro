@@ -28,11 +28,11 @@
   --color-surface: #FFFFFF;
   --color-text: #1C1917;
   --color-text-muted: #5C534D;
-  --color-text-light: #8A827A;
+  --color-text-light: #6B625A;
   --color-carbon: #1C1917;
   --color-carbon-light: #3A3A3A;
-  --color-border: rgba(0, 0, 0, 0.08);
-  --color-success: #5A7A5A;
+  --color-border: rgba(0, 0, 0, 0.12);
+  --color-success: #4A7A4A;
   --color-error: #B84545;
 }
 
@@ -201,6 +201,16 @@ html {
 
 button, a {
   touch-action: manipulation;
+}
+
+input[type="checkbox"]:not(:checked) {
+  border-color: #6B7280;
+  background-color: #E5E7EB;
+}
+
+select option {
+  background-color: var(--color-surface);
+  color: var(--color-text);
 }
 
 @media (max-width: 767px) {

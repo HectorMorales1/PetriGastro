@@ -6,6 +6,13 @@ import { feedbackApi } from '../services/api'
 import { useAuth } from '../context/AuthContext'
 import { getEstadoColor } from '../utils/estadoPedido'
 
+interface PedidoItem {
+  nombre: string
+  cantidad: number
+  precio_unitario: string
+  imagen_url?: string
+}
+
 interface PedidoConFeedback {
   id: number
   total: string
@@ -15,6 +22,7 @@ interface PedidoConFeedback {
   notas: string | null
   calificacion: number | null
   feedback_comentario: string | null
+  items?: PedidoItem[]
 }
 
 export default function MisPedidos() {
@@ -27,7 +35,7 @@ export default function MisPedidos() {
   const { data: pedidos = [], isLoading } = useQuery({
     queryKey: ['misPedidos'],
     queryFn: feedbackApi.getMisPedidos,
-    refetchInterval: 15000
+    refetchInterval: 60000
   })
 
   const createFeedbackMutation = useMutation({
@@ -102,6 +110,27 @@ export default function MisPedidos() {
 
                 {pedido.notas && (
                   <p className="text-sm text-text-muted mb-4">Notas: {pedido.notas}</p>
+                )}
+
+                {pedido.items && pedido.items.length > 0 && (
+                  <div className="border-t border-border pt-4 mt-4">
+                    <p className="text-sm font-medium mb-2">Platos del pedido:</p>
+                    <div className="space-y-2">
+                      {pedido.items.map((item, idx) => (
+                        <div key={idx} className="flex items-center justify-between text-sm">
+                          <div className="flex items-center gap-2">
+                            {item.imagen_url && (
+                              <img src={item.imagen_url} alt={item.nombre} className="w-8 h-8 rounded object-cover" />
+                            )}
+                            <span className="text-carbon">{item.nombre}</span>
+                          </div>
+                          <span className="text-text-muted">
+                            x{item.cantidad} · {Number(item.precio_unitario).toFixed(2)}€
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
                 )}
 
                 {pedido.estado === 'entregado' && (

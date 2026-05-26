@@ -33,16 +33,24 @@ app.use(helmet({
   contentSecurityPolicy: {
     directives: {
       defaultSrc: ["'self'"],
+      baseUri: ["'self'"],
+      formAction: ["'self'"],
       scriptSrc: ["'self'", `'nonce-${nonce}'`, "https://js.stripe.com"],
       styleSrc: ["'self'", `'nonce-${nonce}'`, "https://fonts.googleapis.com"],
       imgSrc: ["'self'", "data:", "https://res.cloudinary.com", "https://images.unsplash.com"],
       fontSrc: ["'self'", "https://fonts.gstatic.com"],
       connectSrc: ["'self'"],
       frameSrc: ["'none'"],
-      objectSrc: ["'none'"]
+      objectSrc: ["'none'"],
+      upgradeInsecureRequests: []
     }
   },
-  crossOriginEmbedderPolicy: false
+  crossOriginEmbedderPolicy: false,
+  hsts: {
+    maxAge: 31536000,
+    includeSubDomains: true,
+    preload: true
+  }
 }))
 
 app.use(cors({
@@ -75,10 +83,20 @@ const refreshLimiter = rateLimit({
   message: 'Demasiadas solicitudes de refresco, intenta más tarde'
 })
 
+const writeLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 50,
+  message: 'Demasiadas solicitudes, intenta más tarde'
+})
+
 app.use('/api/', generalLimiter)
 app.use('/api/auth/login', loginLimiter)
 app.use('/api/auth/register', loginLimiter)
 app.use('/api/auth/refresh', refreshLimiter)
+app.use('/api/feedback', writeLimiter)
+app.use('/api/usuarios', writeLimiter)
+app.use('/api/fechas', writeLimiter)
+app.use('/api/upload', writeLimiter)
 
 app.use('/api/auth', authRoutes)
 app.use('/api/platos', platosRoutes)

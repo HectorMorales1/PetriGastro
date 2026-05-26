@@ -13,6 +13,7 @@ router.post('/', authMiddleware, adminMiddleware, validate([
   body('nombre').trim().notEmpty().withMessage('Nombre del plato requerido'),
   body('precio').isFloat({ min: 0 }).withMessage('Precio debe ser un número positivo'),
   body('descripcion').optional().trim(),
+  body('ingredientes').optional().trim(),
   body('imagen_url').optional().trim(),
   body('disponible').optional().isBoolean(),
   body('destacado').optional().isBoolean()
@@ -22,6 +23,7 @@ router.put('/:id', authMiddleware, adminMiddleware, validate([
   body('nombre').optional().trim().escape().notEmpty().withMessage('Nombre del plato requerido'),
   body('precio').optional().isFloat({ min: 0 }).withMessage('Precio debe ser un número positivo'),
   body('descripcion').optional().trim().escape(),
+  body('ingredientes').optional().trim().escape(),
   body('imagen_url').optional().trim(),
   body('disponible').optional().isBoolean(),
   body('destacado').optional().isBoolean()
