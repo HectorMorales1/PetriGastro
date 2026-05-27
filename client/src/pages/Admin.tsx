@@ -20,7 +20,7 @@ export default function Admin() {
   const queryClient = useQueryClient()
   const [activeTab, setActiveTab] = useState('pedidos')
   const [pedidoPage, setPedidoPage] = useState(1)
-  const [expandedPedido, setExpandedPedido] = useState<number | null>(null)
+
 
   if (!user || user.rol !== 'admin') {
     return (
@@ -151,15 +151,9 @@ export default function Admin() {
                             ✓ Marcar preparado
                           </button>
                         )}
-                        <button
-                          onClick={() => setExpandedPedido(expandedPedido === pedido.id ? null : pedido.id)}
-                          className="w-full text-xs px-2 py-1 rounded bg-bg-secondary text-text-muted font-medium hover:bg-border transition mt-1"
-                        >
-                          {expandedPedido === pedido.id ? '▲ Ocultar platos' : '▼ Ver platos'}
-                        </button>
                       </td>
                     </tr>
-                    {expandedPedido === pedido.id && pedido.items && pedido.items.length > 0 && (
+                    {pedido.items && pedido.items.length > 0 && (
                       <tr className="bg-bg-secondary">
                         <td colSpan={7} className="px-6 py-3">
                           <div className="text-sm">
