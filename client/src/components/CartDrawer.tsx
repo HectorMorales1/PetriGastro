@@ -1,16 +1,10 @@
-import { useState, useEffect, useMemo, useCallback } from 'react'
-import { X, Minus, Plus, Trash2, Loader2, ShoppingBag, Calendar, ImageOff } from 'lucide-react'
+import { useState, useMemo, useCallback } from 'react'
+import { X, Minus, Plus, Trash2, Loader2, ShoppingBag, Calendar } from 'lucide-react'
+import { useQuery } from '@tanstack/react-query'
 import { useCart } from '../context/CartContext'
 import { useToast } from '../context/ToastContext'
 import { pedidosApi, fechasApi } from '../services/api'
 import type { Pedido } from '../types'
-
-interface FechaDisponible {
-  id: number
-  fecha: string
-  activo?: boolean
-  horarios: { id: number; hora: string; disponible: boolean }[]
-}
 
 export default function CartDrawer() {
   const [submitting, setSubmitting] = useState(false)
@@ -18,18 +12,16 @@ export default function CartDrawer() {
   const [pedidoInfo, setPedidoInfo] = useState<Pedido | null>(null)
   const [error, setError] = useState('')
   const { addToast } = useToast()
-  const [fechas, setFechas] = useState<FechaDisponible[]>([])
   const [fechaSeleccionada, setFechaSeleccionada] = useState('')
   const [horaSeleccionada, setHoraSeleccionada] = useState('')
   const { cart, isOpen, setIsOpen, removeItem, updateQuantity, total, clearCart } = useCart()
 
-  useEffect(() => {
-    if (isOpen) {
-      fechasApi.getAll().then(setFechas).catch(() => {
-        addToast('Error al cargar fechas disponibles', 'error')
-      })
-    }
-  }, [isOpen, addToast])
+  const { data: fechas = [] } = useQuery({
+    queryKey: ['fechas', 'cart'],
+    queryFn: () => fechasApi.getAll(),
+    enabled: isOpen,
+    staleTime: 60000
+  })
 
   const fechasActivas = useMemo(() => {
     const hoy = new Date()

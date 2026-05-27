@@ -14,5 +14,6 @@ COPY --from=build /app/server/dist ./server
 COPY --from=build /app/client/dist ./client/dist
 COPY --from=build /app/server/package.json ./server/
 COPY --from=build /app/package.json ./
+COPY --from=build /app/server/node_modules ./server/node_modules
 EXPOSE 3000
 CMD ["node", "server/server.js"]

@@ -33,7 +33,17 @@ jobs:
         working-directory: ./client
         run: npm ci && npm run build
 
-      - name: Deploy
-        run: |
-          echo "Deploying to ${{ github.event.inputs.environment || 'production' }}"
-          echo "Configure your actual deployment steps here"
+      - name: Deploy to VPS
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: ${{ secrets.DEPLOY_HOST }}
+          username: ${{ secrets.DEPLOY_USER }}
+          key: ${{ secrets.DEPLOY_SSH_KEY }}
+          envs: NODE_VERSION
+          script: |
+            cd /opt/petrigastro
+            git pull origin main
+            docker compose -f docker-compose.yml down
+            docker compose -f docker-compose.yml build
+            docker compose -f docker-compose.yml up -d
+            docker system prune -f

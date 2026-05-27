@@ -17,4 +17,4 @@ router.put('/:id', authMiddleware, adminMiddleware, validate([
 ]), categoriaController.update)
 router.delete('/:id', authMiddleware, adminMiddleware, categoriaController.delete)
 
-export = router
+export default router

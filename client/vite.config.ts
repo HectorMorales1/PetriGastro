@@ -4,11 +4,11 @@ import tailwindcss from '@tailwindcss/vite'
 import { VitePWA } from 'vite-plugin-pwa'
 import compression from 'vite-plugin-compression'
 
-export default defineConfig({
+export default defineConfig(({ mode }) => ({
   plugins: [
     react(),
     tailwindcss(),
-    VitePWA({
+    mode === 'production' && VitePWA({
       registerType: 'autoUpdate',
       manifest: {
         name: 'PetriGastro',
@@ -53,7 +53,7 @@ export default defineConfig({
       }
     }),
     compression({ algorithm: 'gzip', ext: '.gz' })
-  ],
+  ].filter(Boolean),
   build: {
     chunkSizeWarningLimit: 300,
     rollupOptions: {
@@ -78,4 +78,4 @@ export default defineConfig({
     port: 5173,
     open: true
   }
-})
+}))

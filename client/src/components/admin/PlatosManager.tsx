@@ -26,10 +26,11 @@ export function PlatosManager({ pageNum = 1 }: { pageNum?: number }) {
   })
 
   const { data: platosResp, isLoading } = useQuery({
-    queryKey: ['platos', 'admin'],
-    queryFn: () => platosApi.getAll({ todas: true })
+    queryKey: ['platos', 'admin', platoPage],
+    queryFn: () => platosApi.getAll({ todas: true, page: platoPage, limit: ITEMS_PER_PAGE })
   })
-  const platos = Array.isArray(platosResp) ? platosResp : []
+  const platos = Array.isArray(platosResp) ? platosResp : platosResp?.data || []
+  const totalPlatoPages = platosResp?.pagination?.totalPages || 0
 
   const { data: categoriasResp } = useQuery({
     queryKey: ['categorias'],
@@ -121,11 +122,7 @@ export function PlatosManager({ pageNum = 1 }: { pageNum?: number }) {
     updateMutation.mutate({ id: plato.id, data: { [field]: !plato[field] } as Partial<{ disponible: boolean; destacado: boolean }> })
   }
 
-  const paginatedPlatos = platos.slice(
-    (platoPage - 1) * ITEMS_PER_PAGE,
-    platoPage * ITEMS_PER_PAGE
-  )
-  const totalPlatoPages = Math.ceil(platos.length / ITEMS_PER_PAGE)
+  const paginatedPlatos = platos
 
   if (isLoading) {
     return <div className="flex items-center justify-center py-12" role="status" aria-live="polite"><Loader2 className="animate-spin text-accent" size={40} /><span className="sr-only">Cargando platos...</span></div>

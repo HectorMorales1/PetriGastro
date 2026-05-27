@@ -19,4 +19,4 @@ router.put('/:id/estado', authMiddleware, adminMiddleware, validate([
   body('estado').isIn(['pendiente', 'confirmado', 'preparando', 'preparado', 'entregado', 'cancelado']).withMessage('Estado inválido')
 ]), pedidoController.updateEstado)
 
-export = router
+export default router

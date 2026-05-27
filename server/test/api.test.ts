@@ -1,6 +1,6 @@
-import { describe, it, expect, beforeAll, afterAll } from 'vitest'
+import { describe, it, expect } from 'vitest'
 import request from 'supertest'
-const { createTestApp } = require('./helpers')
+import { createTestApp } from './helpers'
 
 const app = createTestApp()
 

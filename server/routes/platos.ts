@@ -30,4 +30,4 @@ router.put('/:id', authMiddleware, adminMiddleware, validate([
 ]), platoController.update)
 router.delete('/:id', authMiddleware, adminMiddleware, platoController.delete)
 
-export = router
+export default router

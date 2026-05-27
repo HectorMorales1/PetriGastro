@@ -13,4 +13,4 @@ router.put('/', authMiddleware, adminMiddleware, validate([
 ]), configController.update)
 router.post('/generar-fechas', authMiddleware, adminMiddleware, configController.generarFechas)
 
-export = router
+export default router
