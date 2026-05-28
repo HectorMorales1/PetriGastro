@@ -6,6 +6,7 @@ import pool from '../config/db'
 import logger from '../config/logger'
 import { AppError, asyncHandler } from '../middleware/errorHandler'
 import { sendEmail } from '../config/mailer'
+import { verificationEmail } from '../config/emailTemplates'
 
 interface User {
   id: number
@@ -24,7 +25,7 @@ interface User {
 
 const generateToken = (user: User): string => {
   return jwt.sign(
-    { id: user.id, email: user.email, nombre: user.nombre, apellidos: user.apellidos, rol: user.rol, estado_solicitud: user.estado_solicitud },
+    { id: user.id, email: user.email, nombre: user.nombre, apellidos: user.apellidos, rol: user.rol, estado_solicitud: user.estado_solicitud, token_version: user.token_version || 0 },
     process.env.JWT_SECRET as string,
     { expiresIn: '15m' as any }
   )
@@ -94,19 +95,7 @@ const register = asyncHandler(async (req: Request, res: Response) => {
       await sendEmail({
         to: email,
         subject: 'Confirma tu correo - PetriGastro',
-        html: `<div style="font-family:sans-serif;max-width:500px;margin:0 auto;">
-          <h2 style="color:#C4785A;">PetriGastro</h2>
-          <p>Hola <strong>${nombre}</strong>,</p>
-          <p>Gracias por registrarte en PetriGastro. Para continuar, confirma tu dirección de correo haciendo clic en el siguiente enlace:</p>
-          <div style="text-align:center;margin:30px 0;">
-            <a href="${verificationUrl}" style="background:#C4785A;color:white;padding:12px 30px;border-radius:8px;text-decoration:none;font-weight:bold;">
-              Confirmar correo electrónico
-            </a>
-          </div>
-          <p>Este enlace expira en 24 horas.</p>
-          <hr style="border:none;border-top:1px solid #eee;margin:20px 0;">
-          <p style="font-size:12px;color:#999;">Si no solicitaste este registro, ignora este mensaje.</p>
-        </div>`
+        html: verificationEmail(nombre, verificationUrl)
       })
     }
 
@@ -120,7 +109,7 @@ const register = asyncHandler(async (req: Request, res: Response) => {
     await client.query('ROLLBACK')
     const err = error as Error
     logger.error({ err: err.message, context: 'authController.register', email })
-    throw new AppError('Error del servidor')
+    throw new AppError('Error al registrar usuario. Inténtalo de nuevo más tarde.')
   } finally {
     client.release()
   }
@@ -265,4 +254,4 @@ const invalidateSessions = asyncHandler(async (req: Request, res: Response) => {
   res.json({ message: 'Sesiones invalidadas correctamente' })
 })
 
-export = { register, login, me, verificarEmail, refreshToken: refreshTokenHandler, invalidateSessions }
+export default { register, login, me, verificarEmail, refreshToken: refreshTokenHandler, invalidateSessions }

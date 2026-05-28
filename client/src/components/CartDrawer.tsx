@@ -1,35 +1,26 @@
-import { useState, useEffect, useMemo, useCallback } from 'react'
-import { X, Minus, Plus, Trash2, Loader2, ShoppingBag, Calendar, ImageOff } from 'lucide-react'
+import { useState, useMemo, useCallback } from 'react'
+import { X, Minus, Plus, Trash2, Loader2, ShoppingBag, Calendar } from 'lucide-react'
+import { useQuery } from '@tanstack/react-query'
 import { useCart } from '../context/CartContext'
 import { useToast } from '../context/ToastContext'
 import { pedidosApi, fechasApi } from '../services/api'
 import type { Pedido } from '../types'
 
-interface FechaDisponible {
-  id: number
-  fecha: string
-  activo?: boolean
-  horarios: { id: number; hora: string; disponible: boolean }[]
-}
-
 export default function CartDrawer() {
   const [submitting, setSubmitting] = useState(false)
-  const [submitted, setSubmitted] = useState(false)
-  const [pedidoInfo, setPedidoInfo] = useState<Pedido | null>(null)
   const [error, setError] = useState('')
+  const [orderResult, setOrderResult] = useState<{ type: 'success'; pedido: Pedido } | { type: 'error'; message: string } | null>(null)
   const { addToast } = useToast()
-  const [fechas, setFechas] = useState<FechaDisponible[]>([])
   const [fechaSeleccionada, setFechaSeleccionada] = useState('')
   const [horaSeleccionada, setHoraSeleccionada] = useState('')
   const { cart, isOpen, setIsOpen, removeItem, updateQuantity, total, clearCart } = useCart()
 
-  useEffect(() => {
-    if (isOpen) {
-      fechasApi.getAll().then(setFechas).catch(() => {
-        addToast('Error al cargar fechas disponibles', 'error')
-      })
-    }
-  }, [isOpen, addToast])
+  const { data: fechas = [] } = useQuery({
+    queryKey: ['fechas', 'cart'],
+    queryFn: () => fechasApi.getAll(),
+    enabled: isOpen,
+    staleTime: 60000
+  })
 
   const fechasActivas = useMemo(() => {
     const hoy = new Date()
@@ -79,25 +70,111 @@ export default function CartDrawer() {
     try {
       const result = await pedidosApi.create({
         items: cart.map(item => ({ id: item.id, precio: item.precio, cantidad: item.cantidad })),
-        notas: horaSeleccionada ? `Recoger a las ${horaSeleccionada}` : '',
+        notas: horaSeleccionada ? `Recoger a las ${horaSeleccionada.slice(0, 5)}` : '',
         fecha_recogida: fechaSeleccionada
       })
-      setPedidoInfo(result)
-      setSubmitted(true)
+      setIsOpen(false)
+      setOrderResult({ type: 'success', pedido: result })
       clearCart()
       setFechaSeleccionada('')
       setHoraSeleccionada('')
+
     } catch (err: unknown) {
       const error = err as { response?: { data?: { message?: string } } }
-      setError(error.response?.data?.message || 'Error al procesar el pedido')
+      const msg = error.response?.data?.message || 'Error al procesar el pedido'
+      setIsOpen(false)
+      setOrderResult({ type: 'error', message: msg })
+
     }
     setSubmitting(false)
   }, [fechaSeleccionada, horaSeleccionada, cart, clearCart])
 
-  if (!isOpen) return null
-
   return (
-    <div
+    <>
+      {orderResult && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center p-4"
+          onClick={() => setOrderResult(null)}
+          role="dialog"
+          aria-modal="true"
+          aria-label={orderResult.type === 'success' ? 'Pedido realizado' : 'Error al procesar el pedido'}
+        >
+          <div className="absolute inset-0 bg-black/90" />
+          <div
+            className="relative bg-surface rounded-2xl max-w-md w-full p-6 text-center space-y-4 shadow-2xl"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {orderResult.type === 'success' ? (
+              <>
+                <div className="bg-green-100 rounded-full p-4 w-16 h-16 mx-auto flex items-center justify-center">
+                  <ShoppingBag className="text-green-600" size={32} />
+                </div>
+                <div>
+                  <p className="text-xl font-bold text-green-600">¡Pedido realizado!</p>
+                  <p className="text-text-muted">Tu pedido ha sido recibido</p>
+                </div>
+                <div className="bg-bg-tertiary rounded-lg p-4 text-left space-y-2">
+                  <div className="flex justify-between">
+                    <span className="text-text-muted">Número de pedido:</span>
+                    <span className="font-bold">#{orderResult.pedido.id}</span>
+                  </div>
+                  {orderResult.pedido.fecha_recogida && (
+                    <div className="flex justify-between">
+                      <span className="text-text-muted">Fecha de recogida:</span>
+                      <span className="font-medium text-carbon">
+                        {new Date(orderResult.pedido.fecha_recogida).toLocaleDateString('es-ES', {
+                          weekday: 'long', day: 'numeric', month: 'long'
+                        })}
+                      </span>
+                    </div>
+                  )}
+                  {orderResult.pedido.notas && (
+                    <div className="flex justify-between">
+                      <span className="text-text-muted">Hora:</span>
+                      <span className="font-medium">{orderResult.pedido.notas.replace('Recoger a las ', '').slice(0, 5)}</span>
+                    </div>
+                  )}
+                  <div className="flex justify-between pt-2 border-t border-border">
+                    <span className="text-text-muted">Total:</span>
+                    <span className="font-bold text-carbon">{Number(orderResult.pedido.total).toFixed(2)}€</span>
+                  </div>
+                </div>
+                <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
+                  <p className="text-sm text-blue-800">
+                    <strong>Próximos pasos:</strong> Recibirás una confirmación cuando el pedido esté listo.
+                    Puedes seguir el estado en "Mis Pedidos".
+                  </p>
+                </div>
+                <button
+                  onClick={() => setOrderResult(null)}
+                  className="w-full py-3 bg-accent text-carbon rounded-lg font-medium hover:opacity-90"
+                >
+                  Cerrar
+                </button>
+              </>
+            ) : (
+              <>
+                <div className="bg-red-100 rounded-full p-4 w-16 h-16 mx-auto flex items-center justify-center">
+                  <X className="text-red-600" size={32} />
+                </div>
+                <div>
+                  <p className="text-xl font-bold text-red-600">Error al procesar el pedido</p>
+                  <p className="text-text-muted">{orderResult.message}</p>
+                </div>
+                <button
+                  onClick={() => setOrderResult(null)}
+                  className="w-full py-3 bg-accent text-carbon rounded-lg font-medium hover:opacity-90"
+                >
+                  Cerrar
+                </button>
+              </>
+            )}
+          </div>
+        </div>
+      )}
+
+      {isOpen && (
+        <div
       className="fixed inset-0 z-50 flex justify-end"
       role="dialog"
       aria-modal="true"
@@ -162,58 +239,6 @@ export default function CartDrawer() {
 
         {cart.length > 0 && (
           <div className="p-4 border-t border-border">
-            {submitted ? (
-              <div className="text-center py-4 space-y-4" role="alert" aria-live="assertive">
-                <div className="bg-green-100 rounded-full p-4 w-16 h-16 mx-auto flex items-center justify-center">
-                  <ShoppingBag className="text-green-600" size={32} />
-                </div>
-                <div>
-                  <p className="text-xl font-bold text-green-600">¡Pedido realizado!</p>
-                  <p className="text-text-muted">Tu pedido ha sido recibido</p>
-                </div>
-                {pedidoInfo && (
-                  <div className="bg-bg-tertiary rounded-lg p-4 text-left space-y-2">
-                    <div className="flex justify-between">
-                      <span className="text-text-muted">Número de pedido:</span>
-                      <span className="font-bold">#{pedidoInfo.id}</span>
-                    </div>
-                    {pedidoInfo.fecha_recogida && (
-                      <div className="flex justify-between">
-                        <span className="text-text-muted">Fecha de recogida:</span>
-                        <span className="font-medium text-carbon">
-                          {new Date(pedidoInfo.fecha_recogida).toLocaleDateString('es-ES', { 
-                            weekday: 'long', day: 'numeric', month: 'long' 
-                          })}
-                        </span>
-                      </div>
-                    )}
-                    {pedidoInfo.notas && (
-                      <div className="flex justify-between">
-                        <span className="text-text-muted">Hora:</span>
-                        <span className="font-medium">{pedidoInfo.notas.replace('Recoger a las ', '')}</span>
-                      </div>
-                    )}
-                    <div className="flex justify-between pt-2 border-t border-border">
-                      <span className="text-text-muted">Total:</span>
-                      <span className="font-bold text-carbon">{Number(pedidoInfo.total).toFixed(2)}€</span>
-                    </div>
-                  </div>
-                )}
-                <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
-                  <p className="text-sm text-blue-800">
-                    <strong>Próximos pasos:</strong> Recibirás una confirmación cuando el pedido esté listo. 
-                    Puedes seguir el estado en "Mis Pedidos".
-                  </p>
-                </div>
-                <button
-                  onClick={() => { setSubmitted(false); setPedidoInfo(null) }}
-                  className="w-full py-3 bg-accent text-carbon rounded-lg font-medium hover:opacity-90"
-                >
-                  Hacer otro pedido
-                </button>
-              </div>
-            ) : (
-              <>
                 <div className="flex justify-between mb-4 text-lg font-bold">
                   <span>Total:</span>
                   <span className="text-carbon">{total.toFixed(2)}€</span>
@@ -292,11 +317,11 @@ export default function CartDrawer() {
                 >
                   Vaciar carrito
                 </button>
-              </>
-            )}
           </div>
         )}
       </div>
     </div>
+      )}
+    </>
   )
 }

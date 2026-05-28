@@ -35,7 +35,7 @@ export default function VerificarEmail() {
       </Helmet>
 
       <div className="min-h-screen flex items-center justify-center px-4">
-        <div className="bg-surface rounded-lg shadow-lg p-8 max-w-md w-full text-center">
+        <div className="bg-card rounded-lg shadow-lg p-8 max-w-md w-full text-center">
           {status === 'loading' && (
             <div className="py-8 space-y-4" role="status" aria-live="polite">
               <Loader2 className="animate-spin text-accent mx-auto" size={48} />

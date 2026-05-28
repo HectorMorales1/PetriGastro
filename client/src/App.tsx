@@ -21,6 +21,7 @@ const VerificarEmail = lazy(() => import('./pages/VerificarEmail'))
 const MisPedidos = lazy(() => import('./pages/MisPedidos'))
 const Admin = lazy(() => import('./pages/Admin'))
 const NotFound = lazy(() => import('./pages/NotFound'))
+const Legal = lazy(() => import('./pages/Legal'))
 
 function App() {
   return (
@@ -38,6 +39,8 @@ function App() {
                         <Routes>
                           <Route path="/login" element={<Login />} />
                           <Route path="/verificar" element={<VerificarEmail />} />
+                          <Route path="/privacidad" element={<Legal />} />
+                          <Route path="/terminos" element={<Legal />} />
                           <Route element={<AuthGuard />}>
                             <Route path="/" element={<Home />} />
                             <Route path="/menu" element={<Menu />} />

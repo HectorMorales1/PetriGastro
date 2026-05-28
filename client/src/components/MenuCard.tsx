@@ -1,7 +1,6 @@
 import { memo, useState, useCallback, type SyntheticEvent } from 'react'
 import { Plus, Check, ImageOff } from 'lucide-react'
 import { useCart } from '../context/CartContext'
-import DishModal from './DishModal'
 import type { Plato } from '../types'
 
 const DEFAULT_FALLBACK = 'https://placehold.co/400x300/1e1e1e/a8a29e?text=Sin+imagen'
@@ -13,7 +12,6 @@ interface MenuCardProps {
 function MenuCard({ plato }: MenuCardProps) {
   const { addItem } = useCart()
   const [added, setAdded] = useState(false)
-  const [showDetail, setShowDetail] = useState(false)
   const [imgError, setImgError] = useState(false)
 
   const handleImgError = useCallback((e: SyntheticEvent<HTMLImageElement>) => {
@@ -29,14 +27,7 @@ function MenuCard({ plato }: MenuCardProps) {
 
   return (
     <>
-      <div
-        className="bg-surface rounded-xl shadow-md overflow-hidden hover:shadow-xl transition-all duration-300 hover:-translate-y-1 cursor-pointer"
-        onClick={() => setShowDetail(true)}
-        role="button"
-        tabIndex={0}
-        aria-label={`Ver detalle de ${plato.nombre}`}
-        onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setShowDetail(true) } }}
-      >
+      <div className="bg-card rounded-xl shadow-md overflow-hidden hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
         <div className="aspect-video bg-bg-tertiary relative overflow-hidden">
           {plato.imagen_url && !imgError ? (
             <img
@@ -93,7 +84,6 @@ function MenuCard({ plato }: MenuCardProps) {
           </div>
         </div>
       </div>
-      <DishModal plato={showDetail ? plato : null} onClose={() => setShowDetail(false)} />
     </>
   )
 }

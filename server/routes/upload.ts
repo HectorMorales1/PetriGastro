@@ -45,7 +45,11 @@ router.post('/imagen', authMiddleware, adminMiddleware, (req: Request, res: Resp
       const uploadStream = cloudinary.uploader.upload_stream(
         {
           folder: process.env.CLOUDINARY_FOLDER || 'petrigastro/platos',
-          resource_type: 'image'
+          resource_type: 'image',
+          transformation: [
+            { width: 800, height: 600, crop: 'fill', quality: 'auto' },
+            { fetch_format: 'auto' }
+          ]
         },
         (error: unknown, result: unknown) => {
           if (error) reject(error)
@@ -62,4 +66,4 @@ router.post('/imagen', authMiddleware, adminMiddleware, (req: Request, res: Resp
   }
 })
 
-export = router
+export default router

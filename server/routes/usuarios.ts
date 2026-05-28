@@ -24,4 +24,4 @@ router.put('/:id/rol', authMiddleware, adminMiddleware, validate([
   body('rol').isIn(['admin', 'cliente']).withMessage('Rol debe ser admin o cliente')
 ]), usuarioController.updateRol)
 
-export = router
+export default router

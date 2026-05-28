@@ -37,7 +37,7 @@ export default function DishModal({ plato, onClose }: DishModalProps) {
     >
       <div className="absolute inset-0 bg-black/90" />
       <div
-        className="relative bg-surface rounded-xl shadow-2xl max-w-lg w-full max-h-[90vh] overflow-y-auto"
+        className="relative bg-card rounded-xl shadow-2xl max-w-lg w-full max-h-[90vh] overflow-y-auto"
         onClick={(e) => e.stopPropagation()}
       >
         <button

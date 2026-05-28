@@ -1,5 +1,9 @@
 -- ============================================================
 -- PetriGastro - Migration 001: Initial schema + seed data
+-- NOTA: Los password_hash en seed son para desarrollo local
+--   admin:  $2b$10$LhNu... (password: "admin123")
+--   cliente: $2b$10$abc... (password: "cliente123")
+-- En producción, crear usuarios manualmente o cambiar estas claves
 -- ============================================================
 
 -- 1. USUARIOS

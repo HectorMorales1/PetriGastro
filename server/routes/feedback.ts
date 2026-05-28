@@ -16,4 +16,4 @@ router.get('/pedido/:pedido_id', validate([
 ]), feedbackController.getByPedido)
 router.get('/mis-pedidos', authMiddleware, feedbackController.getMisPedidos)
 
-export = router
+export default router
