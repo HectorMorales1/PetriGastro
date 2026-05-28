@@ -111,7 +111,7 @@ export default function Login() {
                     type="email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    className="w-full px-4 py-3 border border-border rounded-lg bg-bg-secondary text-carbon focus:border-accent focus:ring-2 focus:ring-accent/20 outline-none transition"
+                    className="w-full px-4 py-3 border border-border rounded-lg bg-bg-secondary text-carbon focus:border-accent focus:ring-2 focus:ring-accent/20 outline-none transition dark:bg-white dark:text-black dark:placeholder:text-gray-400"
                     placeholder="tu@correo.com"
                     autoComplete="email"
                     required
@@ -123,7 +123,7 @@ export default function Login() {
                     type="password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    className="w-full px-4 py-3 border border-border rounded-lg bg-bg-secondary text-carbon focus:border-accent focus:ring-2 focus:ring-accent/20 outline-none transition"
+                    className="w-full px-4 py-3 border border-border rounded-lg bg-bg-secondary text-carbon focus:border-accent focus:ring-2 focus:ring-accent/20 outline-none transition dark:bg-white dark:text-black dark:placeholder:text-gray-400"
                     placeholder="••••••••"
                     autoComplete="current-password"
                     required
@@ -169,7 +169,7 @@ export default function Login() {
                         type="text"
                         value={nombre}
                         onChange={(e) => setNombre(e.target.value)}
-                        className="w-full px-4 py-3 border border-border rounded-lg bg-bg-secondary text-carbon focus:border-accent focus:ring-2 focus:ring-accent/20 outline-none transition"
+                        className="w-full px-4 py-3 border border-border rounded-lg bg-bg-secondary text-carbon focus:border-accent focus:ring-2 focus:ring-accent/20 outline-none transition dark:bg-white dark:text-black dark:placeholder:text-gray-400"
                         placeholder="Juan"
                         autoComplete="given-name"
                         required
@@ -181,7 +181,7 @@ export default function Login() {
                         type="text"
                         value={apellidos}
                         onChange={(e) => setApellidos(e.target.value)}
-                        className="w-full px-4 py-3 border border-border rounded-lg bg-bg-secondary text-carbon focus:border-accent focus:ring-2 focus:ring-accent/20 outline-none transition"
+                        className="w-full px-4 py-3 border border-border rounded-lg bg-bg-secondary text-carbon focus:border-accent focus:ring-2 focus:ring-accent/20 outline-none transition dark:bg-white dark:text-black dark:placeholder:text-gray-400"
                         placeholder="García López"
                         autoComplete="family-name"
                         required
@@ -194,7 +194,7 @@ export default function Login() {
                       type="email"
                       value={regEmail}
                       onChange={(e) => setRegEmail(e.target.value)}
-                      className="w-full px-4 py-3 border border-border rounded-lg bg-bg-secondary text-carbon focus:border-accent focus:ring-2 focus:ring-accent/20 outline-none transition"
+                      className="w-full px-4 py-3 border border-border rounded-lg bg-bg-secondary text-carbon focus:border-accent focus:ring-2 focus:ring-accent/20 outline-none transition dark:bg-white dark:text-black dark:placeholder:text-gray-400"
                       placeholder="tu@correo.com"
                       autoComplete="email"
                       required
@@ -206,7 +206,7 @@ export default function Login() {
                     type="password"
                     value={regPassword}
                     onChange={(e) => setRegPassword(e.target.value)}
-                    className="w-full px-4 py-3 border border-border rounded-lg bg-bg-secondary text-carbon focus:border-accent focus:ring-2 focus:ring-accent/20 outline-none transition"
+                    className="w-full px-4 py-3 border border-border rounded-lg bg-bg-secondary text-carbon focus:border-accent focus:ring-2 focus:ring-accent/20 outline-none transition dark:bg-white dark:text-black dark:placeholder:text-gray-400"
                     placeholder="Mínimo 8 caracteres"
                     autoComplete="new-password"
                     minLength={8}
@@ -219,7 +219,7 @@ export default function Login() {
                     type="password"
                     value={confirmPassword}
                     onChange={(e) => setConfirmPassword(e.target.value)}
-                    className="w-full px-4 py-3 border border-border rounded-lg bg-bg-secondary text-carbon focus:border-accent focus:ring-2 focus:ring-accent/20 outline-none transition"
+                    className="w-full px-4 py-3 border border-border rounded-lg bg-bg-secondary text-carbon focus:border-accent focus:ring-2 focus:ring-accent/20 outline-none transition dark:bg-white dark:text-black dark:placeholder:text-gray-400"
                     placeholder="Repite la contraseña"
                     autoComplete="new-password"
                     required
