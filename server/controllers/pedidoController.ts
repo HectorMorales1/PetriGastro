@@ -37,10 +37,27 @@ const updateEstado = asyncHandler(async (req: Request, res: Response) => {
   res.json(pedido)
 })
 
+const update = asyncHandler(async (req: Request, res: Response) => {
+  const { id } = req.params
+  const { items, notas, fecha_recogida } = req.body
+  const usuario_id = (req as Request & { user: { id: number } }).user.id
+
+  const pedido = await pedidoService.update(Number(id), usuario_id, items, notas, fecha_recogida)
+  res.json(pedido)
+})
+
+const remove = asyncHandler(async (req: Request, res: Response) => {
+  const { id } = req.params
+  const usuario_id = (req as Request & { user: { id: number } }).user.id
+
+  const result = await pedidoService.remove(Number(id), usuario_id)
+  res.json(result)
+})
+
 const getStats = asyncHandler(async (req: Request, res: Response) => {
   const filter = req.query.filter as string | undefined
   const stats = await pedidoService.getStats(filter)
   res.json(stats)
 })
 
-export default { create, getAll, getMine, updateEstado, getStats }
+export default { create, getAll, getMine, updateEstado, update, remove, getStats }

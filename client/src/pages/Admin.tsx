@@ -96,100 +96,108 @@ export default function Admin() {
         </div>
 
         {activeTab === 'pedidos' && (
-          <div className="space-y-4">
-            {pedidos.map(pedido => {
-              const expandido = pedidoExpandido === pedido.id
-              return (
-                <div
-                  key={pedido.id}
-                  className="bg-card dark:bg-zinc-700 rounded-xl shadow-sm hover:shadow-md transition-shadow"
-                >
-                  <div className="p-4 sm:p-5">
-                    <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4">
-                      <div className="flex items-center gap-3 sm:min-w-0 sm:flex-1">
-                        <span className="text-xs font-bold text-text-muted uppercase tracking-wider">#{pedido.id}</span>
-                        <div className="hidden sm:block text-sm text-text-muted truncate">{pedido.usuario_nombre || 'Cliente'}</div>
-                      </div>
-                      <div className="flex flex-wrap items-center gap-2 sm:gap-4">
-                        <span className="font-bold text-carbon">{Number(pedido.total || 0).toFixed(2)}€</span>
-                        <span className={`px-2.5 py-0.5 rounded text-xs font-semibold ${getEstadoColor(pedido.estado)}`}>
-                          {pedido.estado}
-                        </span>
-                      </div>
-                    </div>
-
-                    <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-text-muted">
-                      <span className="sm:hidden">{pedido.usuario_nombre || 'Cliente'}</span>
-                      {pedido.fecha_recogida ? (
-                        <span>
-                          Recogida:{' '}
-                          {new Date(pedido.fecha_recogida).toLocaleDateString('es-ES', { weekday: 'short', day: 'numeric', month: 'short' })}
-                        </span>
-                      ) : (
-                        <span>Recogida: -</span>
-                      )}
-                      <span>Pedido: {new Date(pedido.created_at).toLocaleDateString()}</span>
-                    </div>
-
-                    <div className="mt-4 flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3">
-                      <select
-                        value={pedido.estado}
-                        onChange={(e) => updatePedidoMutation.mutate({ id: pedido.id, estado: e.target.value })}
-                        className="text-sm border border-border rounded-lg px-3 py-1.5 bg-bg-secondary w-full sm:w-auto"
-                        aria-label={`Estado del pedido #${pedido.id}`}
-                      >
-                        <option value="pendiente">Pendiente</option>
-                        <option value="confirmado">Confirmado</option>
-                        <option value="preparando">Preparando</option>
-                        <option value="preparado">Preparado</option>
-                        <option value="entregado">Entregado</option>
-                        <option value="cancelado">Cancelado</option>
-                      </select>
-                      {pedido.estado === 'preparando' && (
-                        <button
-                          onClick={() => updatePedidoMutation.mutate({ id: pedido.id, estado: 'preparado' })}
-                          className="text-xs px-3 py-1.5 rounded-lg bg-purple-100 text-purple-800 font-medium hover:bg-purple-200 transition w-full sm:w-auto"
-                        >
-                          ✓ Marcar preparado
-                        </button>
-                      )}
-                      {pedido.items && pedido.items.length > 0 && (
-                        <button
-                          onClick={() => setPedidoExpandido(expandido ? null : pedido.id)}
-                          className="ml-auto text-xs text-text-muted hover:text-carbon transition flex items-center gap-1"
-                        >
-                          {expandido ? 'Ocultar platos' : 'Ver platos'}
-                          {expandido ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
-                        </button>
-                      )}
-                    </div>
-                  </div>
-
-                  {expandido && pedido.items && pedido.items.length > 0 && (
-                    <div className="border-t border-border px-4 sm:px-5 py-4 bg-bg-tertiary/50 rounded-b-xl">
-                      <p className="text-xs font-semibold text-text-muted uppercase tracking-wider mb-3">Platos del pedido</p>
-                      <div className="space-y-2">
-                        {pedido.items.map((item: { nombre: string; cantidad: number; precio_unitario: string }, idx: number) => (
-                          <div key={idx} className="flex items-center justify-between text-sm bg-surface rounded-lg px-3 py-2 border border-border/50">
-                            <span className="font-medium text-carbon truncate flex-1">{item.nombre}</span>
-                            <div className="flex items-center gap-4 ml-2 flex-shrink-0">
-                              <span className="text-text-muted text-xs">x{item.cantidad}</span>
-                              <span className="text-carbon font-medium w-16 text-right">{Number(item.precio_unitario).toFixed(2)}€</span>
-                              <span className="text-carbon font-bold w-16 text-right">{(item.cantidad * Number(item.precio_unitario)).toFixed(2)}€</span>
-                            </div>
+          <>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {pedidos.map(pedido => {
+                const expandido = pedidoExpandido === pedido.id
+                return (
+                  <div key={pedido.id} className="bg-card rounded-lg shadow p-4 space-y-3">
+                    <div
+                      className="flex items-center justify-center gap-6 cursor-pointer select-none"
+                      onClick={() => setPedidoExpandido(expandido ? null : pedido.id)}
+                    >
+                      <span className="font-bold text-text-muted uppercase shrink-0">#{pedido.id}</span>
+                      <span className={`px-3 py-1 rounded text-sm font-semibold ${getEstadoColor(pedido.estado)}`}>
+                        {pedido.estado}
+                      </span>
+                      <span className="text-sm text-text-muted text-center leading-snug">
+                        <div className="font-medium text-carbon">{pedido.fecha_recogida
+                          ? new Date(pedido.fecha_recogida).toLocaleDateString('es-ES', { day: 'numeric', month: 'short' })
+                          : '-'}</div>
+                        {pedido.notas?.startsWith('Recoger a las ') && (
+                          <div className="text-text-muted">
+                            {pedido.notas.replace('Recoger a las ', '').slice(0, 5)}
                           </div>
-                        ))}
-                      </div>
+                        )}
+                      </span>
                     </div>
-                  )}
-                </div>
-              )
-            })}
+
+                    {expandido && (
+                      <div className="pt-3 border-t border-border space-y-3">
+                        <div className="grid grid-cols-2 gap-x-8 gap-y-3 text-sm">
+                          <div>
+                            <span className="text-text-muted text-xs">Cliente</span>
+                            <p className="font-medium">{pedido.usuario_nombre || 'Cliente'}</p>
+                          </div>
+                          <div>
+                            <span className="text-text-muted text-xs">Total</span>
+                            <p className="font-bold text-carbon">{Number(pedido.total || 0).toFixed(2)}€</p>
+                          </div>
+                          <div>
+                            <span className="text-text-muted text-xs">Fecha pedido</span>
+                            <p>{new Date(pedido.created_at).toLocaleDateString('es-ES', { day: 'numeric', month: 'short', year: 'numeric' })}</p>
+                          </div>
+                          <div>
+                            <span className="text-text-muted text-xs">Recogida</span>
+                            <p>{pedido.fecha_recogida
+                              ? `${new Date(pedido.fecha_recogida).toLocaleDateString('es-ES', { day: 'numeric', month: 'short' })} ${pedido.notas?.startsWith('Recoger a las ') ? pedido.notas.replace('Recoger a las ', '').slice(0, 5) : ''}`
+                              : '-'}</p>
+                          </div>
+                        </div>
+
+                        <div className="flex flex-wrap items-center gap-2">
+                          <select
+                            value={pedido.estado}
+                            onChange={(e) => updatePedidoMutation.mutate({ id: pedido.id, estado: e.target.value })}
+                            className="text-xs border border-border rounded-lg px-3 py-2 bg-bg-secondary flex-1 min-w-[140px]"
+                            aria-label={`Estado del pedido #${pedido.id}`}
+                            onClick={(e) => e.stopPropagation()}
+                          >
+                            <option value="pendiente">Pendiente</option>
+                            <option value="confirmado">Confirmado</option>
+                            <option value="preparando">Preparando</option>
+                            <option value="preparado">Preparado</option>
+                            <option value="entregado">Entregado</option>
+                            <option value="cancelado">Cancelado</option>
+                          </select>
+                          {pedido.estado === 'preparando' && (
+                            <button
+                              onClick={(e) => { e.stopPropagation(); updatePedidoMutation.mutate({ id: pedido.id, estado: 'preparado' }) }}
+                              className="text-xs px-4 py-2 rounded-lg bg-purple-100 text-purple-800 font-medium hover:bg-purple-200 transition whitespace-nowrap"
+                            >
+                              ✓ Preparado
+                            </button>
+                          )}
+                          <button
+                            onClick={(e) => { e.stopPropagation(); setPedidoExpandido(expandido ? null : pedido.id) }}
+                            className="text-xs text-text-muted hover:text-carbon transition flex items-center gap-1"
+                          >
+                            {expandido ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
+                          </button>
+                        </div>
+
+                        {pedido.items && pedido.items.length > 0 && (
+                          <div className="space-y-1">
+                            <p className="text-xs font-semibold text-text-muted uppercase tracking-wider">Platos ({pedido.items.length})</p>
+                            {pedido.items.map((item: { nombre: string; cantidad: number; precio_unitario: string }, idx: number) => (
+                              <div key={idx} className="flex items-center justify-between text-xs bg-bg-tertiary rounded-lg px-3 py-2">
+                                <span className="font-medium text-carbon truncate flex-1">{item.nombre}</span>
+                                <span className="text-text-muted shrink-0 ml-2">x{item.cantidad} · {(item.cantidad * Number(item.precio_unitario)).toFixed(2)}€</span>
+                              </div>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                )
+              })}
+            </div>
             {pedidos.length === 0 && (
               <div className="text-center py-12 text-text-muted">No hay pedidos.</div>
             )}
             <Paginacion currentPage={pedidoPage} totalPages={totalPedidoPages} onPageChange={setPedidoPage} />
-          </div>
+          </>
         )}
 
         {activeTab === 'stats' && <StatsManager />}

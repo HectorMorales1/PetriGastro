@@ -91,7 +91,7 @@ export default function Login() {
             </p>
           </div>
 
-          <div className="bg-surface rounded-lg shadow-lg p-8">
+          <div className="bg-card rounded-lg shadow-lg p-8">
             {error && (
               <div className="bg-error/10 border border-error/30 text-error px-4 py-3 rounded mb-4 text-sm" role="alert">
                 {error}

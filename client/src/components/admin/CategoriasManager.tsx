@@ -58,7 +58,7 @@ export function CategoriasManager() {
       </div>
 
       {showForm && (
-        <form onSubmit={handleCreate} className="bg-surface p-6 rounded-lg shadow mb-8 space-y-4">
+        <form onSubmit={handleCreate} className="bg-card p-6 rounded-lg shadow mb-8 space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div>
               <label className="block text-sm font-medium mb-1">Nombre *</label>
@@ -107,39 +107,30 @@ export function CategoriasManager() {
         </form>
       )}
 
-      <div className="bg-surface rounded-lg shadow overflow-x-auto overscroll-x-contain">
-        <table className="w-full responsive-table">
-          <thead className="bg-bg-secondary">
-            <tr>
-              <th className="px-4 py-3 text-left">Icono</th>
-              <th className="px-4 py-3 text-left">Nombre</th>
-              <th className="px-4 py-3 text-left">Orden</th>
-              <th className="px-4 py-3 text-center">Acciones</th>
-            </tr>
-          </thead>
-          <tbody>
-            {categorias.map((cat: { id: number; icono: string; nombre: string; orden: number }) => (
-              <tr key={cat.id} className="border-t border-border">
-                <td className="px-4 py-3 text-2xl" data-label="Icono">{cat.icono}</td>
-                <td className="px-4 py-3 font-medium" data-label="Nombre">{cat.nombre}</td>
-                <td className="px-4 py-3 text-text-muted" data-label="Orden">{cat.orden || 0}</td>
-                <td className="px-4 py-3 text-center" data-label="Acciones">
-                  <button
-                    onClick={() => { if (confirm('¿Eliminar esta categoría?')) deleteMutation.mutate(cat.id) }}
-                    className="text-error hover:opacity-80 transition"
-                    disabled={deleteMutation.isPending}
-                  >
-                    <Trash2 size={20} />
-                  </button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-        {categorias.length === 0 && !isLoading && (
-          <p className="text-center py-8 text-text-muted">No hay categorías registradas.</p>
-        )}
+      <div className="grid grid-cols-1 gap-4 mx-auto max-w-4xl">
+        {categorias.map((cat: { id: number; icono: string; nombre: string; orden: number }) => (
+          <div key={cat.id} className="bg-card rounded-lg shadow px-4 py-3 grid grid-cols-[1fr_90px_auto] gap-4 items-center">
+            <div className="flex items-center gap-3 min-w-0">
+              <span className="text-2xl shrink-0">{cat.icono}</span>
+              <h3 className="font-semibold truncate">{cat.nombre}</h3>
+            </div>
+            <span className="text-sm text-text-muted text-center">Orden: {cat.orden || 0}</span>
+            <div className="flex justify-end">
+              <button
+                onClick={() => { if (confirm('¿Eliminar esta categoría?')) deleteMutation.mutate(cat.id) }}
+                className="text-error hover:opacity-80 transition text-sm flex items-center gap-1"
+                disabled={deleteMutation.isPending}
+              >
+                <Trash2 size={16} />
+                Eliminar
+              </button>
+            </div>
+          </div>
+        ))}
       </div>
+      {categorias.length === 0 && !isLoading && (
+        <p className="text-center py-8 text-text-muted">No hay categorías registradas.</p>
+      )}
     </div>
   )
 }

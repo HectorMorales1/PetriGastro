@@ -58,69 +58,55 @@ export function SolicitudesManager() {
       </div>
 
       {solicitudes.length === 0 ? (
-        <div className="bg-surface rounded-lg shadow p-12 text-center">
+        <div className="bg-card rounded-lg shadow p-12 text-center">
           <CheckCircle className="mx-auto text-success mb-4" size={48} />
           <p className="text-text-muted text-lg">No hay solicitudes pendientes.</p>
         </div>
       ) : (
-        <div className="bg-surface rounded-lg shadow overflow-x-auto overscroll-x-contain">
-          <table className="w-full responsive-table">
-            <thead className="bg-bg-secondary">
-              <tr>
-                <th className="px-4 py-3 text-left">Nombre</th>
-                <th className="px-4 py-3 text-left">Email</th>
-                <th className="px-4 py-3 text-left">Solicitado</th>
-                <th className="px-4 py-3 text-center">Acciones</th>
-              </tr>
-            </thead>
-            <tbody>
-              {solicitudes.map((sol: { id: number; nombre: string; apellidos: string; email: string; fecha_solicitud: string }) => (
-                <tr key={sol.id} className="border-t border-border">
-                  <td className="px-4 py-3 font-medium" data-label="Nombre">
-                    {sol.nombre} {sol.apellidos}
-                  </td>
-                  <td className="px-4 py-3 text-text-muted" data-label="Email">{sol.email}</td>
-                  <td className="px-4 py-3 text-text-muted text-sm" data-label="Solicitado">
-                    {sol.fecha_solicitud
-                      ? new Date(sol.fecha_solicitud).toLocaleDateString('es-ES', {
-                          day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit'
-                        })
-                      : '-'}
-                  </td>
-                  <td className="px-4 py-3" data-label="Acciones">
-                    <div className="flex items-center justify-center gap-2">
-                      <button
-                        onClick={() => {
-                          if (confirm(`¿Aprobar la solicitud de ${sol.nombre} ${sol.apellidos}?`)) {
-                            aprobarMutation.mutate(sol.id)
-                          }
-                        }}
-                        disabled={aprobarMutation.isPending}
-                        className="px-3 py-1.5 rounded-lg bg-success/20 text-success font-medium text-sm hover:bg-success/30 transition disabled:opacity-50 flex items-center gap-1"
-                      >
-                        <CheckCircle size={16} />
-                        Aprobar
-                      </button>
-                      <button
-                        onClick={() => setRechazarModal({ id: sol.id, nombre: `${sol.nombre} ${sol.apellidos}` })}
-                        disabled={rechazarMutation.isPending}
-                        className="px-3 py-1.5 rounded-lg bg-error/20 text-error font-medium text-sm hover:bg-error/30 transition disabled:opacity-50 flex items-center gap-1"
-                      >
-                        <XCircle size={16} />
-                        Rechazar
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {solicitudes.map((sol: { id: number; nombre: string; apellidos: string; email: string; fecha_solicitud: string }) => (
+            <div key={sol.id} className="bg-card rounded-lg shadow p-4 space-y-3">
+              <div>
+                <h3 className="font-semibold">{sol.nombre} {sol.apellidos}</h3>
+                <p className="text-sm text-text-muted">{sol.email}</p>
+              </div>
+              <p className="text-xs text-text-muted">
+                Solicitado: {sol.fecha_solicitud
+                  ? new Date(sol.fecha_solicitud).toLocaleDateString('es-ES', {
+                      day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit'
+                    })
+                  : '-'}
+              </p>
+              <div className="flex items-center gap-2 pt-2 border-t border-border">
+                <button
+                  onClick={() => {
+                    if (confirm(`¿Aprobar la solicitud de ${sol.nombre} ${sol.apellidos}?`)) {
+                      aprobarMutation.mutate(sol.id)
+                    }
+                  }}
+                  disabled={aprobarMutation.isPending}
+                  className="px-3 py-1.5 rounded-lg bg-success/20 text-success font-medium text-sm hover:bg-success/30 transition disabled:opacity-50 flex items-center gap-1"
+                >
+                  <CheckCircle size={16} />
+                  Aprobar
+                </button>
+                <button
+                  onClick={() => setRechazarModal({ id: sol.id, nombre: `${sol.nombre} ${sol.apellidos}` })}
+                  disabled={rechazarMutation.isPending}
+                  className="px-3 py-1.5 rounded-lg bg-error/20 text-error font-medium text-sm hover:bg-error/30 transition disabled:opacity-50 flex items-center gap-1"
+                >
+                  <XCircle size={16} />
+                  Rechazar
+                </button>
+              </div>
+            </div>
+          ))}
         </div>
       )}
 
       {rechazarModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50" role="dialog" aria-modal="true" aria-labelledby="rechazar-title">
-          <div className="bg-surface rounded-lg shadow-xl p-6 max-w-md w-full space-y-4">
+          <div className="bg-card rounded-lg shadow-xl p-6 max-w-md w-full space-y-4">
             <h3 id="rechazar-title" className="text-lg font-semibold">Rechazar solicitud</h3>
             <p className="text-text-muted text-sm">
               ¿Estás seguro de rechazar la solicitud de <strong>{rechazarModal.nombre}</strong>?

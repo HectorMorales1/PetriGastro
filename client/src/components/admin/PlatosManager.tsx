@@ -57,13 +57,13 @@ export function PlatosManager({ pageNum = 1 }: { pageNum?: number }) {
   const handleImageSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (!file) return
-    handleImageUpload(file, (url) => setForm(prev => ({ ...prev, imagen_url: url })))
+    await handleImageUpload(file, (url) => setForm(prev => ({ ...prev, imagen_url: url })))
   }
 
   const handleEditImageSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (!file) return
-    handleImageUpload(file, (url) => setEditForm(prev => ({ ...prev, imagen_url: url })))
+    await handleImageUpload(file, (url) => setEditForm(prev => ({ ...prev, imagen_url: url })))
   }
 
   const createMutation = useMutation({
@@ -141,7 +141,7 @@ export function PlatosManager({ pageNum = 1 }: { pageNum?: number }) {
       </div>
 
       {showForm && (
-        <form onSubmit={handleCreate} className="bg-surface p-6 rounded-lg shadow mb-8 space-y-4">
+        <form onSubmit={handleCreate} className="bg-card p-6 rounded-lg shadow mb-8 space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             <div>
               <label className="block text-sm font-medium mb-1">Nombre *</label>
@@ -218,7 +218,7 @@ export function PlatosManager({ pageNum = 1 }: { pageNum?: number }) {
       )}
 
       {editingPlato && (
-        <form onSubmit={handleEdit} className="bg-surface p-6 rounded-lg shadow mb-8 space-y-4 border-2 border-accent">
+        <form onSubmit={handleEdit} className="bg-card p-6 rounded-lg shadow mb-8 space-y-4">
           <div className="flex justify-between items-center">
             <h3 className="text-lg font-semibold">Editando: {editingPlato.nombre}</h3>
             <button
@@ -304,90 +304,86 @@ export function PlatosManager({ pageNum = 1 }: { pageNum?: number }) {
         </form>
       )}
 
-      <div className="bg-surface rounded-lg shadow overflow-x-auto overscroll-x-contain">
-        <table className="w-full responsive-table">
-          <thead className="bg-bg-secondary">
-            <tr>
-              <th className="px-4 py-3 text-left">ID</th>
-              <th className="px-4 py-3 text-left">Nombre</th>
-              <th className="px-4 py-3 text-left">Categoría</th>
-              <th className="px-4 py-3 text-left">Precio</th>
-              <th className="px-4 py-3 text-center">Disponible</th>
-              <th className="px-4 py-3 text-center">Destacado</th>
-              <th className="px-4 py-3 text-center">Acciones</th>
-            </tr>
-          </thead>
-          <tbody>
-            {paginatedPlatos.map(plato => (
-              <tr key={plato.id} className="border-t border-border">
-                <td className="px-4 py-3" data-label="ID">#{plato.id}</td>
-                <td className="px-4 py-3 font-medium" data-label="Nombre">{plato.nombre}</td>
-                <td className="px-4 py-3 text-text-muted" data-label="Categoría">{plato.categoria || '-'}</td>
-                <td className="px-4 py-3" data-label="Precio">{Number(plato.precio || 0).toFixed(2)}€</td>
-                <td className="px-4 py-3" data-label="Disponible">
-                  <button
-                    onClick={() => toggleField(plato, 'disponible')}
-                    className={`w-8 h-5 rounded-full transition relative ${plato.disponible ? 'bg-accent' : 'bg-gray-400 dark:bg-gray-600'}`}
-                    title={plato.disponible ? 'Disponible' : 'No disponible'}
-                    role="switch"
-                    aria-checked={plato.disponible}
-                    aria-label={`${plato.nombre} ${plato.disponible ? 'disponible' : 'no disponible'}`}
-                  >
-                    <span className={`absolute top-0.5 w-4 h-4 rounded-full bg-white transition ${plato.disponible ? 'left-4' : 'left-0.5'}`} />
-                  </button>
-                </td>
-                <td className="px-4 py-3" data-label="Destacado">
-                  <button
-                    onClick={() => toggleField(plato, 'destacado')}
-                    className={`w-8 h-5 rounded-full transition relative ${plato.destacado ? 'bg-accent' : 'bg-gray-400 dark:bg-gray-600'}`}
-                    title={plato.destacado ? 'Destacado' : 'No destacado'}
-                    role="switch"
-                    aria-checked={plato.destacado}
-                    aria-label={`${plato.nombre} ${plato.destacado ? 'destacado' : 'no destacado'}`}
-                  >
-                    <span className={`absolute top-0.5 w-4 h-4 rounded-full bg-white transition ${plato.destacado ? 'left-4' : 'left-0.5'}`} />
-                  </button>
-                </td>
-                <td className="px-4 py-3 text-center" data-label="Acciones">
-                  <div className="flex items-center justify-center gap-2">
-                    <button
-                      onClick={() => {
-                        setEditingPlato(plato)
-                        setEditForm({
-                          nombre: plato.nombre,
-                          descripcion: plato.descripcion || '',
-                          ingredientes: plato.ingredientes || '',
-                          precio: String(plato.precio),
-                          categoria_id: String(plato.categoria_id),
-                          imagen_url: plato.imagen_url || '',
-                          disponible: plato.disponible,
-                          destacado: plato.destacado
-                        })
-                        setPreviewImg(plato.imagen_url || '')
-                      }}
-                       className="text-carbon hover:text-accent transition text-sm flex items-center gap-1"
-                    >
-                      <Pencil size={14} />
-                      Editar
-                    </button>
-                    <button
-                      onClick={() => { if (confirm('¿Eliminar este plato?')) deleteMutation.mutate(plato.id) }}
-                      className="text-error hover:opacity-80 transition text-sm"
-                      disabled={deleteMutation.isPending}
-                    >
-                      Eliminar
-                    </button>
-                  </div>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-        <Paginacion currentPage={platoPage} totalPages={totalPlatoPages} onPageChange={setPlatoPage} />
-        {platos.length === 0 && !isLoading && (
-          <p className="text-center py-8 text-text-muted">No hay platos registrados.</p>
-        )}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        {paginatedPlatos.map(plato => (
+          <div key={plato.id} className="bg-card rounded-lg shadow p-4 space-y-3">
+            <div className="flex items-center gap-3">
+              {plato.imagen_url ? (
+                <img src={plato.imagen_url} alt={plato.nombre} className="w-14 h-14 rounded-lg object-cover shrink-0" />
+              ) : (
+                <div className="w-14 h-14 rounded-lg bg-bg-secondary flex items-center justify-center text-xl shrink-0">🍽️</div>
+              )}
+              <div className="min-w-0 flex-1">
+                <div className="flex items-center justify-between gap-2">
+                  <span className="text-xs font-bold text-text-muted uppercase">#{plato.id}</span>
+                  <span className="font-bold text-carbon shrink-0">{Number(plato.precio || 0).toFixed(2)}€</span>
+                </div>
+                <h3 className="font-semibold truncate">{plato.nombre}</h3>
+                <p className="text-sm text-text-muted truncate">{plato.categoria || '-'}</p>
+              </div>
+            </div>
+            <div className="flex items-center gap-4 pt-2 border-t border-border">
+              <label className="flex items-center gap-2 text-sm cursor-pointer">
+                <button
+                  onClick={() => toggleField(plato, 'disponible')}
+                  className={`w-8 h-5 rounded-full transition relative ${plato.disponible ? 'bg-accent' : 'bg-gray-400 dark:bg-gray-600'}`}
+                  role="switch"
+                  aria-checked={plato.disponible}
+                  aria-label={`${plato.nombre} ${plato.disponible ? 'disponible' : 'no disponible'}`}
+                >
+                  <span className={`absolute top-0.5 w-4 h-4 rounded-full bg-white transition ${plato.disponible ? 'left-4' : 'left-0.5'}`} />
+                </button>
+                <span className="text-text-muted">Disponible</span>
+              </label>
+              <label className="flex items-center gap-2 text-sm cursor-pointer">
+                <button
+                  onClick={() => toggleField(plato, 'destacado')}
+                  className={`w-8 h-5 rounded-full transition relative ${plato.destacado ? 'bg-accent' : 'bg-gray-400 dark:bg-gray-600'}`}
+                  role="switch"
+                  aria-checked={plato.destacado}
+                  aria-label={`${plato.nombre} ${plato.destacado ? 'destacado' : 'no destacado'}`}
+                >
+                  <span className={`absolute top-0.5 w-4 h-4 rounded-full bg-white transition ${plato.destacado ? 'left-4' : 'left-0.5'}`} />
+                </button>
+                <span className="text-text-muted">Destacado</span>
+              </label>
+            </div>
+            <div className="flex items-center gap-3 pt-2 border-t border-border">
+              <button
+                onClick={() => {
+                  setEditingPlato(plato)
+                  setEditForm({
+                    nombre: plato.nombre,
+                    descripcion: plato.descripcion || '',
+                    ingredientes: plato.ingredientes || '',
+                    precio: String(plato.precio),
+                    categoria_id: String(plato.categoria_id),
+                    imagen_url: plato.imagen_url || '',
+                    disponible: plato.disponible,
+                    destacado: plato.destacado
+                  })
+                  setPreviewImg(plato.imagen_url || '')
+                }}
+                className="text-carbon hover:text-accent transition text-sm flex items-center gap-1"
+              >
+                <Pencil size={14} />
+                Editar
+              </button>
+              <button
+                onClick={() => { if (confirm('¿Eliminar este plato?')) deleteMutation.mutate(plato.id) }}
+                className="text-error hover:opacity-80 transition text-sm"
+                disabled={deleteMutation.isPending}
+              >
+                Eliminar
+              </button>
+            </div>
+          </div>
+        ))}
       </div>
+      <Paginacion currentPage={platoPage} totalPages={totalPlatoPages} onPageChange={setPlatoPage} />
+      {platos.length === 0 && !isLoading && (
+        <p className="text-center py-8 text-text-muted">No hay platos registrados.</p>
+      )}
     </div>
   )
 }

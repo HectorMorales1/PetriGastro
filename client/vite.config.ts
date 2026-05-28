@@ -13,8 +13,8 @@ export default defineConfig(({ mode }) => ({
       manifest: {
         name: 'PetriGastro',
         short_name: 'PetriGastro',
-        theme_color: '#C4785A',
-        background_color: '#F5F0E8',
+        theme_color: '#A3D977',
+        background_color: '#FCF8F2',
         display: 'standalone',
         icons: [
           { src: '/pwa-192x192.png', sizes: '192x192', type: 'image/png' },
