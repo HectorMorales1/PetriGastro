@@ -100,7 +100,9 @@ export const pedidosApi = {
   getAll: (params?) => api.get('/pedidos', { params }).then(r => r.data),
   getMine: () => api.get('/pedidos/mis-pedidos').then(r => r.data),
   getStats: (filter?: string) => api.get('/pedidos/stats', { params: { filter } }).then(r => r.data),
-  updateEstado: (id, estado) => api.put(`/pedidos/${id}/estado`, { estado }).then(r => r.data)
+  updateEstado: (id, estado) => api.put(`/pedidos/${id}/estado`, { estado }).then(r => r.data),
+  update: (id, data) => api.put(`/pedidos/${id}`, data).then(r => r.data),
+  delete: (id) => api.delete(`/pedidos/${id}`).then(r => r.data)
 }
 
 export const authApi = {

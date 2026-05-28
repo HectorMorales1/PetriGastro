@@ -28,7 +28,7 @@ function PlatoDetailModal({ plato, onClose }: { plato: Plato; onClose: () => voi
     >
       <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" />
       <div
-        className="relative bg-surface rounded-2xl overflow-hidden max-w-lg w-full max-h-[90vh] overflow-y-auto shadow-2xl"
+        className="relative bg-card rounded-2xl overflow-hidden max-w-lg w-full max-h-[90vh] overflow-y-auto shadow-2xl"
         onClick={(e) => e.stopPropagation()}
       >
         <button
@@ -232,7 +232,7 @@ export default function Menu() {
                 ))}
               </div>
             ) : (
-              <div className="text-center py-12" role="status">
+              <div className="bg-card rounded-lg shadow p-12 text-center" role="status">
                 <p className="text-text-muted text-lg">
                   No se encontraron platos que coincidan con tu búsqueda.
                 </p>

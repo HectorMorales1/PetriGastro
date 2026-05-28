@@ -11,7 +11,7 @@ const ThemeContext = createContext<ThemeContextType | null>(null)
 export function ThemeProvider({ children }: { children: ReactNode }) {
   const [theme, setTheme] = useState(() => {
     const stored = safeGetItem('petri_theme')
-    return stored || 'light'
+    return stored || 'dark'
   })
 
   useEffect(() => {

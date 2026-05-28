@@ -44,7 +44,6 @@ export function CartProvider({ children }: { children: ReactNode }) {
       }
       return [...prev, { id: plato.id, nombre: plato.nombre, precio: plato.precio, cantidad: 1, categoria_id: plato.categoria_id } as CartItem]
     })
-    setIsOpen(true)
   }
 
   const removeItem = (id: number) => {

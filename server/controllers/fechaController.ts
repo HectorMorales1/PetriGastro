@@ -121,4 +121,4 @@ const deleteFecha = asyncHandler(async (req: Request, res: Response) => {
   res.json({ message: 'Fecha eliminada' })
 })
 
-export = { getAll, create, update, delete: deleteFecha }
+export default { getAll, create, update, delete: deleteFecha }

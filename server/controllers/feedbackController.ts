@@ -1,79 +1,24 @@
 import { Request, Response } from 'express'
-import pool from '../config/db'
-import { AppError, asyncHandler } from '../middleware/errorHandler'
+import { asyncHandler } from '../middleware/errorHandler'
+import * as feedbackService from '../services/feedbackService'
 
 const create = asyncHandler(async (req: Request, res: Response) => {
   const { pedido_id, calificacion, comentario } = req.body
   const usuario_id = (req as Request & { user?: { id: number } }).user!.id
-
-  const commentSanitized = comentario
-    ? comentario.replace(/<[^>]*>/g, '').trim()
-    : null
-
-  const pedidoCheck = await pool.query(
-    'SELECT id, usuario_id FROM pedidos WHERE id = $1',
-    [pedido_id]
-  )
-
-  if (pedidoCheck.rows.length === 0) {
-    throw new AppError('Pedido no encontrado', 404)
-  }
-
-  if ((pedidoCheck.rows[0] as { usuario_id: number }).usuario_id !== usuario_id) {
-    throw new AppError('No puedes valorar este pedido', 403)
-  }
-
-  const result = await pool.query(
-    `INSERT INTO pedido_feedback (pedido_id, usuario_id, calificacion, comentario)
-     VALUES ($1, $2, $3, $4)
-     ON CONFLICT (pedido_id) DO UPDATE SET calificacion = $3, comentario = $4
-     RETURNING *`,
-    [pedido_id, usuario_id, calificacion, commentSanitized]
-  )
-
-  res.status(201).json(result.rows[0])
+  const feedback = await feedbackService.create(pedido_id, usuario_id, calificacion, comentario)
+  res.status(201).json(feedback)
 })
 
 const getByPedido = asyncHandler(async (req: Request, res: Response) => {
   const { pedido_id } = req.params
-  const result = await pool.query(
-    'SELECT * FROM pedido_feedback WHERE pedido_id = $1',
-    [pedido_id]
-  )
-  res.json(result.rows[0] || null)
+  const feedback = await feedbackService.getByPedido(Number(pedido_id))
+  res.json(feedback)
 })
 
 const getMisPedidos = asyncHandler(async (req: Request, res: Response) => {
-  const result = await pool.query(`
-    SELECT p.*, pf.calificacion, pf.comentario as feedback_comentario
-    FROM pedidos p
-    LEFT JOIN pedido_feedback pf ON p.id = pf.pedido_id
-    WHERE p.usuario_id = $1
-    ORDER BY p.created_at DESC
-  `, [(req as Request & { user?: { id: number } }).user!.id])
-
-  const pedidos = result.rows
-  if (pedidos.length > 0) {
-    const ids = pedidos.map((p: { id: number }) => p.id)
-    const itemsResult = await pool.query(`
-      SELECT pd.pedido_id, pd.cantidad, pd.precio_unitario, pl.nombre, pl.imagen_url
-      FROM pedido_detalles pd
-      JOIN platos pl ON pd.plato_id = pl.id
-      WHERE pd.pedido_id = ANY($1::int[])
-      ORDER BY pd.pedido_id
-    `, [ids])
-    const itemsByPedido: Record<number, unknown[]> = {}
-    for (const item of itemsResult.rows) {
-      const pid = (item as { pedido_id: number }).pedido_id
-      if (!itemsByPedido[pid]) itemsByPedido[pid] = []
-      itemsByPedido[pid].push(item)
-    }
-    for (const pedido of pedidos) {
-      (pedido as { items: unknown[] }).items = itemsByPedido[(pedido as { id: number }).id] || []
-    }
-  }
-
+  const usuario_id = (req as Request & { user?: { id: number } }).user!.id
+  const pedidos = await feedbackService.getMisPedidos(usuario_id)
   res.json(pedidos)
 })
 
-export = { create, getByPedido, getMisPedidos }
+export default { create, getByPedido, getMisPedidos }

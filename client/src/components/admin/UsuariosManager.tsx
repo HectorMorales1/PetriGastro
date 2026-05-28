@@ -51,77 +51,60 @@ export function UsuariosManager() {
     <div>
       <h2 className="text-2xl font-bold font-heading mb-6">Gestión de Usuarios</h2>
 
-      <div className="bg-surface rounded-lg shadow overflow-x-auto overscroll-x-contain">
-        <table className="w-full responsive-table">
-          <thead className="bg-bg-secondary">
-            <tr>
-              <th className="px-4 py-3 text-left">Nombre</th>
-              <th className="px-4 py-3 text-left">Email</th>
-              <th className="px-4 py-3 text-left">Rol</th>
-              <th className="px-4 py-3 text-left">Estado</th>
-              <th className="px-4 py-3 text-center">Acciones</th>
-            </tr>
-          </thead>
-          <tbody>
-            {usuarios.map((user: { id: number; nombre: string; apellidos: string; email: string; rol: string; estado_solicitud: string }) => (
-              <tr key={user.id} className="border-t border-border">
-                <td className="px-4 py-3 font-medium" data-label="Nombre">
-                  {user.nombre} {user.apellidos}
-                </td>
-                <td className="px-4 py-3 text-text-muted" data-label="Email">{user.email}</td>
-                <td className="px-4 py-3" data-label="Rol">
-                  <span className={`px-2 py-0.5 rounded text-xs font-medium ${
-                    user.rol === 'admin' ? 'bg-purple-100 text-purple-800' : 'bg-blue-100 text-blue-800'
-                  }`}>
-                    {user.rol}
-                  </span>
-                </td>
-                <td className="px-4 py-3" data-label="Estado">
-                  <span className={`px-2 py-0.5 rounded text-xs font-medium ${
-                    user.estado_solicitud === 'aprobado' || !user.estado_solicitud
-                      ? 'bg-green-100 text-green-800'
-                      : user.estado_solicitud === 'pendiente'
-                      ? 'bg-yellow-100 text-yellow-800'
-                      : 'bg-red-100 text-red-800'
-                  }`}>
-                    {user.estado_solicitud || 'aprobado'}
-                  </span>
-                </td>
-                <td className="px-4 py-3 text-center" data-label="Acciones">
-                  <div className="flex items-center justify-center gap-2">
-                    <button
-                      onClick={() => {
-                        const newRol = user.rol === 'admin' ? 'cliente' : 'admin'
-                        if (confirm(`¿Cambiar el rol de ${user.nombre} ${user.apellidos} a "${newRol}"?`)) {
-                          updateRolMutation.mutate({ id: user.id, rol: newRol })
-                        }
-                      }}
-                      disabled={updateRolMutation.isPending}
-                      className="px-3 py-1.5 rounded-lg bg-accent/20 text-carbon font-medium text-sm hover:bg-accent/30 transition disabled:opacity-50"
-                    >
-                      Cambiar Rol
-                    </button>
-                    <button
-                      onClick={() => {
-                        if (confirm(`¿Eliminar al usuario ${user.nombre} ${user.apellidos}? Esta acción no se puede deshacer.`)) {
-                          deleteUserMutation.mutate(user.id)
-                        }
-                      }}
-                      disabled={deleteUserMutation.isPending}
-                      className="px-3 py-1.5 rounded-lg bg-error/20 text-error font-medium text-sm hover:bg-error/30 transition disabled:opacity-50"
-                    >
-                      Borrar
-                    </button>
-                  </div>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-        {usuarios.length === 0 && !isLoading && (
-          <p className="text-center py-8 text-text-muted">No hay usuarios registrados.</p>
-        )}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        {usuarios.map((user: { id: number; nombre: string; apellidos: string; email: string; rol: string; estado_solicitud: string }) => (
+          <div key={user.id} className="bg-card rounded-lg shadow p-4 space-y-3">
+            <div>
+              <h3 className="font-semibold">{user.nombre} {user.apellidos}</h3>
+              <p className="text-sm text-text-muted">{user.email}</p>
+            </div>
+            <div className="flex items-center gap-2">
+              <span className={`px-2 py-0.5 rounded text-xs font-medium ${
+                user.rol === 'admin' ? 'bg-purple-100 text-purple-800' : 'bg-blue-100 text-blue-800'
+              }`}>
+                {user.rol}
+              </span>
+              <span className={`px-2 py-0.5 rounded text-xs font-medium ${
+                user.estado_solicitud === 'aprobado' || !user.estado_solicitud
+                  ? 'bg-green-100 text-green-800'
+                  : user.estado_solicitud === 'pendiente'
+                  ? 'bg-yellow-100 text-yellow-800'
+                  : 'bg-red-100 text-red-800'
+              }`}>
+                {user.estado_solicitud || 'aprobado'}
+              </span>
+            </div>
+            <div className="flex items-center gap-2 pt-2 border-t border-border">
+              <button
+                onClick={() => {
+                  const newRol = user.rol === 'admin' ? 'cliente' : 'admin'
+                  if (confirm(`¿Cambiar el rol de ${user.nombre} ${user.apellidos} a "${newRol}"?`)) {
+                    updateRolMutation.mutate({ id: user.id, rol: newRol })
+                  }
+                }}
+                disabled={updateRolMutation.isPending}
+                className="px-3 py-1.5 rounded-lg bg-accent/20 text-carbon font-medium text-sm hover:bg-accent/30 transition disabled:opacity-50"
+              >
+                Cambiar Rol
+              </button>
+              <button
+                onClick={() => {
+                  if (confirm(`¿Eliminar al usuario ${user.nombre} ${user.apellidos}? Esta acción no se puede deshacer.`)) {
+                    deleteUserMutation.mutate(user.id)
+                  }
+                }}
+                disabled={deleteUserMutation.isPending}
+                className="px-3 py-1.5 rounded-lg bg-error/20 text-error font-medium text-sm hover:bg-error/30 transition disabled:opacity-50"
+              >
+                Borrar
+              </button>
+            </div>
+          </div>
+        ))}
       </div>
+      {usuarios.length === 0 && !isLoading && (
+        <p className="text-center py-8 text-text-muted">No hay usuarios registrados.</p>
+      )}
     </div>
   )
 }

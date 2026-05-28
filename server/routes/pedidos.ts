@@ -19,4 +19,12 @@ router.put('/:id/estado', authMiddleware, adminMiddleware, validate([
   body('estado').isIn(['pendiente', 'confirmado', 'preparando', 'preparado', 'entregado', 'cancelado']).withMessage('Estado inválido')
 ]), pedidoController.updateEstado)
 
-export = router
+router.put('/:id', authMiddleware, validate([
+  body('items').isArray({ min: 1 }).withMessage('Debe incluir al menos un item'),
+  body('notas').optional().trim(),
+  body('fecha_recogida').optional().trim()
+]), pedidoController.update)
+
+router.delete('/:id', authMiddleware, pedidoController.remove)
+
+export default router

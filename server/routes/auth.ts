@@ -34,4 +34,4 @@ router.post('/refresh', validate([
 router.get('/verificar', authController.verificarEmail)
 router.post('/invalidate-sessions', authMiddleware, authController.invalidateSessions)
 
-export = router
+export default router

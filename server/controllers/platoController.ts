@@ -1,97 +1,39 @@
 import { Request, Response } from 'express'
-import pool from '../config/db'
-import { AppError, asyncHandler } from '../middleware/errorHandler'
+import { asyncHandler } from '../middleware/errorHandler'
+import * as platoService from '../services/platoService'
 
 const getAll = asyncHandler(async (req: Request, res: Response) => {
-  const { categoria, busqueda, destacado, todas } = req.query as Record<string, string | undefined>
-  const conditions: string[] = []
-  const params: string[] = []
+  const { categoria, busqueda, destacado, todas, page, limit } = req.query as Record<string, string | undefined>
 
-  if (todas !== 'true') {
-    conditions.push('p.disponible = true')
-  }
+  const pagination = page && limit
+    ? { page: parseInt(page, 10), limit: parseInt(limit, 10) }
+    : undefined
 
-  if (categoria && categoria !== 'todas') {
-    params.push(categoria)
-    conditions.push(`c.nombre = $${params.length}`)
-  }
-
-  if (busqueda) {
-    params.push(`%${busqueda}%`)
-    conditions.push(`(p.nombre ILIKE $${params.length} OR p.descripcion ILIKE $${params.length})`)
-  }
-
-  if (destacado === 'true') {
-    conditions.push('p.destacado = true')
-  }
-
-  const whereClause = conditions.length > 0 ? ' WHERE ' + conditions.join(' AND ') : ''
-
-  const result = await pool.query(
-    `SELECT p.*, c.nombre as categoria FROM platos p
-     LEFT JOIN categorias c ON p.categoria_id = c.id${whereClause}
-     ORDER BY p.nombre`,
-    params
-  )
-  res.json(result.rows)
+  const result = await platoService.getAll({ categoria, busqueda, destacado, todas }, pagination)
+  res.json(result)
 })
 
 const getById = asyncHandler(async (req: Request, res: Response) => {
   const { id } = req.params
-  const result = await pool.query('SELECT p.*, c.nombre as categoria FROM platos p LEFT JOIN categorias c ON p.categoria_id = c.id WHERE p.id = $1', [id])
-
-  if (result.rows.length === 0) {
-    throw new AppError('Plato no encontrado', 404)
-  }
-
-  res.json(result.rows[0])
+  const plato = await platoService.getById(Number(id))
+  res.json(plato)
 })
 
 const create = asyncHandler(async (req: Request, res: Response) => {
-  const { nombre, descripcion, ingredientes, precio, categoria_id, imagen_url, disponible, destacado } = req.body
-
-  const result = await pool.query(
-    'INSERT INTO platos (nombre, descripcion, ingredientes, precio, categoria_id, imagen_url, disponible, destacado) VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *',
-    [nombre, descripcion, ingredientes || '', precio, categoria_id, imagen_url, disponible ?? true, destacado ?? false]
-  )
-
-  res.status(201).json(result.rows[0])
+  const plato = await platoService.create(req.body)
+  res.status(201).json(plato)
 })
 
 const update = asyncHandler(async (req: Request, res: Response) => {
   const { id } = req.params
-  const { nombre, descripcion, ingredientes, precio, categoria_id, imagen_url, disponible, destacado } = req.body
-
-  const result = await pool.query(
-    `UPDATE platos SET
-      nombre = COALESCE($1, nombre),
-      descripcion = COALESCE($2, descripcion),
-      ingredientes = COALESCE($3, ingredientes),
-      precio = COALESCE($4, precio),
-      categoria_id = COALESCE($5, categoria_id),
-      imagen_url = COALESCE($6, imagen_url),
-      disponible = COALESCE($7, disponible),
-      destacado = COALESCE($8, destacado)
-    WHERE id = $9 RETURNING *`,
-    [nombre, descripcion, ingredientes, precio, categoria_id, imagen_url, disponible, destacado, id]
-  )
-
-  if (result.rows.length === 0) {
-    throw new AppError('Plato no encontrado', 404)
-  }
-
-  res.json(result.rows[0])
+  const plato = await platoService.update(Number(id), req.body)
+  res.json(plato)
 })
 
 const deletePlato = asyncHandler(async (req: Request, res: Response) => {
   const { id } = req.params
-  const result = await pool.query('DELETE FROM platos WHERE id = $1 RETURNING *', [id])
-
-  if (result.rows.length === 0) {
-    throw new AppError('Plato no encontrado', 404)
-  }
-
+  await platoService.remove(Number(id))
   res.json({ message: 'Plato eliminado' })
 })
 
-export = { getAll, getById, create, update, delete: deletePlato }
+export default { getAll, getById, create, update, delete: deletePlato }

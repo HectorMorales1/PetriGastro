@@ -4,17 +4,17 @@ import tailwindcss from '@tailwindcss/vite'
 import { VitePWA } from 'vite-plugin-pwa'
 import compression from 'vite-plugin-compression'
 
-export default defineConfig({
+export default defineConfig(({ mode }) => ({
   plugins: [
     react(),
     tailwindcss(),
-    VitePWA({
+    mode === 'production' && VitePWA({
       registerType: 'autoUpdate',
       manifest: {
         name: 'PetriGastro',
         short_name: 'PetriGastro',
-        theme_color: '#C4785A',
-        background_color: '#F5F0E8',
+        theme_color: '#A3D977',
+        background_color: '#FCF8F2',
         display: 'standalone',
         icons: [
           { src: '/pwa-192x192.png', sizes: '192x192', type: 'image/png' },
@@ -53,7 +53,7 @@ export default defineConfig({
       }
     }),
     compression({ algorithm: 'gzip', ext: '.gz' })
-  ],
+  ].filter(Boolean),
   build: {
     chunkSizeWarningLimit: 300,
     rollupOptions: {
@@ -78,4 +78,4 @@ export default defineConfig({
     port: 5173,
     open: true
   }
-})
+}))

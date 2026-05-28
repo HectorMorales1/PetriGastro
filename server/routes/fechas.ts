@@ -21,4 +21,4 @@ router.delete('/:id', authMiddleware, adminMiddleware, validate([
   param('id').isInt({ min: 1 }).withMessage('ID de fecha inválido')
 ]), fechaController.delete)
 
-export = router
+export default router

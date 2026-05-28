@@ -48,6 +48,12 @@ function Footer() {
                   {link.label}
                 </Link>
               ))}
+              <Link to="/privacidad" className="text-text-muted hover:text-accent transition">
+                Política de Privacidad
+              </Link>
+              <Link to="/terminos" className="text-text-muted hover:text-accent transition">
+                Términos y Condiciones
+              </Link>
             </nav>
           </div>
 
@@ -81,11 +87,14 @@ function Footer() {
           </div>
         </div>
 
-        <div className="mt-12 pt-8 border-t border-border text-center">
+        <div className="mt-12 pt-8 border-t border-border text-center space-y-2">
           <p className="text-text-muted">
             © {new Date().getFullYear()} PetriGastro. Todos los derechos reservados.
           </p>
-
+          <div className="flex justify-center gap-4 text-xs text-text-muted">
+            <Link to="/privacidad" className="hover:text-accent transition">Política de Privacidad</Link>
+            <Link to="/terminos" className="hover:text-accent transition">Términos y Condiciones</Link>
+          </div>
         </div>
       </div>
     </footer>

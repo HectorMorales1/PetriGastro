@@ -1,6 +1,7 @@
 import fs from 'fs'
 import path from 'path'
 import { Pool, PoolConfig } from 'pg'
+import logger from './config/logger'
 
 function getPoolConfig(): PoolConfig {
   return process.env.DATABASE_URL
@@ -37,7 +38,7 @@ async function runMigrations(): Promise<void> {
       )
 
       if (rows.length > 0) {
-        console.log(`Migration ${file} already run, skipping`)
+        logger.info(`Migration ${file} already run, skipping`)
         continue
       }
 
@@ -48,16 +49,16 @@ async function runMigrations(): Promise<void> {
         await pool.query(sql)
         await pool.query('INSERT INTO migrations (name) VALUES ($1)', [file])
         await pool.query('COMMIT')
-        console.log(`Migration ${file} applied successfully`)
+        logger.info(`Migration ${file} applied successfully`)
       } catch (err) {
         await pool.query('ROLLBACK')
         const error = err as Error
-        console.error(`Migration ${file} failed: ${error.message}`)
+        logger.error({ err: error.message, context: `migration:${file}` })
         throw err
       }
     }
 
-    console.log('All migrations completed')
+    logger.info('All migrations completed')
   } finally {
     await pool.end()
   }

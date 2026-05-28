@@ -7,16 +7,19 @@ if (!process.env.DATABASE_URL && !process.env.DB_PASSWORD) {
   )
 }
 
+const poolMax = parseInt(process.env.DB_POOL_MAX || '20', 10)
+
 const pool = new Pool(
   process.env.DATABASE_URL
-    ? { connectionString: process.env.DATABASE_URL, ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: true, ca: process.env.DB_CA_CERT } : false }
+    ? { connectionString: process.env.DATABASE_URL, ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: true, ca: process.env.DB_CA_CERT } : false, max: poolMax }
     : {
         host: process.env.DB_HOST || 'localhost',
         port: parseInt(process.env.DB_PORT || '5432', 10) || 5432,
         database: process.env.DB_NAME || 'petrigastro',
         user: process.env.DB_USER || 'postgres',
         password: process.env.DB_PASSWORD,
-        ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: true, ca: process.env.DB_CA_CERT } : false
+        ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: true, ca: process.env.DB_CA_CERT } : false,
+        max: poolMax
       }
 )
 
@@ -24,4 +27,4 @@ pool.on('error', (err: Error) => {
   logger.error({ err, context: 'db-pool' }, 'Unexpected error on idle client')
 })
 
-export = pool
+export default pool

@@ -15,7 +15,6 @@ import configRoutes from './routes/config'
 import uploadRoutes from './routes/upload'
 import feedbackRoutes from './routes/feedback'
 import usuarioRoutes from './routes/usuarios'
-import logger from './config/logger'
 import { globalErrorHandler } from './middleware/errorHandler'
 
 const app = express()
@@ -35,7 +34,7 @@ app.use(helmet({
       defaultSrc: ["'self'"],
       baseUri: ["'self'"],
       formAction: ["'self'"],
-      scriptSrc: ["'self'", `'nonce-${nonce}'`, "https://js.stripe.com"],
+      scriptSrc: ["'self'", `'nonce-${nonce}'`],
       styleSrc: ["'self'", `'nonce-${nonce}'`, "https://fonts.googleapis.com"],
       imgSrc: ["'self'", "data:", "https://res.cloudinary.com", "https://images.unsplash.com"],
       fontSrc: ["'self'", "https://fonts.gstatic.com"],
@@ -89,10 +88,17 @@ const writeLimiter = rateLimit({
   message: 'Demasiadas solicitudes, intenta más tarde'
 })
 
+const verificarLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 10,
+  message: 'Demasiados intentos de verificación, espera 15 minutos'
+})
+
 app.use('/api/', generalLimiter)
 app.use('/api/auth/login', loginLimiter)
 app.use('/api/auth/register', loginLimiter)
 app.use('/api/auth/refresh', refreshLimiter)
+app.use('/api/auth/verificar', verificarLimiter)
 app.use('/api/feedback', writeLimiter)
 app.use('/api/usuarios', writeLimiter)
 app.use('/api/fechas', writeLimiter)
@@ -135,4 +141,8 @@ app.use((req: Request, res: Response, next: NextFunction) => {
   next()
 })
 
-export = app
+app.use((req: Request, res: Response) => {
+  res.status(404).json({ message: 'Ruta no encontrada' })
+})
+
+export default app
