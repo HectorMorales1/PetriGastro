@@ -33,7 +33,7 @@ export default class ErrorBoundary extends Component<Props, State> {
           <p className="text-text-muted mb-4">Hubo un error al cargar esta secci&oacute;n.</p>
           <button
             onClick={() => window.location.reload()}
-            className="px-6 py-2 bg-accent text-carbon rounded-lg hover:opacity-90 transition"
+            className="px-6 py-3 bg-accent text-carbon rounded-lg hover:opacity-90 transition"
           >
             Recargar p&aacute;gina
           </button>

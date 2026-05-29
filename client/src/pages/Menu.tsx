@@ -33,7 +33,7 @@ function PlatoDetailModal({ plato, onClose }: { plato: Plato; onClose: () => voi
       >
         <button
           onClick={onClose}
-          className="absolute top-4 right-4 z-10 w-10 h-10 flex items-center justify-center bg-black/40 hover:bg-black/60 rounded-full text-white transition-colors"
+          className="absolute top-4 right-4 z-10 w-11 h-11 flex items-center justify-center bg-black/40 hover:bg-black/60 rounded-full text-white transition-colors"
           aria-label="Cerrar"
         >
           <X size={20} />
@@ -150,17 +150,17 @@ export default function Menu() {
         <meta name="description" content="Descubre nuestro menú de gastronomía mediterránea. Platos elaborados con productos frescos y de temporada." />
       </Helmet>
 
-      <div className="relative h-64 flex items-center justify-center" style={{ background: 'linear-gradient(135deg, var(--color-accent) 0%, #B8860B 100%)' }}>
+      <div className="relative h-48 md:h-64 flex items-center justify-center" style={{ background: 'linear-gradient(135deg, var(--color-accent) 0%, #B8860B 100%)' }}>
         <div className="absolute inset-0 bg-black/20" />
         <div className="relative z-10 text-center text-white px-4">
-          <h1 className="text-4xl md:text-5xl font-bold font-heading mb-4">Nuestro Menú</h1>
-          <p className="text-xl max-w-2xl mx-auto text-white/90">
+          <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold font-heading mb-3 md:mb-4">Nuestro Menú</h1>
+          <p className="text-base md:text-xl max-w-2xl mx-auto text-white/90">
             Descubre nuestros platos elaborados con los mejores ingredientes de temporada
           </p>
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 py-8">
+      <div className="max-w-7xl mx-auto px-4 py-6 md:py-8">
         <div className="flex flex-col md:flex-row gap-4 mb-8">
           <div className="relative flex-1">
             <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-text-muted" size={20} />

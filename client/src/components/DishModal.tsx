@@ -1,5 +1,5 @@
 import { useEffect } from 'react'
-import { X, Plus, Check, ImageOff } from 'lucide-react'
+import { X, Plus, ImageOff } from 'lucide-react'
 import { useCart } from '../context/CartContext'
 import type { Plato } from '../types'
 
@@ -42,7 +42,7 @@ export default function DishModal({ plato, onClose }: DishModalProps) {
       >
         <button
           onClick={onClose}
-          className="absolute top-4 right-4 z-10 p-2 bg-black/50 rounded-full text-white hover:bg-black/70 transition"
+          className="absolute top-4 right-4 z-10 w-11 h-11 flex items-center justify-center bg-black/50 rounded-full text-white hover:bg-black/70 transition"
           aria-label="Cerrar"
         >
           <X size={20} />

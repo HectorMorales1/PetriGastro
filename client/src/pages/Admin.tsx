@@ -77,7 +77,7 @@ export default function Admin() {
       </Helmet>
 
       <div className="max-w-7xl mx-auto px-4 py-8">
-        <h1 className="text-3xl font-bold mb-8 font-heading">Panel de Administración</h1>
+        <h1 className="text-2xl md:text-3xl font-bold mb-6 md:mb-8 font-heading">Panel de Administración</h1>
 
         <div className="flex gap-2 mb-6 overflow-x-auto overscroll-x-contain snap-x snap-mandatory" role="tablist" aria-label="Secciones de administración">
           {tabs.map(tab => (
@@ -103,14 +103,14 @@ export default function Admin() {
                 return (
                   <div key={pedido.id} className="bg-card rounded-lg shadow p-4 space-y-3">
                     <div
-                      className="flex items-center justify-center gap-6 cursor-pointer select-none"
+                      className="flex flex-wrap items-center justify-center gap-2 sm:gap-6 cursor-pointer select-none"
                       onClick={() => setPedidoExpandido(expandido ? null : pedido.id)}
                     >
                       <span className="font-bold text-text-muted uppercase shrink-0">#{pedido.id}</span>
-                      <span className={`px-3 py-1 rounded text-sm font-semibold ${getEstadoColor(pedido.estado)}`}>
+                      <span className={`px-2 sm:px-3 py-1 rounded text-xs sm:text-sm font-semibold ${getEstadoColor(pedido.estado)}`}>
                         {pedido.estado}
                       </span>
-                      <span className="text-sm text-text-muted text-center leading-snug">
+                      <span className="text-xs sm:text-sm text-text-muted text-center leading-snug">
                         <div className="font-medium text-carbon">{pedido.fecha_recogida
                           ? new Date(pedido.fecha_recogida).toLocaleDateString('es-ES', { day: 'numeric', month: 'short' })
                           : '-'}</div>

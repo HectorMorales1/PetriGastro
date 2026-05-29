@@ -92,11 +92,11 @@ export default function Home() {
           <ProcesoSection />
         </div>
 
-        <section id="menu" className="py-20 px-4 bg-bg">
+        <section id="menu" className="py-16 md:py-20 px-4 bg-bg">
           <div className="max-w-7xl mx-auto">
             <div className="text-center mb-16">
               <span className="inline-block px-4 py-2 rounded-full text-sm font-medium uppercase tracking-wider mb-4 bg-surface text-carbon">Carta</span>
-              <h2 className="text-4xl font-bold font-heading text-carbon">Platos Destacados</h2>
+              <h2 className="text-3xl md:text-4xl font-bold font-heading text-carbon">Platos Destacados</h2>
               <p className="text-text-muted mt-4 max-w-2xl mx-auto">Selección de nuestras mejores creaciones, hechas con alma</p>
             </div>
             {loadingDestacados ? (
@@ -114,7 +114,7 @@ export default function Home() {
               <p className="text-center text-text-muted mb-12">No hay platos destacados disponibles.</p>
             )}
             <div className="text-center">
-              <Link to="/menu" className="inline-flex items-center gap-2 px-8 py-4 rounded-full font-semibold bg-accent text-carbon transition hover:opacity-90 hover:scale-105">
+              <Link to="/menu" className="inline-flex items-center gap-2 px-6 sm:px-8 py-3 sm:py-4 rounded-full font-semibold bg-accent text-carbon transition hover:opacity-90 hover:scale-105 text-sm sm:text-base">
                 <span>Ver Menú Completo</span>
                 <ArrowRight size={20} />
               </Link>
@@ -122,7 +122,7 @@ export default function Home() {
           </div>
         </section>
 
-        <section id="chef" className="py-20 px-4 bg-bg-secondary">
+        <section id="chef" className="py-16 md:py-20 px-4 bg-bg-secondary">
           <div className="max-w-7xl mx-auto">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
               <div className="relative">
@@ -140,7 +140,7 @@ export default function Home() {
 
               <div className="space-y-6">
                 <span className="inline-block px-4 py-2 rounded-full text-sm font-medium uppercase tracking-wider bg-surface text-carbon">El Artista</span>
-                <h2 className="text-4xl font-bold font-heading text-carbon">Pasión que se hereda<br/>de generaciones</h2>
+                <h2 className="text-3xl md:text-4xl font-bold font-heading text-carbon">Pasión que se hereda<br className="hidden sm:block"/>de generaciones</h2>
                 <p className="text-2xl italic font-accent text-carbon">Chef Petri</p>
                 <p className="text-text-muted leading-relaxed">
                   Desde los fogones de casa hasta las cocinas más exigentes, cada plato lleva consigo una historia familiar.
@@ -149,7 +149,7 @@ export default function Home() {
                   En PetriGastro combino la tradición culinaria española con técnicas modernas.
                 </p>
 
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-4">
+                <div className="grid grid-cols-3 gap-2 sm:gap-4 pt-4">
                   {statsData.chef.stats.map((stat, i) => (
                     <div key={i} className="text-center p-4 rounded-xl bg-bg-secondary">
                       <div className="text-2xl font-bold mb-1 text-carbon">{stat.value}</div>

@@ -5,11 +5,11 @@ export function Paginacion({ currentPage, totalPages, onPageChange }: {
 }) {
   if (totalPages <= 1) return null
   return (
-    <div className="flex items-center justify-center gap-2 py-4">
+    <div className="flex items-center justify-center gap-1.5 sm:gap-2 py-4">
       <button
         onClick={() => onPageChange(currentPage - 1)}
         disabled={currentPage <= 1}
-        className="px-3 py-1 rounded border border-border disabled:opacity-30 hover:bg-bg-secondary"
+        className="min-h-[44px] px-3 sm:px-3 py-2 rounded border border-border disabled:opacity-30 hover:bg-bg-secondary text-sm"
         aria-label="Página anterior"
       >
         Anterior
@@ -21,7 +21,7 @@ export function Paginacion({ currentPage, totalPages, onPageChange }: {
             {idx > 0 && arr[idx - 1] !== p - 1 && <span className="text-text-muted">...</span>}
             <button
               onClick={() => onPageChange(p)}
-              className={`w-8 h-8 rounded text-sm font-medium ${
+              className={`min-w-[44px] min-h-[44px] rounded text-sm font-medium ${
                 p === currentPage ? 'bg-accent text-carbon' : 'hover:bg-bg-secondary'
               }`}
               aria-label={`Ir a página ${p}`}
@@ -34,7 +34,7 @@ export function Paginacion({ currentPage, totalPages, onPageChange }: {
       <button
         onClick={() => onPageChange(currentPage + 1)}
         disabled={currentPage >= totalPages}
-        className="px-3 py-1 rounded border border-border disabled:opacity-30 hover:bg-bg-secondary"
+        className="min-h-[44px] px-3 sm:px-3 py-2 rounded border border-border disabled:opacity-30 hover:bg-bg-secondary text-sm"
         aria-label="Página siguiente"
       >
         Siguiente

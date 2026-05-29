@@ -63,7 +63,7 @@ function MenuCard({ plato }: MenuCardProps) {
               disabled={!plato.disponible}
               aria-label={`${!plato.disponible ? 'No disponible - ' : ''}Añadir ${plato.nombre} al carrito`}
               title={!plato.disponible ? 'Plato no disponible' : ''}
-              className={`flex items-center gap-2 px-5 py-2.5 rounded-full font-medium transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed ${
+              className={`min-h-[44px] flex items-center gap-2 px-5 py-2.5 rounded-full font-medium transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed ${
                 added
                   ? 'bg-verde-oliva text-white'
                   : 'bg-accent text-carbon hover:scale-105'

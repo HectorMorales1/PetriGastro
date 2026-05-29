@@ -37,6 +37,8 @@ const IGNORE_PATHS = [
   /\.(png|jpg|jpeg|gif|ico|svg|woff2?|eot|ttf|otf|pdf|zip|gz|lock)$/,
   /\.(example|sample)\./,
   /(\/|^)test\//, /(\/|^)__tests__\//, /(\/|^)spec\//, /\/mock/, /\/fixture/,
+  /\.github\/workflows\//,
+  /docker-compose\.yml$/,
 ]
 
 function getStagedFiles() {

@@ -4,9 +4,10 @@ const TOTAL_FRAMES = 40
 
 export default function ScrollVideo() {
   const sectionRef = useRef(null)
-  const [loaded, setLoaded] = useState(false)
+  const prefersReduced = typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches
+  const [loaded, setLoaded] = useState(prefersReduced)
   const [currentFrame, setCurrentFrame] = useState(0)
-  const [progress, setProgress] = useState(0)
+  const [progress, setProgress] = useState(prefersReduced ? 1 : 0)
   const [isVisible, setIsVisible] = useState(false)
   const lastFrameRef = useRef(-1)
 
@@ -29,7 +30,6 @@ export default function ScrollVideo() {
   useEffect(() => {
     if (!isVisible) return
     let loadedCount = 0
-    const images: HTMLImageElement[] = []
 
     for (let i = 0; i < TOTAL_FRAMES; i++) {
       const img = new Image()
@@ -45,34 +45,11 @@ export default function ScrollVideo() {
         loadedCount++
         if (loadedCount >= 20) setLoaded(true)
       }
-
-      images.push(img)
     }
-
-    const checkLoaded = () => images.filter(img => img.complete).length >= 20
-    const preloadImages = setInterval(() => {
-      if (checkLoaded()) {
-        setLoaded(true)
-        clearInterval(preloadImages)
-      }
-    }, 100)
-
-    if (checkLoaded()) {
-      setLoaded(true)
-      clearInterval(preloadImages)
-    }
-
-    return () => clearInterval(preloadImages)
   }, [isVisible])
 
   useEffect(() => {
-    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
-    if (prefersReducedMotion) {
-      setCurrentFrame(0)
-      setLoaded(true)
-      setProgress(1)
-      return
-    }
+    if (prefersReduced) return
 
     const handleScroll = () => {
       if (!sectionRef.current) return
@@ -97,7 +74,7 @@ export default function ScrollVideo() {
     window.addEventListener('scroll', handleScroll, { passive: true })
     handleScroll()
     return () => window.removeEventListener('scroll', handleScroll)
-  }, [])
+  }, [prefersReduced])
 
   return (
     <section ref={sectionRef} className="relative" style={{ height: '400vh' }}>
@@ -124,10 +101,10 @@ export default function ScrollVideo() {
           }`}
         >
           <div className="text-center text-white">
-            <h2 className="text-4xl md:text-6xl font-bold font-heading mb-4" style={{ textShadow: '0 2px 20px rgba(0,0,0,0.5)' }}>
+            <h2 className="text-3xl sm:text-4xl md:text-6xl font-bold font-heading mb-3 md:mb-4 px-4 text-center" style={{ textShadow: '0 2px 20px rgba(0,0,0,0.5)' }}>
               La magia de la cocina
             </h2>
-            <p className="text-xl md:text-2xl" style={{ textShadow: '0 2px 10px rgba(0,0,0,0.5)' }}>
+            <p className="text-lg sm:text-xl md:text-2xl px-4 text-center" style={{ textShadow: '0 2px 10px rgba(0,0,0,0.5)' }}>
               Cada plato cuenta una historia
             </p>
           </div>

@@ -131,7 +131,7 @@ export function FechasManager() {
                     key={hora}
                     type="button"
                     onClick={() => toggleHorarioInNewFecha(hora)}
-                    className={`px-3 py-1.5 rounded-lg text-sm transition ${
+                    className={`min-h-[44px] px-3 rounded-lg text-sm transition ${
                       newFecha.horarios.includes(hora)
                         ? 'bg-accent text-carbon'
                         : 'bg-bg-secondary text-text-muted'
@@ -181,56 +181,50 @@ export function FechasManager() {
       ) : (
         <div className="grid grid-cols-1 gap-4 mx-auto max-w-4xl">
           {fechasFiltradas.map((fecha: { id: number; activo: boolean; fecha: string; horarios?: { id: number; hora: string; disponible: boolean }[] }) => (
-            <div key={fecha.id} className={`bg-card rounded-lg shadow px-4 py-3 grid grid-cols-[minmax(200px,1fr)_1fr_auto] gap-4 items-center ${!fecha.activo ? 'opacity-60' : ''}`}>
+            <div key={fecha.id} className={`bg-card rounded-lg shadow p-4 ${!fecha.activo ? 'opacity-60' : ''}`}>
               {editingFecha?.id === fecha.id ? (
-                <>
-                  <form onSubmit={handleEditFecha} className="contents">
-                    <div>
-                      <h4 className="font-semibold text-carbon">
-                        {new Date(fecha.fecha).toLocaleDateString('es-ES', { weekday: 'long', day: 'numeric', month: 'long' })}
-                      </h4>
-                    </div>
-                    <div className="flex flex-wrap gap-1">
-                      {availableHours.map(hora => (
-                        <button
-                          key={hora}
-                          type="button"
-                          onClick={() => toggleHorarioInEdit(hora)}
-                          className={`px-2 py-0.5 rounded text-xs transition ${
-                            editingFecha.horarios.includes(hora)
-                              ? 'bg-accent text-carbon'
-                              : 'bg-bg-secondary text-text-muted'
-                          }`}
-                        >
-                          {hora}
-                        </button>
-                      ))}
-                    </div>
-                    <div className="flex items-center gap-2 justify-end">
+                <form onSubmit={handleEditFecha} className="space-y-3">
+                  <h4 className="font-semibold text-carbon">
+                    {new Date(fecha.fecha).toLocaleDateString('es-ES', { weekday: 'long', day: 'numeric', month: 'long' })}
+                  </h4>
+                  <div className="flex flex-wrap gap-1.5">
+                    {availableHours.map(hora => (
                       <button
+                        key={hora}
                         type="button"
-                        onClick={() => setEditingFecha(null)}
-                        className="px-2 py-1 rounded bg-bg-secondary text-xs"
+                        onClick={() => toggleHorarioInEdit(hora)}
+                        className={`min-h-[44px] px-2 rounded text-xs sm:text-sm transition ${
+                          editingFecha.horarios.includes(hora)
+                            ? 'bg-accent text-carbon'
+                            : 'bg-bg-secondary text-text-muted'
+                        }`}
                       >
-                        Cancelar
+                        {hora}
                       </button>
-                      <button
-                        type="submit"
-                        disabled={updateFechaMutation.isPending || editingFecha.horarios.length === 0}
-                        className="px-2 py-1 rounded bg-accent text-carbon text-xs disabled:opacity-50"
-                      >
-                        Guardar
-                      </button>
-                    </div>
-                  </form>
-                </>
-              ) : (
-                <>
-                  <div>
-                    <h4 className="font-semibold text-carbon">
-                      {new Date(fecha.fecha).toLocaleDateString('es-ES', { weekday: 'long', day: 'numeric', month: 'long' })}
-                    </h4>
+                    ))}
                   </div>
+                  <div className="flex items-center gap-2">
+                    <button
+                      type="button"
+                      onClick={() => setEditingFecha(null)}
+                      className="px-2 py-1 rounded bg-bg-secondary text-xs"
+                    >
+                      Cancelar
+                    </button>
+                    <button
+                      type="submit"
+                      disabled={updateFechaMutation.isPending || editingFecha.horarios.length === 0}
+                      className="px-2 py-1 rounded bg-accent text-carbon text-xs disabled:opacity-50"
+                    >
+                      Guardar
+                    </button>
+                  </div>
+                </form>
+              ) : (
+                <div className="md:grid md:grid-cols-[minmax(200px,1fr)_1fr_auto] md:gap-4 md:items-center space-y-3 md:space-y-0">
+                  <h4 className="font-semibold text-carbon">
+                    {new Date(fecha.fecha).toLocaleDateString('es-ES', { weekday: 'long', day: 'numeric', month: 'long' })}
+                  </h4>
                   <div className="flex flex-wrap gap-1">
                     {fecha.horarios?.map((h: { id: number; hora: string; disponible: boolean }) => (
                       <span
@@ -245,21 +239,21 @@ export function FechasManager() {
                       </span>
                     ))}
                   </div>
-                  <div className="flex items-center gap-1 justify-end">
+                  <div className="flex items-center gap-1.5">
                     <button
                       onClick={() => setEditingFecha({
                         id: fecha.id,
                         activo: fecha.activo,
                         horarios: fecha.horarios?.map((h: { hora: string }) => h.hora.slice(0, 5)) || []
                       })}
-                      className="p-1.5 rounded hover:bg-bg-secondary text-text-muted hover:text-accent"
+                      className="w-11 h-11 flex items-center justify-center rounded hover:bg-bg-secondary text-text-muted hover:text-accent"
                       title="Editar horarios"
                     >
                       <Pencil size={16} />
                     </button>
                     <button
                       onClick={() => toggleFechaMutation.mutate({ id: fecha.id, activo: !fecha.activo })}
-                      className={`px-2 py-1 rounded text-xs font-medium ${
+                      className={`min-h-[44px] px-3 rounded text-xs sm:text-sm font-medium ${
                         fecha.activo
                           ? 'bg-green-100 text-green-800 hover:bg-green-200'
                           : 'bg-gray-100 text-gray-800 hover:bg-gray-200'
@@ -269,13 +263,13 @@ export function FechasManager() {
                     </button>
                     <button
                       onClick={() => { if (confirm('¿Eliminar esta fecha?')) deleteFechaMutation.mutate(fecha.id) }}
-                      className="p-1.5 rounded hover:bg-error/10 text-error"
+                      className="w-11 h-11 flex items-center justify-center rounded hover:bg-error/10 text-error"
                       title="Eliminar"
                     >
                       <Trash2 size={16} />
                     </button>
                   </div>
-                </>
+                </div>
               )}
             </div>
           ))}

@@ -141,7 +141,7 @@ function EditarPedidoModal({
       <div className="relative w-full max-w-md bg-card h-full shadow-xl flex flex-col">
         <div className="flex items-center justify-between p-4">
           <h2 className="text-xl font-bold font-heading">Editar Pedido #{pedido.id}</h2>
-          <button onClick={onClose} className="p-2 hover:bg-bg-secondary rounded-full" aria-label="Cerrar">
+          <button onClick={onClose} className="w-11 h-11 flex items-center justify-center hover:bg-bg-secondary rounded-full" aria-label="Cerrar">
             <X size={20} />
           </button>
         </div>
@@ -185,21 +185,21 @@ function EditarPedidoModal({
                   <div className="flex items-center gap-2 ml-2">
                     {item.id > 0 ? (
                       <>
-                        <button
-                          onClick={() => setEditItems(prev => prev.map((i, n) => n === idx ? { ...i, cantidad: Math.max(0, i.cantidad - 1) } : i))}
-                          className="p-1 bg-surface rounded"
-                          aria-label={`Reducir cantidad de ${item.nombre}`}
-                        >
-                          <Minus size={14} />
-                        </button>
-                        <span className="w-6 text-center text-sm">{item.cantidad}</span>
-                        <button
-                          onClick={() => setEditItems(prev => prev.map((i, n) => n === idx ? { ...i, cantidad: i.cantidad + 1 } : i))}
-                          className="p-1 bg-surface rounded"
-                          aria-label={`Aumentar cantidad de ${item.nombre}`}
-                        >
-                          <Plus size={14} />
-                        </button>
+                          <button
+                            onClick={() => setEditItems(prev => prev.map((i, n) => n === idx ? { ...i, cantidad: Math.max(0, i.cantidad - 1) } : i))}
+                            className="min-touch bg-surface rounded"
+                            aria-label={`Reducir cantidad de ${item.nombre}`}
+                          >
+                            <Minus size={14} />
+                          </button>
+                          <span className="w-8 text-center text-sm">{item.cantidad}</span>
+                          <button
+                            onClick={() => setEditItems(prev => prev.map((i, n) => n === idx ? { ...i, cantidad: i.cantidad + 1 } : i))}
+                            className="min-touch bg-surface rounded"
+                            aria-label={`Aumentar cantidad de ${item.nombre}`}
+                          >
+                            <Plus size={14} />
+                          </button>
                       </>
                     ) : (
                       <span className="text-sm text-text-muted">x{item.cantidad}</span>
@@ -229,7 +229,7 @@ function EditarPedidoModal({
             {fechaRecogida && (
               <>
                 <label className="block text-sm text-text-muted">Selecciona hora:</label>
-                <div className="grid grid-cols-3 gap-2">
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
                   {getHorariosParaFecha(fechaRecogida).map(h => (
                     <button
                       key={h.id}
@@ -327,11 +327,11 @@ export default function MisPedidos() {
         <meta name="description" content="Consulta el estado de tus pedidos en PetriGastro. Realiza un seguimiento de tus pedidos de comida artesanal." />
       </Helmet>
 
-      <div className="max-w-4xl mx-auto px-4 py-8">
-        <h1 className="text-3xl font-bold mb-8 font-heading">Mis Pedidos</h1>
+      <div className="max-w-4xl mx-auto px-4 py-6 md:py-8">
+        <h1 className="text-2xl md:text-3xl font-bold mb-6 md:mb-8 font-heading">Mis Pedidos</h1>
 
         {pedidos.length === 0 ? (
-          <div className="bg-card rounded-lg shadow p-12 text-center">
+          <div className="bg-card rounded-lg shadow p-6 sm:p-8 md:p-12 text-center">
             <p className="text-text-muted text-lg">No tienes pedidos todavía.</p>
             <a href="/menu" className="text-carbon hover:text-accent underline mt-4 inline-block">
               Ver el menú
@@ -340,8 +340,8 @@ export default function MisPedidos() {
         ) : (
           <div className="space-y-4">
             {pedidos.map((pedido: PedidoConFeedback) => (
-              <div key={pedido.id} className="bg-card rounded-lg shadow p-6">
-                <div className="flex justify-between items-start mb-4">
+              <div key={pedido.id} className="bg-card rounded-lg shadow p-4 md:p-6">
+                <div className="flex flex-col sm:flex-row justify-between items-start gap-3 sm:gap-0 mb-4">
                   <div>
                     <div className="flex items-center gap-2">
                       <h3 className="font-bold text-lg">Pedido #{pedido.id}</h3>
@@ -349,14 +349,14 @@ export default function MisPedidos() {
                         <div className="flex gap-1">
                           <button
                             onClick={() => setEditingPedido(pedido)}
-                            className="p-1.5 rounded hover:bg-bg-secondary text-text-muted hover:text-accent transition"
+                            className="w-10 h-10 flex items-center justify-center rounded hover:bg-bg-secondary text-text-muted hover:text-accent transition"
                             title="Editar pedido"
                           >
                             <Pencil size={16} />
                           </button>
                           <button
                             onClick={() => handleDelete(pedido)}
-                            className="p-1.5 rounded hover:bg-bg-secondary text-text-muted hover:text-error transition"
+                            className="w-10 h-10 flex items-center justify-center rounded hover:bg-bg-secondary text-text-muted hover:text-error transition"
                             title="Eliminar pedido"
                           >
                             <Trash2 size={16} />
@@ -383,8 +383,8 @@ export default function MisPedidos() {
                       </p>
                     )}
                   </div>
-                  <div className="text-right">
-                    <p className="text-2xl font-bold text-carbon">{Number(pedido.total).toFixed(2)}€</p>
+                  <div className="text-left sm:text-right w-full sm:w-auto">
+                    <p className="text-xl sm:text-2xl font-bold text-carbon">{Number(pedido.total).toFixed(2)}€</p>
                     <span className={`px-2 py-1 rounded text-xs ${getEstadoColor(pedido.estado)}`}>
                       {pedido.estado}
                     </span>
@@ -443,7 +443,7 @@ export default function MisPedidos() {
                             <button
                               key={star}
                               onClick={() => setRating(star)}
-                              className="focus:outline-none"
+                              className="p-1.5 focus:outline-none"
                               aria-label={`${star} de 5 estrellas`}
                               role="radio"
                               aria-checked={star <= rating}

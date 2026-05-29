@@ -125,8 +125,8 @@ export default function Legal() {
         <meta name="robots" content="index, follow" />
       </Helmet>
 
-      <div className="max-w-4xl mx-auto px-4 py-8">
-        <h1 className="text-3xl font-bold font-heading mb-8">{section.title}</h1>
+      <div className="max-w-4xl mx-auto px-4 py-6 sm:py-8">
+        <h1 className="text-2xl sm:text-3xl font-bold font-heading mb-6 sm:mb-8">{section.title}</h1>
 
         <div className="flex gap-2 mb-8 overflow-x-auto" role="tablist">
           <button
@@ -168,7 +168,7 @@ export default function Legal() {
           ))}
         </div>
 
-        <div className="mt-12 p-6 bg-bg-secondary rounded-lg text-sm text-text-muted">
+        <div className="mt-8 sm:mt-12 p-4 sm:p-6 bg-bg-secondary rounded-lg text-sm text-text-muted">
           <p>Última actualización: 1 de enero de 2026</p>
           <p className="mt-2">
             Si tienes alguna pregunta sobre estas políticas, puedes contactarnos en{' '}

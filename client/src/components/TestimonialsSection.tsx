@@ -16,7 +16,6 @@ const getCardsPerView = () => {
 }
 
 export default function TestimonialsSection() {
-  const [currentSlide, setCurrentSlide] = useState(0)
   const [cardsPerView, setCardsPerView] = useState(() => (typeof window !== 'undefined' ? getCardsPerView() : 3))
   const [carouselPaused, setCarouselPaused] = useState(false)
 
@@ -28,6 +27,10 @@ export default function TestimonialsSection() {
     return pages
   }, [cardsPerView])
 
+  const maxIndex = Math.max(testimonialPages.length - 1, 0)
+  const [rawSlide, setRawSlide] = useState(0)
+  const currentSlide = Math.min(rawSlide, maxIndex)
+
   useEffect(() => {
     const handleResize = () => {
       setCardsPerView(getCardsPerView())
@@ -37,31 +40,27 @@ export default function TestimonialsSection() {
   }, [])
 
   useEffect(() => {
-    setCurrentSlide(prev => Math.min(prev, Math.max(testimonialPages.length - 1, 0)))
-  }, [testimonialPages.length])
-
-  useEffect(() => {
     if (carouselPaused) return
     const interval = setInterval(() => {
-      setCurrentSlide(prev => (prev >= testimonialPages.length - 1 ? 0 : prev + 1))
+      setRawSlide(prev => (prev >= testimonialPages.length - 1 ? 0 : prev + 1))
     }, 5000)
     return () => clearInterval(interval)
   }, [testimonialPages.length, carouselPaused])
 
   const prevSlide = () => {
-    setCurrentSlide(prev => (prev <= 0 ? testimonialPages.length - 1 : prev - 1))
+    setRawSlide(prev => (prev <= 0 ? testimonialPages.length - 1 : prev - 1))
   }
 
   const nextSlide = () => {
-    setCurrentSlide(prev => (prev >= testimonialPages.length - 1 ? 0 : prev + 1))
+    setRawSlide(prev => (prev >= testimonialPages.length - 1 ? 0 : prev + 1))
   }
 
   return (
-    <section id="testimonios" className="py-20 px-4 bg-bg">
+    <section id="testimonios" className="py-16 md:py-20 px-4 bg-bg">
       <div className="max-w-7xl mx-auto">
-        <div className="text-center mb-16">
+        <div className="text-center mb-12 md:mb-16">
           <span className="inline-block px-4 py-2 rounded-full text-sm font-medium uppercase tracking-wider mb-4 bg-surface text-carbon">Testimonios</span>
-          <h2 className="text-4xl font-bold font-heading text-carbon">Lo que dicen<br/>nuestros clientes</h2>
+          <h2 className="text-3xl md:text-4xl font-bold font-heading text-carbon">Lo que dicen<br/>nuestros clientes</h2>
         </div>
 
         <div
@@ -124,7 +123,7 @@ export default function TestimonialsSection() {
               {testimonialPages.map((_, i) => (
                 <button
                   key={i}
-                  onClick={() => setCurrentSlide(i)}
+                  onClick={() => setRawSlide(i)}
                   className={`h-2.5 rounded-full transition-all ${i === currentSlide ? 'w-8 bg-accent' : 'w-2.5 bg-text-muted'}`}
                   aria-label={`Ir a testimonio ${i + 1}`}
                 />

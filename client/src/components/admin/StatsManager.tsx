@@ -51,7 +51,7 @@ export function StatsManager() {
 
       <div className="grid grid-cols-1 gap-4 mx-auto max-w-4xl">
         {platos.map((plato: { id: number; imagen_url: string; nombre: string; precio: number; total_vendido: number; num_pedidos: number }) => (
-          <div key={plato.id} className="bg-card rounded-lg shadow px-4 py-3 grid grid-cols-[minmax(180px,1fr)_90px_90px_90px_110px] gap-4 items-center">
+          <div key={plato.id} className="bg-card rounded-lg shadow p-4 md:p-3 space-y-3 md:space-y-0 md:grid md:grid-cols-[minmax(180px,1fr)_90px_90px_90px_110px] md:gap-4 md:items-center">
             <div className="flex items-center gap-3 min-w-0">
               {plato.imagen_url ? (
                 <img src={plato.imagen_url} alt={plato.nombre} className="w-10 h-10 rounded object-cover shrink-0" />
@@ -60,23 +60,23 @@ export function StatsManager() {
               )}
               <h3 className="font-semibold truncate">{plato.nombre}</h3>
             </div>
-            <div className="text-center">
-              <div className="text-text-muted text-xs">Veces</div>
-              <div className="font-medium">{plato.num_pedidos}</div>
+            <div className="flex md:block justify-between md:text-center">
+              <span className="md:hidden text-text-muted text-xs">Veces pedido: </span>
+              <span className="font-medium">{plato.num_pedidos}</span>
             </div>
-            <div className="text-center">
-              <div className="text-text-muted text-xs">Cantidad</div>
+            <div className="flex md:block justify-between md:text-center">
+              <span className="md:hidden text-text-muted text-xs">Cantidad: </span>
               <span className="inline-flex items-center px-2 py-0.5 rounded-full bg-accent/20 text-carbon font-medium text-xs">
                 {plato.total_vendido} uds
               </span>
             </div>
-            <div className="text-center">
-              <div className="text-text-muted text-xs">Precio</div>
-              <div>{Number(plato.precio || 0).toFixed(2)}€</div>
+            <div className="flex md:block justify-between md:text-center">
+              <span className="md:hidden text-text-muted text-xs">Precio: </span>
+              <span>{Number(plato.precio || 0).toFixed(2)}€</span>
             </div>
-            <div className="text-center">
-              <div className="text-text-muted text-xs">Ingresos</div>
-              <div className="font-semibold text-carbon">{(plato.total_vendido * Number(plato.precio)).toFixed(2)}€</div>
+            <div className="flex md:block justify-between md:text-center">
+              <span className="md:hidden text-text-muted text-xs">Ingresos: </span>
+              <span className="font-semibold text-carbon">{(plato.total_vendido * Number(plato.precio)).toFixed(2)}€</span>
             </div>
           </div>
         ))}

@@ -85,13 +85,13 @@ export default function Login() {
               <circle cx="50" cy="50" r="45" className="fill-accent"/>
               <path d="M30 50 Q50 30 70 50 Q50 70 30 50" className="fill-carbon"/>
             </svg>
-            <h1 className="text-3xl font-bold font-heading text-carbon">PetriGastro</h1>
+            <h1 className="text-2xl md:text-3xl font-bold font-heading text-carbon">PetriGastro</h1>
             <p className="text-text-muted mt-2">
               {isRegisterMode ? 'Solicita tu acceso al sistema' : 'Accede a tu cuenta'}
             </p>
           </div>
 
-          <div className="bg-card rounded-lg shadow-lg p-8">
+          <div className="bg-card rounded-lg shadow-lg p-5 sm:p-6 md:p-8">
             {error && (
               <div className="bg-error/10 border border-error/30 text-error px-4 py-3 rounded mb-4 text-sm" role="alert">
                 {error}
@@ -248,7 +248,7 @@ export default function Login() {
                 <button
                   type="button"
                   onClick={() => { setIsRegisterMode(true); setError(''); setSuccessMessage('') }}
-                  className="w-full text-carbon font-medium hover:underline text-sm text-center"
+                  className="w-full py-2 text-carbon font-medium hover:underline text-sm text-center"
                 >
                   ¿No tienes cuenta? Solicita acceso aquí
                 </button>
@@ -256,7 +256,7 @@ export default function Login() {
                 <button
                   type="button"
                   onClick={() => { setIsRegisterMode(false); setError(''); setSuccessMessage('') }}
-                  className="w-full text-carbon font-medium hover:underline text-sm text-center"
+                  className="w-full py-2 text-carbon font-medium hover:underline text-sm text-center"
                 >
                   ¿Ya tienes cuenta? Inicia sesión
                 </button>

@@ -10,8 +10,8 @@ const navLinks = [
 function Footer() {
   return (
     <footer className="bg-bg-secondary text-carbon">
-      <div className="max-w-7xl mx-auto px-4 py-12">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+      <div className="max-w-7xl mx-auto px-4 py-10 md:py-12">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
           <div>
             <Link to="/" className="flex items-center gap-2 text-xl font-bold font-heading mb-4">
               <svg width="32" height="32" viewBox="0 0 100 100" fill="none">
@@ -23,14 +23,14 @@ function Footer() {
             <p className="text-text-muted mb-4">
               Sabores que cuentan historias. Comida artesanal para llevar.
             </p>
-            <div className="flex gap-4">
-              <a href="#" className="p-2 rounded-full hover:bg-accent/20 transition" aria-label="Instagram">
+            <div className="flex gap-3">
+              <a href="#" className="w-11 h-11 flex items-center justify-center rounded-full hover:bg-accent/20 transition" aria-label="Instagram">
                 <Globe size={20} />
               </a>
-              <a href="#" className="p-2 rounded-full hover:bg-accent/20 transition" aria-label="Telegram">
+              <a href="#" className="w-11 h-11 flex items-center justify-center rounded-full hover:bg-accent/20 transition" aria-label="Telegram">
                 <Send size={20} />
               </a>
-              <a href="#" className="p-2 rounded-full hover:bg-accent/20 transition" aria-label="Facebook">
+              <a href="#" className="w-11 h-11 flex items-center justify-center rounded-full hover:bg-accent/20 transition" aria-label="Facebook">
                 <ExternalLink size={20} />
               </a>
             </div>
@@ -70,7 +70,7 @@ function Footer() {
               </div>
               <a 
                 href="tel:+34600123456" 
-                className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-white text-sm font-medium w-fit transition hover:scale-105 bg-accent"
+                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full text-white text-sm font-medium w-fit transition hover:scale-105 bg-accent"
               >
                 <Phone size={16} aria-hidden="true" />
                 Llamar
@@ -91,9 +91,9 @@ function Footer() {
           <p className="text-text-muted">
             © {new Date().getFullYear()} PetriGastro. Todos los derechos reservados.
           </p>
-          <div className="flex justify-center gap-4 text-xs text-text-muted">
-            <Link to="/privacidad" className="hover:text-accent transition">Política de Privacidad</Link>
-            <Link to="/terminos" className="hover:text-accent transition">Términos y Condiciones</Link>
+          <div className="flex justify-center gap-4 sm:gap-6 text-xs sm:text-sm text-text-muted">
+            <Link to="/privacidad" className="py-1 hover:text-accent transition">Política de Privacidad</Link>
+            <Link to="/terminos" className="py-1 hover:text-accent transition">Términos y Condiciones</Link>
           </div>
         </div>
       </div>

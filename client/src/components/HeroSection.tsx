@@ -25,25 +25,25 @@ export default function HeroSection({ scrollProgress }: { scrollProgress: number
           <div className="absolute bottom-20 -right-20 w-80 h-80 rounded-full opacity-20 hidden md:block" style={{ background: 'radial-gradient(circle, var(--color-success) 0%, transparent 70%)' }} />
         </div>
 
-        <div className="max-w-7xl mx-auto px-4 py-20 grid grid-cols-1 lg:grid-cols-2 gap-12 items-center relative z-10">
-          <div className="space-y-8">
+        <div className="max-w-7xl mx-auto px-4 py-12 md:py-20 grid grid-cols-1 lg:grid-cols-2 gap-8 md:gap-12 items-center relative z-10">
+          <div className="space-y-6 md:space-y-8">
             <span className="inline-flex items-center gap-2 text-sm font-medium uppercase tracking-wider text-carbon">
               <span className="w-2 h-2 rounded-full bg-accent"></span>
               Cocina Artesanal · Madrid
             </span>
-            <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold font-heading leading-tight text-carbon">
+            <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold font-heading leading-tight text-carbon">
               Sabores que<br />
               <em className="font-normal text-carbon">cuentan historias</em>
             </h1>
-            <p className="text-xl text-text-muted max-w-lg">
+            <p className="text-base sm:text-xl text-text-muted max-w-lg">
               Platos preparados con pasión, ingredientes de temporada y el toque inconfundible de Chef Petri.
             </p>
-            <div className="flex flex-wrap gap-4">
-              <Link to="/menu" className="inline-flex items-center gap-2 px-6 py-3 rounded-full font-semibold bg-accent text-carbon transition hover:opacity-90 hover:scale-105">
+            <div className="flex flex-wrap gap-3 sm:gap-4">
+              <Link to="/menu" className="inline-flex items-center gap-2 px-5 sm:px-6 py-2.5 sm:py-3 rounded-full font-semibold bg-accent text-carbon transition hover:opacity-90 hover:scale-105 text-sm sm:text-base">
                 <span>Descubre el Menú</span>
                 <ArrowRight size={18} />
               </Link>
-              <a href="#proceso" className="inline-flex items-center gap-2 px-6 py-3 rounded-full font-semibold border-2 border-carbon text-carbon transition hover:bg-carbon/10">
+              <a href="#proceso" className="inline-flex items-center gap-2 px-5 sm:px-6 py-2.5 sm:py-3 rounded-full font-semibold border-2 border-carbon text-carbon transition hover:opacity-90 hover:scale-105 text-sm sm:text-base">
                 Cómo Funciona
               </a>
             </div>

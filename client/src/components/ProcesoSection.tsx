@@ -9,15 +9,15 @@ const steps = [
 
 export default function ProcesoSection() {
   return (
-    <section id="proceso" className="py-20 px-4 bg-bg-secondary">
+    <section id="proceso" className="py-16 md:py-20 px-4 bg-bg-secondary">
       <div className="max-w-7xl mx-auto">
-        <div className="text-center mb-16">
+        <div className="text-center mb-12 md:mb-16">
           <span className="inline-block px-4 py-2 rounded-full text-sm font-medium uppercase tracking-wider mb-4 bg-surface text-carbon">Experiencia</span>
-          <h2 className="text-4xl font-bold font-heading text-carbon">Del fuego a tu mesa</h2>
+          <h2 className="text-3xl md:text-4xl font-bold font-heading text-carbon">Del fuego a tu mesa</h2>
           <p className="text-text-muted mt-4 max-w-2xl mx-auto">Un proceso artesanal pensado para que disfrutes sin complicaciones</p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 md:gap-8">
           {steps.map((step, i) => (
             <div key={i} className="relative bg-surface rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-2 border border-border">
               <div className="absolute -top-3 left-6 w-10 h-10 rounded-full bg-accent flex items-center justify-center text-carbon font-bold shadow-md">

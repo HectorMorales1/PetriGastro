@@ -1,5 +1,5 @@
 import bcrypt from 'bcryptjs'
-import jwt from 'jsonwebtoken'
+import jwt, { type SignOptions } from 'jsonwebtoken'
 import crypto from 'crypto'
 import { Request, Response } from 'express'
 import pool from '../config/db'
@@ -24,18 +24,20 @@ interface User {
 }
 
 const generateToken = (user: User): string => {
+  const options: SignOptions = { expiresIn: 900 }
   return jwt.sign(
     { id: user.id, email: user.email, nombre: user.nombre, apellidos: user.apellidos, rol: user.rol, estado_solicitud: user.estado_solicitud, token_version: user.token_version || 0 },
     process.env.JWT_SECRET as string,
-    { expiresIn: '15m' as any }
+    options
   )
 }
 
 const generateRefreshToken = (user: User): string => {
+  const options: SignOptions = { expiresIn: 604800 }
   return jwt.sign(
     { id: user.id, type: 'refresh', version: user.token_version || 0 },
     process.env.JWT_SECRET as string,
-    { expiresIn: (process.env.REFRESH_TOKEN_EXPIRES_IN || '7d') as any }
+    options
   )
 }
 

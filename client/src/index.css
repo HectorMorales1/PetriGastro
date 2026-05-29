@@ -172,4 +172,30 @@ select option {
   color: var(--color-text);
 }
 
+/* Ocultar scrollbar en navegación horizontal (Menu.tsx) */
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+/* Touch target mínimo WCAG 44x44px */
+.min-touch {
+  min-height: 44px;
+  min-width: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Texto fluido responsive */
+.text-fluid-sm {
+  font-size: clamp(0.75rem, 0.7rem + 0.25vw, 0.875rem);
+}
+.text-fluid-base {
+  font-size: clamp(0.875rem, 0.8rem + 0.3vw, 1rem);
+}
+
 

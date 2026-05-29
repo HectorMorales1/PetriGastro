@@ -348,7 +348,7 @@ export function PlatosManager({ pageNum = 1 }: { pageNum?: number }) {
                 <span className="text-text-muted">Destacado</span>
               </label>
             </div>
-            <div className="flex items-center gap-3 pt-2 border-t border-border">
+            <div className="flex items-center gap-2 pt-2 border-t border-border">
               <button
                 onClick={() => {
                   setEditingPlato(plato)
@@ -364,14 +364,14 @@ export function PlatosManager({ pageNum = 1 }: { pageNum?: number }) {
                   })
                   setPreviewImg(plato.imagen_url || '')
                 }}
-                className="text-carbon hover:text-accent transition text-sm flex items-center gap-1"
+                className="h-11 flex items-center gap-1.5 px-3 rounded-lg text-carbon hover:text-accent hover:bg-accent/10 transition text-sm"
               >
                 <Pencil size={14} />
                 Editar
               </button>
               <button
                 onClick={() => { if (confirm('¿Eliminar este plato?')) deleteMutation.mutate(plato.id) }}
-                className="text-error hover:opacity-80 transition text-sm"
+                className="h-11 flex items-center gap-1.5 px-3 rounded-lg text-error hover:bg-error/10 transition text-sm"
                 disabled={deleteMutation.isPending}
               >
                 Eliminar

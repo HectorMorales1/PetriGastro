@@ -6,10 +6,10 @@ export default function StatsSection() {
   ]
 
   return (
-    <div className="flex gap-8 pt-4">
+    <div className="flex gap-6 sm:gap-8 pt-4">
       {stats.map((stat, i) => (
         <div key={i} className="text-center">
-          <div className="text-2xl font-bold text-carbon">{stat.number}</div>
+          <div className="text-xl sm:text-2xl font-bold text-carbon">{stat.number}</div>
           <div className="text-sm text-text-muted">{stat.label}</div>
         </div>
       ))}

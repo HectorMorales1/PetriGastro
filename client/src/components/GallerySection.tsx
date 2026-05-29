@@ -36,13 +36,13 @@ export default function GallerySection() {
 
   return (
     <>
-      <section className="py-12 px-4 overflow-hidden bg-bg">
+      <section className="py-8 md:py-12 px-4 overflow-hidden bg-bg">
         <div className="max-w-7xl mx-auto overflow-hidden">
           <div className="gallery-marquee flex gap-4 w-max">
             {galleryLoopImages.map((img, i) => (
               <div
                 key={`${img}-${i}`}
-                className="flex-shrink-0 w-36 sm:w-48 h-36 sm:h-48 rounded-xl overflow-hidden cursor-pointer"
+                className="flex-shrink-0 w-28 sm:w-36 md:w-48 h-28 sm:h-36 md:h-48 rounded-xl overflow-hidden cursor-pointer"
                 onClick={() => openLightbox(i % galleryImages.length)}
               >
                 <img src={img} alt={`Plato gourmet ${(i % galleryImages.length) + 1}`} className="w-full h-full object-cover hover:scale-110 transition-transform" loading="lazy" />

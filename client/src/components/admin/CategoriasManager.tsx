@@ -78,7 +78,7 @@ export function CategoriasManager() {
                     key={icono}
                     type="button"
                     onClick={() => setForm({ ...form, icono })}
-                    className={`w-10 h-10 rounded-lg text-xl flex items-center justify-center transition ${
+                    className={`w-11 h-11 sm:w-10 sm:h-10 rounded-lg text-xl flex items-center justify-center transition ${
                       form.icono === icono ? 'bg-accent' : 'bg-bg-secondary hover:bg-border'
                     }`}
                   >
@@ -109,16 +109,19 @@ export function CategoriasManager() {
 
       <div className="grid grid-cols-1 gap-4 mx-auto max-w-4xl">
         {categorias.map((cat: { id: number; icono: string; nombre: string; orden: number }) => (
-          <div key={cat.id} className="bg-card rounded-lg shadow px-4 py-3 grid grid-cols-[1fr_90px_auto] gap-4 items-center">
+          <div key={cat.id} className="bg-card rounded-lg shadow p-4 md:px-4 md:py-3 space-y-2 md:space-y-0 md:grid md:grid-cols-[1fr_90px_auto] md:gap-4 md:items-center">
             <div className="flex items-center gap-3 min-w-0">
               <span className="text-2xl shrink-0">{cat.icono}</span>
               <h3 className="font-semibold truncate">{cat.nombre}</h3>
             </div>
-            <span className="text-sm text-text-muted text-center">Orden: {cat.orden || 0}</span>
-            <div className="flex justify-end">
+            <div className="flex md:block justify-between md:text-center">
+              <span className="md:hidden text-text-muted text-xs">Orden: </span>
+              <span className="text-sm text-text-muted">{cat.orden || 0}</span>
+            </div>
+            <div className="flex justify-start md:justify-end pt-1 md:pt-0">
               <button
                 onClick={() => { if (confirm('¿Eliminar esta categoría?')) deleteMutation.mutate(cat.id) }}
-                className="text-error hover:opacity-80 transition text-sm flex items-center gap-1"
+                className="h-11 flex items-center gap-1.5 px-3 rounded-lg text-error hover:bg-error/10 transition text-sm"
                 disabled={deleteMutation.isPending}
               >
                 <Trash2 size={16} />

@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { Loader2, CheckCircle, XCircle } from 'lucide-react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { useToast } from '../../context/ToastContext'
-import { usuariosApi, categoriasApi } from '../../services/api'
+import { usuariosApi } from '../../services/api'
 
 export function SolicitudesManager() {
   const queryClient = useQueryClient()
@@ -14,11 +14,6 @@ export function SolicitudesManager() {
     queryKey: ['solicitudes'],
     queryFn: usuariosApi.getSolicitudes,
     refetchInterval: 120000
-  })
-
-  const { data: categorias = [] } = useQuery({
-    queryKey: ['categorias'],
-    queryFn: categoriasApi.getAll
   })
 
   const aprobarMutation = useMutation({
@@ -77,7 +72,7 @@ export function SolicitudesManager() {
                     })
                   : '-'}
               </p>
-              <div className="flex items-center gap-2 pt-2 border-t border-border">
+                <div className="flex items-center gap-2 pt-2 border-t border-border">
                 <button
                   onClick={() => {
                     if (confirm(`¿Aprobar la solicitud de ${sol.nombre} ${sol.apellidos}?`)) {
@@ -85,7 +80,7 @@ export function SolicitudesManager() {
                     }
                   }}
                   disabled={aprobarMutation.isPending}
-                  className="px-3 py-1.5 rounded-lg bg-success/20 text-success font-medium text-sm hover:bg-success/30 transition disabled:opacity-50 flex items-center gap-1"
+                  className="min-h-[44px] px-3 rounded-lg bg-success/20 text-success font-medium text-sm hover:bg-success/30 transition disabled:opacity-50 flex items-center gap-1"
                 >
                   <CheckCircle size={16} />
                   Aprobar
@@ -93,7 +88,7 @@ export function SolicitudesManager() {
                 <button
                   onClick={() => setRechazarModal({ id: sol.id, nombre: `${sol.nombre} ${sol.apellidos}` })}
                   disabled={rechazarMutation.isPending}
-                  className="px-3 py-1.5 rounded-lg bg-error/20 text-error font-medium text-sm hover:bg-error/30 transition disabled:opacity-50 flex items-center gap-1"
+                  className="min-h-[44px] px-3 rounded-lg bg-error/20 text-error font-medium text-sm hover:bg-error/30 transition disabled:opacity-50 flex items-center gap-1"
                 >
                   <XCircle size={16} />
                   Rechazar

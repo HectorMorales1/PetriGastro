@@ -1,5 +1,5 @@
-import { createContext, useContext, useState, useEffect, type ReactNode } from 'react'
-import { authApi, API_URL, api } from '../services/api'
+import { createContext, useContext, useState, type ReactNode } from 'react'
+import { authApi, api } from '../services/api'
 import { safeGetItem, safeSetItem, safeRemoveItem } from '../utils/storage'
 import type { User } from '../types'
 
@@ -15,26 +15,22 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType | null>(null)
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [user, setUser] = useState<User | null>(null)
-  const [loading, setLoading] = useState(true)
-
-  useEffect(() => {
+  const [user, setUser] = useState<User | null>(() => {
     const storedUser = safeGetItem('petri_user')
     const token = safeGetItem('petri_token', 'session')
     if (storedUser && token) {
       try {
         const parsed = JSON.parse(storedUser)
         if (parsed && typeof parsed === 'object') {
-          setUser(parsed)
-        } else {
-          safeRemoveItem('petri_user')
+          return parsed
         }
       } catch {
         safeRemoveItem('petri_user')
       }
     }
-    setLoading(false)
-  }, [])
+    return null
+  })
+  const loading = false
 
   const login = async (email: string, password: string) => {
     try {
@@ -76,13 +72,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       return { success: false, error: 'No refresh token' }
     }
     try {
-      const response = await fetch(`${API_URL}/auth/refresh`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ refreshToken: stored })
-      })
-      const data = await response.json()
-      if (!response.ok) throw new Error(data.message)
+      const response = await api.post('/auth/refresh', { refreshToken: stored })
+      const data = response.data
 
       safeSetItem('petri_token', data.token, 'session')
       safeSetItem('petri_refresh_token', data.refreshToken || '', 'session')

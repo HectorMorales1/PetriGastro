@@ -83,7 +83,7 @@ export function UsuariosManager() {
                   }
                 }}
                 disabled={updateRolMutation.isPending}
-                className="px-3 py-1.5 rounded-lg bg-accent/20 text-carbon font-medium text-sm hover:bg-accent/30 transition disabled:opacity-50"
+                className="min-h-[44px] px-3 rounded-lg bg-accent/20 text-carbon font-medium text-sm hover:bg-accent/30 transition disabled:opacity-50"
               >
                 Cambiar Rol
               </button>
@@ -94,7 +94,7 @@ export function UsuariosManager() {
                   }
                 }}
                 disabled={deleteUserMutation.isPending}
-                className="px-3 py-1.5 rounded-lg bg-error/20 text-error font-medium text-sm hover:bg-error/30 transition disabled:opacity-50"
+                className="min-h-[44px] px-3 rounded-lg bg-error/20 text-error font-medium text-sm hover:bg-error/30 transition disabled:opacity-50"
               >
                 Borrar
               </button>

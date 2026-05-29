@@ -2,7 +2,6 @@ import { useState, useMemo, useCallback } from 'react'
 import { X, Minus, Plus, Trash2, Loader2, ShoppingBag, Calendar } from 'lucide-react'
 import { useQuery } from '@tanstack/react-query'
 import { useCart } from '../context/CartContext'
-import { useToast } from '../context/ToastContext'
 import { pedidosApi, fechasApi } from '../services/api'
 import type { Pedido } from '../types'
 
@@ -10,7 +9,6 @@ export default function CartDrawer() {
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState('')
   const [orderResult, setOrderResult] = useState<{ type: 'success'; pedido: Pedido } | { type: 'error'; message: string } | null>(null)
-  const { addToast } = useToast()
   const [fechaSeleccionada, setFechaSeleccionada] = useState('')
   const [horaSeleccionada, setHoraSeleccionada] = useState('')
   const { cart, isOpen, setIsOpen, removeItem, updateQuantity, total, clearCart } = useCart()
@@ -87,7 +85,7 @@ export default function CartDrawer() {
 
     }
     setSubmitting(false)
-  }, [fechaSeleccionada, horaSeleccionada, cart, clearCart])
+  }, [fechaSeleccionada, horaSeleccionada, cart, clearCart, setIsOpen])
 
   return (
     <>
@@ -101,12 +99,12 @@ export default function CartDrawer() {
         >
           <div className="absolute inset-0 bg-black/90" />
           <div
-            className="relative bg-surface rounded-2xl max-w-md w-full p-6 text-center space-y-4 shadow-2xl"
+            className="relative bg-surface rounded-2xl max-w-md w-full p-4 sm:p-6 text-center space-y-4 shadow-2xl mx-4"
             onClick={(e) => e.stopPropagation()}
           >
             {orderResult.type === 'success' ? (
               <>
-                <div className="bg-green-100 rounded-full p-4 w-16 h-16 mx-auto flex items-center justify-center">
+                <div className="bg-green-100 rounded-full p-3 sm:p-4 w-14 sm:w-16 h-14 sm:h-16 mx-auto flex items-center justify-center">
                   <ShoppingBag className="text-green-600" size={32} />
                 </div>
                 <div>
@@ -209,7 +207,7 @@ export default function CartDrawer() {
                     <div className="flex items-center gap-2 mt-2">
                       <button
                         onClick={() => updateQuantity(item.id, item.cantidad - 1)}
-                        className="p-1 bg-bg-tertiary rounded"
+                        className="min-touch bg-bg-tertiary rounded"
                         aria-label={`Reducir cantidad de ${item.nombre}`}
                       >
                         <Minus size={16} />
@@ -217,14 +215,14 @@ export default function CartDrawer() {
                       <span className="w-8 text-center" aria-live="polite">{item.cantidad}</span>
                       <button
                         onClick={() => updateQuantity(item.id, item.cantidad + 1)}
-                        className="p-1 bg-bg-tertiary rounded"
+                        className="min-touch bg-bg-tertiary rounded"
                         aria-label={`Aumentar cantidad de ${item.nombre}`}
                       >
                         <Plus size={16} />
                       </button>
                       <button
                         onClick={() => removeItem(item.id)}
-                        className="ml-auto text-error hover:opacity-80"
+                        className="ml-auto flex items-center justify-center w-11 h-11 text-error hover:opacity-80 rounded-full hover:bg-error/10"
                         aria-label={`Eliminar ${item.nombre} del carrito`}
                       >
                         <Trash2 size={18} />
@@ -279,7 +277,7 @@ export default function CartDrawer() {
                           <button
                             key={h.id}
                             onClick={() => setHoraSeleccionada(h.hora)}
-                            className={`py-2 px-3 rounded-lg text-sm transition ${
+                            className={`min-h-[44px] px-3 rounded-lg text-sm transition ${
                               horaSeleccionada === h.hora
                                 ? 'bg-accent text-carbon'
                                 : 'bg-bg-tertiary text-text hover:bg-border'
@@ -313,7 +311,7 @@ export default function CartDrawer() {
 
                 <button
                   onClick={() => { if (window.confirm('¿Vaciar el carrito? Se perderán todos los productos añadidos.')) clearCart() }}
-                  className="w-full mt-2 text-text-muted hover:text-error text-sm"
+                  className="w-full mt-2 py-2 text-text-muted hover:text-error hover:bg-error/5 rounded-lg text-sm transition"
                 >
                   Vaciar carrito
                 </button>

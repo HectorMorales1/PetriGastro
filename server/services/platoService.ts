@@ -4,7 +4,7 @@ import { AppError } from '../middleware/errorHandler'
 export async function getAll(filters: {
   categoria?: string; busqueda?: string; destacado?: string; todas?: string
 }, pagination?: { page: number; limit: number }) {
-  const conditions: string[] = []
+  const conditions: string[] = ['p.deleted_at IS NULL']
   const params: string[] = []
 
   if (filters.todas !== 'true') {
@@ -25,7 +25,7 @@ export async function getAll(filters: {
     conditions.push('p.destacado = true')
   }
 
-  const whereClause = conditions.length > 0 ? ' WHERE ' + conditions.join(' AND ') : ''
+  const whereClause = ' WHERE ' + conditions.join(' AND ')
 
   const countResult = await pool.query(
     `SELECT COUNT(*) as total FROM platos p LEFT JOIN categorias c ON p.categoria_id = c.id${whereClause}`,
@@ -63,7 +63,7 @@ export async function getAll(filters: {
 
 export async function getById(id: number) {
   const result = await pool.query(
-    'SELECT p.*, c.nombre as categoria FROM platos p LEFT JOIN categorias c ON p.categoria_id = c.id WHERE p.id = $1',
+    'SELECT p.*, c.nombre as categoria FROM platos p LEFT JOIN categorias c ON p.categoria_id = c.id WHERE p.id = $1 AND p.deleted_at IS NULL',
     [id]
   )
   if (result.rows.length === 0) {
@@ -97,7 +97,7 @@ export async function update(id: number, data: Partial<{
       imagen_url = COALESCE($6, imagen_url),
       disponible = COALESCE($7, disponible),
       destacado = COALESCE($8, destacado)
-    WHERE id = $9 RETURNING *`,
+    WHERE id = $9 AND deleted_at IS NULL RETURNING *`,
     [data.nombre, data.descripcion, data.ingredientes, data.precio, data.categoria_id, data.imagen_url, data.disponible, data.destacado, id]
   )
   if (result.rows.length === 0) {
@@ -107,7 +107,10 @@ export async function update(id: number, data: Partial<{
 }
 
 export async function remove(id: number) {
-  const result = await pool.query('DELETE FROM platos WHERE id = $1 RETURNING *', [id])
+  const result = await pool.query(
+    'UPDATE platos SET deleted_at = NOW() WHERE id = $1 AND deleted_at IS NULL RETURNING *',
+    [id]
+  )
   if (result.rows.length === 0) {
     throw new AppError('Plato no encontrado', 404)
   }

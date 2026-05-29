@@ -42,23 +42,16 @@ api.interceptors.response.use(
       try {
         const refreshToken = safeGetItem('petri_refresh_token', 'session')
         if (refreshToken) {
-          const response = await fetch(`${API_URL}/auth/refresh`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ refreshToken })
-          })
-          if (response.ok) {
-            const data = await response.json()
-            if (data.token) {
-              safeSetItem('petri_token', data.token, 'session')
-              safeSetItem('petri_refresh_token', data.refreshToken || '', 'session')
-              originalRequest.headers.Authorization = `Bearer ${data.token}`
-              return api(originalRequest)
-            }
+          const response = await api.post('/auth/refresh', { refreshToken })
+          if (response.data?.token) {
+            safeSetItem('petri_token', response.data.token, 'session')
+            safeSetItem('petri_refresh_token', response.data.refreshToken || '', 'session')
+            originalRequest.headers.Authorization = `Bearer ${response.data.token}`
+            return api(originalRequest)
           }
         }
-      } catch (e) {
-        console.error('Error al refrescar token:', e)
+      } catch {
+        // Refresh failed, redirect to login below
       }
       safeRemoveItem('petri_token', 'session')
       safeRemoveItem('petri_refresh_token', 'session')
