@@ -16,6 +16,10 @@ for (const envVar of REQUIRED_ENV_VARS) {
   }
 }
 
+if (!process.env.CLOUDINARY_URL && !process.env.CLOUDINARY_CLOUD_NAME) {
+  logger.warn('⚠️  Cloudinary no configurado. La subida de imágenes no funcionará.')
+}
+
 const PORT = process.env.PORT || 3000
 const NODE_ENV = process.env.NODE_ENV || 'development'
 

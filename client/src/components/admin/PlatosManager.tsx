@@ -49,7 +49,7 @@ export function PlatosManager({ pageNum = 1 }: { pageNum?: number }) {
       setUrl(result.url)
     } catch (error: unknown) {
       const err = error as { response?: { data?: { message?: string } } }
-      addToast(err.response?.data?.message || 'Error al subir la imagen', 'error')
+      addToast(err.response?.data?.message || 'Error al subir la imagen. Verifica la configuración de Cloudinary.', 'error')
     }
     setUploading(false)
   }
@@ -98,6 +98,7 @@ export function PlatosManager({ pageNum = 1 }: { pageNum?: number }) {
 
   const handleCreate = (e: React.FormEvent) => {
     e.preventDefault()
+    if (uploading) return
     createMutation.mutate({
       ...form,
       precio: parseFloat(form.precio),
@@ -108,6 +109,7 @@ export function PlatosManager({ pageNum = 1 }: { pageNum?: number }) {
   const handleEdit = (e: React.FormEvent) => {
     e.preventDefault()
     if (!editingPlato) return
+    if (uploading) return
     editMutation.mutate({
       id: editingPlato.id,
       data: {
@@ -210,7 +212,7 @@ export function PlatosManager({ pageNum = 1 }: { pageNum?: number }) {
               </label>
             </div>
           </div>
-          <button type="submit" disabled={createMutation.isPending}
+          <button type="submit" disabled={createMutation.isPending || uploading}
             className="px-6 py-2 rounded-lg bg-accent text-carbon font-medium hover:opacity-90 transition disabled:opacity-50">
             {createMutation.isPending ? 'Creando...' : 'Crear Plato'}
           </button>
@@ -297,7 +299,7 @@ export function PlatosManager({ pageNum = 1 }: { pageNum?: number }) {
               </label>
             </div>
           </div>
-          <button type="submit" disabled={editMutation.isPending}
+          <button type="submit" disabled={editMutation.isPending || uploading}
             className="px-6 py-2 rounded-lg bg-accent text-carbon font-medium hover:opacity-90 transition disabled:opacity-50">
             {editMutation.isPending ? 'Guardando...' : 'Guardar Cambios'}
           </button>

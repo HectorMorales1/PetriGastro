@@ -78,7 +78,7 @@ export async function create(data: {
 }) {
   const result = await pool.query(
     'INSERT INTO platos (nombre, descripcion, ingredientes, precio, categoria_id, imagen_url, disponible, destacado) VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *',
-    [data.nombre, data.descripcion, data.ingredientes || '', data.precio, data.categoria_id, data.imagen_url, data.disponible ?? true, data.destacado ?? false]
+    [data.nombre, data.descripcion, data.ingredientes || '', data.precio, data.categoria_id, data.imagen_url || null, data.disponible ?? true, data.destacado ?? false]
   )
   return result.rows[0]
 }
@@ -98,7 +98,7 @@ export async function update(id: number, data: Partial<{
       disponible = COALESCE($7, disponible),
       destacado = COALESCE($8, destacado)
     WHERE id = $9 RETURNING *`,
-    [data.nombre, data.descripcion, data.ingredientes, data.precio, data.categoria_id, data.imagen_url, data.disponible, data.destacado, id]
+    [data.nombre, data.descripcion, data.ingredientes, data.precio, data.categoria_id, data.imagen_url || null, data.disponible, data.destacado, id]
   )
   if (result.rows.length === 0) {
     throw new AppError('Plato no encontrado', 404)
