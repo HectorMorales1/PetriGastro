@@ -1,11 +1,11 @@
 import { useState, useEffect, useRef } from 'react'
 
-const FPS = 24
+const TOTAL_FRAMES = 40
 
 export default function ScrollVideo() {
-  const sectionRef = useRef<HTMLElement>(null)
-  const videoRef = useRef<HTMLVideoElement>(null)
+  const sectionRef = useRef(null)
   const [loaded, setLoaded] = useState(false)
+  const [currentFrame, setCurrentFrame] = useState(0)
   const [progress, setProgress] = useState(0)
   const [isVisible, setIsVisible] = useState(false)
   const lastFrameRef = useRef(-1)
@@ -27,44 +27,70 @@ export default function ScrollVideo() {
   }, [])
 
   useEffect(() => {
-    if (!isVisible || !videoRef.current) return
-    const video = videoRef.current
-    const onCanPlay = () => {
-      video.play().then(() => video.pause()).catch(() => {})
-      setLoaded(true)
+    if (!isVisible) return
+    let loadedCount = 0
+    const images: HTMLImageElement[] = []
+
+    for (let i = 0; i < TOTAL_FRAMES; i++) {
+      const img = new Image()
+      const frameNum = (i * 3).toString().padStart(3, '0')
+      img.src = `/Fotogramas/frame_${frameNum}.jpg`
+
+      img.onload = () => {
+        loadedCount++
+        if (loadedCount >= 20) setLoaded(true)
+      }
+
+      img.onerror = () => {
+        loadedCount++
+        if (loadedCount >= 20) setLoaded(true)
+      }
+
+      images.push(img)
     }
-    video.addEventListener('canplay', onCanPlay)
-    if (video.readyState >= 3) {
-      video.play().then(() => video.pause()).catch(() => {})
+
+    const checkLoaded = () => images.filter(img => img.complete).length >= 20
+    const preloadImages = setInterval(() => {
+      if (checkLoaded()) {
+        setLoaded(true)
+        clearInterval(preloadImages)
+      }
+    }, 100)
+
+    if (checkLoaded()) {
       setLoaded(true)
+      clearInterval(preloadImages)
     }
-    return () => video.removeEventListener('canplay', onCanPlay)
+
+    return () => clearInterval(preloadImages)
   }, [isVisible])
 
   useEffect(() => {
     const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
     if (prefersReducedMotion) {
+      setCurrentFrame(0)
       setLoaded(true)
       setProgress(1)
-      if (videoRef.current) videoRef.current.currentTime = 0
       return
     }
 
     const handleScroll = () => {
-      if (!sectionRef.current || !videoRef.current) return
-      const video = videoRef.current
-      if (!video.duration) return
-
+      if (!sectionRef.current) return
       const rect = sectionRef.current.getBoundingClientRect()
       const sectionHeight = sectionRef.current.offsetHeight
       const viewportHeight = window.innerHeight
       const calcProgress = Math.max(0, Math.min(1, (viewportHeight - rect.top) / (sectionHeight + viewportHeight)))
+      const animatedFrames = 25
+      const pausedProgress = Math.min(calcProgress / 0.75, 1)
+      let frameIndex = Math.round(pausedProgress * animatedFrames)
+      if (calcProgress > 0.75) {
+        frameIndex = TOTAL_FRAMES - 1
+      }
 
-      const targetFrame = Math.round(calcProgress * video.duration * FPS)
-      if (targetFrame === lastFrameRef.current) return
-      lastFrameRef.current = targetFrame
-
-      video.currentTime = targetFrame / FPS
+      if (frameIndex !== lastFrameRef.current) {
+        setCurrentFrame(frameIndex)
+        lastFrameRef.current = frameIndex
+      }
       setProgress(calcProgress)
     }
 
@@ -76,13 +102,11 @@ export default function ScrollVideo() {
   return (
     <section ref={sectionRef} className="relative" style={{ height: '400vh' }}>
       <div className="sticky top-0 h-screen overflow-hidden bg-black">
-        <video
-          ref={videoRef}
-          src="/Video/video_croqueta.mp4"
-          muted
-          playsInline
-          preload="auto"
+        <img
+          src={`/Fotogramas/frame_${(currentFrame * 3).toString().padStart(3, '0')}.jpg`}
+          alt=""
           className="w-full h-full object-cover"
+          key={currentFrame}
         />
 
         {!loaded && (
