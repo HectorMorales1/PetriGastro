@@ -54,10 +54,7 @@ export default function Header() {
     >
       <div className="max-w-7xl mx-auto px-4 flex items-center justify-between">
         <Link to="/" className="flex items-center gap-2 text-2xl font-bold font-heading text-white">
-          <svg width="32" height="32" viewBox="0 0 100 100" fill="none" className="flex-shrink-0">
-            <circle cx="50" cy="50" r="45" className="fill-accent"/>
-            <path d="M30 50 Q50 30 70 50 Q50 70 30 50" className="fill-white/80"/>
-          </svg>
+          <img src="/logo.png" alt="PetriGastro" className="w-8 h-8 rounded-full object-cover flex-shrink-0" />
           <span>PetriGastro</span>
         </Link>
 

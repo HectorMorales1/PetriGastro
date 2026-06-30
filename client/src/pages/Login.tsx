@@ -87,10 +87,7 @@ export default function Login() {
       <div className="min-h-screen flex items-center justify-center px-4 py-12">
         <div className="w-full max-w-md">
           <div className="text-center mb-8">
-            <svg className="w-16 h-16 mx-auto mb-4" viewBox="0 0 100 100" fill="none">
-              <circle cx="50" cy="50" r="45" className="fill-accent"/>
-              <path d="M30 50 Q50 30 70 50 Q50 70 30 50" className="fill-carbon"/>
-            </svg>
+            <img src="/logo.png" alt="PetriGastro" className="w-16 h-16 mx-auto mb-4 rounded-full object-cover" />
             <h1 className="text-3xl font-bold font-heading text-carbon">PetriGastro</h1>
             <p className="text-text-muted mt-2">
               {isRegisterMode ? 'Solicita tu acceso al sistema' : 'Accede a tu cuenta'}

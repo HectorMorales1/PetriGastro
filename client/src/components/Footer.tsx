@@ -14,10 +14,7 @@ function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           <div>
             <Link to="/" className="flex items-center gap-2 text-xl font-bold font-heading mb-4">
-              <svg width="32" height="32" viewBox="0 0 100 100" fill="none">
-                <circle cx="50" cy="50" r="45" className="fill-accent"/>
-                <path d="M30 50 Q50 30 70 50 Q50 70 30 50" className="fill-carbon"/>
-              </svg>
+              <img src="/logo.png" alt="PetriGastro" className="w-8 h-8 rounded-full object-cover flex-shrink-0" />
               <span>PetriGastro</span>
             </Link>
             <p className="text-text-muted mb-4">
