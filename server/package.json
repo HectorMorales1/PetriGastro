@@ -6,7 +6,7 @@
   "scripts": {
     "start": "node dist/server.js",
     "dev": "tsx watch server.ts",
-    "build": "tsc && cp -r migrations dist/migrations",
+    "build": "tsc",
     "lint": "eslint .",
     "test": "vitest run",
     "migrate": "node dist/migrate.js"

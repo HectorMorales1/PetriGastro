@@ -29,9 +29,12 @@ async function runMigrations(): Promise<void> {
     `)
 
     const migrationsDir = path.join(__dirname, 'migrations')
-    const files = fs.readdirSync(migrationsDir)
-      .filter(f => f.endsWith('.sql'))
-      .sort()
+    let files: string[] = []
+    if (fs.existsSync(migrationsDir)) {
+      files = fs.readdirSync(migrationsDir)
+        .filter(f => f.endsWith('.sql'))
+        .sort()
+    }
 
     for (const file of files) {
       const { rows } = await pool.query(
