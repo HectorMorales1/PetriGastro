@@ -14,8 +14,8 @@ export default function Layout({ children }: LayoutProps) {
 
   return (
     <div className="min-h-screen flex flex-col">
-      <Header />
-      <main id="main-content" className="flex-1 pt-16" tabIndex={-1}>
+      {!isLogin && <Header />}
+      <main id="main-content" className={`flex-1 ${!isLogin ? 'pt-16' : ''}`} tabIndex={-1}>
         {children}
       </main>
       {!isLogin && !isAdmin && <Footer />}
