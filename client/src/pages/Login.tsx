@@ -87,7 +87,7 @@ export default function Login() {
       <div className="min-h-screen flex items-center justify-center px-4 py-12">
         <div className="w-full max-w-md">
           <div className="text-center mb-8">
-            <img src="/logo.png" alt="PetriGastro" className="w-36 h-36 mx-auto mb-6 rounded-full object-cover" />
+            <img src="/logo.png" alt="PetriGastro" className="w-52 h-52 mx-auto mb-8 rounded-full object-cover" />
             <h1 className="text-3xl font-bold font-heading text-carbon">PetriGastro</h1>
             <p className="text-text-muted mt-2">
               {isRegisterMode ? 'Solicita tu acceso al sistema' : 'Accede a tu cuenta'}
