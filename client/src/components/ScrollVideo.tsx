@@ -1,12 +1,14 @@
 import { useState, useEffect, useRef } from 'react'
 
+const FPS = 24
+
 export default function ScrollVideo() {
   const sectionRef = useRef<HTMLElement>(null)
   const videoRef = useRef<HTMLVideoElement>(null)
   const [loaded, setLoaded] = useState(false)
   const [progress, setProgress] = useState(0)
   const [isVisible, setIsVisible] = useState(false)
-  const latestProgressRef = useRef(0)
+  const lastFrameRef = useRef(-1)
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -27,9 +29,15 @@ export default function ScrollVideo() {
   useEffect(() => {
     if (!isVisible || !videoRef.current) return
     const video = videoRef.current
-    const onCanPlay = () => setLoaded(true)
+    const onCanPlay = () => {
+      video.play().then(() => video.pause()).catch(() => {})
+      setLoaded(true)
+    }
     video.addEventListener('canplay', onCanPlay)
-    if (video.readyState >= 3) setLoaded(true)
+    if (video.readyState >= 3) {
+      video.play().then(() => video.pause()).catch(() => {})
+      setLoaded(true)
+    }
     return () => video.removeEventListener('canplay', onCanPlay)
   }, [isVisible])
 
@@ -43,12 +51,20 @@ export default function ScrollVideo() {
     }
 
     const handleScroll = () => {
-      if (!sectionRef.current) return
+      if (!sectionRef.current || !videoRef.current) return
+      const video = videoRef.current
+      if (!video.duration) return
+
       const rect = sectionRef.current.getBoundingClientRect()
       const sectionHeight = sectionRef.current.offsetHeight
       const viewportHeight = window.innerHeight
       const calcProgress = Math.max(0, Math.min(1, (viewportHeight - rect.top) / (sectionHeight + viewportHeight)))
-      latestProgressRef.current = calcProgress
+
+      const targetFrame = Math.round(calcProgress * video.duration * FPS)
+      if (targetFrame === lastFrameRef.current) return
+      lastFrameRef.current = targetFrame
+
+      video.currentTime = targetFrame / FPS
       setProgress(calcProgress)
     }
 
@@ -56,22 +72,6 @@ export default function ScrollVideo() {
     handleScroll()
     return () => window.removeEventListener('scroll', handleScroll)
   }, [])
-
-  useEffect(() => {
-    if (!isVisible) return
-    const video = videoRef.current
-    if (!video) return
-
-    let rafId: number
-    const tick = () => {
-      if (video.duration) {
-        video.currentTime = latestProgressRef.current * video.duration
-      }
-      rafId = requestAnimationFrame(tick)
-    }
-    rafId = requestAnimationFrame(tick)
-    return () => cancelAnimationFrame(rafId)
-  }, [isVisible])
 
   return (
     <section ref={sectionRef} className="relative" style={{ height: '400vh' }}>
