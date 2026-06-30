@@ -7,7 +7,7 @@ if (!process.env.DATABASE_URL && !process.env.DB_PASSWORD) {
   )
 }
 
-const sslConfig = process.env.NODE_ENV === 'production'
+const sslConfig = process.env.DB_CA_CERT
   ? { rejectUnauthorized: true, ca: process.env.DB_CA_CERT }
   : { rejectUnauthorized: false }
 
