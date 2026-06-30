@@ -108,7 +108,7 @@ export const pedidosApi = {
 export const authApi = {
   login: (email, password) => api.post('/auth/login', { email, password }).then(r => r.data),
   register: (nombre, apellidos, email, password) => api.post('/auth/register', { nombre, apellidos, email, password }).then(r => r.data),
-  verificarEmail: (token) => api.get(`/auth/verificar?token=${token}`).then(r => r.data),
+  verificarEmail: (token) => api.post('/auth/verificar', { token }).then(r => r.data),
   invalidateSessions: () => api.post('/auth/invalidate-sessions').then(r => r.data)
 }
 

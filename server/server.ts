@@ -8,7 +8,7 @@ import app from './app'
 import logger from './config/logger'
 import { runMigrations } from './migrate'
 
-const REQUIRED_ENV_VARS = ['JWT_SECRET', 'CLOUDINARY_URL']
+const REQUIRED_ENV_VARS = ['JWT_SECRET']
 for (const envVar of REQUIRED_ENV_VARS) {
   if (!process.env[envVar]) {
     logger.fatal({ err: `Missing required environment variable: ${envVar}` }, 'Environment validation failed')

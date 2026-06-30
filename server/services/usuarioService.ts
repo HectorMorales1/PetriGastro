@@ -81,7 +81,7 @@ export async function rechazar(id: number, motivo?: string) {
     throw new AppError(`La solicitud no está pendiente. Estado actual: ${userData.estado_solicitud}`, 400)
   }
 
-  const motivoFinal = motivo || ''
+  const motivoFinal = (motivo || '').replace(/[<>"'&]/g, '')
 
   await sendEmail({
     to: userData.email,

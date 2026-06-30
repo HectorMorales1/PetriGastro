@@ -41,7 +41,8 @@ app.use(helmet({
       connectSrc: ["'self'"],
       frameSrc: ["'none'"],
       objectSrc: ["'none'"],
-      upgradeInsecureRequests: []
+      upgradeInsecureRequests: [],
+      reportUri: '/api/csp-report'
     }
   },
   crossOriginEmbedderPolicy: false,
@@ -62,7 +63,7 @@ app.use(compression({
   threshold: 1024
 }))
 
-app.use(express.json())
+app.use(express.json({ limit: '1mb' }))
 
 const generalLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
@@ -72,7 +73,7 @@ const generalLimiter = rateLimit({
 
 const loginLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
-  max: 20,
+  max: 5,
   message: 'Demasiados intentos de login, espera 15 minutos'
 })
 
@@ -103,6 +104,11 @@ app.use('/api/feedback', writeLimiter)
 app.use('/api/usuarios', writeLimiter)
 app.use('/api/fechas', writeLimiter)
 app.use('/api/upload', writeLimiter)
+
+app.post('/api/csp-report', (req: Request, res: Response) => {
+  console.warn('CSP Violation:', JSON.stringify(req.body))
+  res.status(204).end()
+})
 
 app.use('/api/auth', authRoutes)
 app.use('/api/platos', platosRoutes)

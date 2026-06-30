@@ -31,7 +31,9 @@ router.post('/refresh', validate([
   body('refreshToken').notEmpty().withMessage('Refresh token requerido')
 ]), authController.refreshToken)
 
-router.get('/verificar', authController.verificarEmail)
+router.post('/verificar', validate([
+  body('token').notEmpty().withMessage('Token requerido')
+]), authController.verificarEmail)
 router.post('/invalidate-sessions', authMiddleware, authController.invalidateSessions)
 
 export default router

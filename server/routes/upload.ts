@@ -6,9 +6,26 @@ import { authMiddleware, adminMiddleware } from '../middleware/auth'
 
 const router = express.Router()
 
+const ALLOWED_MIMES = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp']
+
+const IMAGE_MAGIC_BYTES: Record<string, Uint8Array[]> = {
+  'image/jpeg': [new Uint8Array([0xFF, 0xD8, 0xFF])],
+  'image/png': [new Uint8Array([0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A])],
+  'image/gif': [new Uint8Array([0x47, 0x49, 0x46, 0x38])],
+  'image/webp': [new Uint8Array([0x52, 0x49, 0x46, 0x46])]
+}
+
+function validateMagicBytes(buffer: Buffer, mimetype: string): boolean {
+  const signatures = IMAGE_MAGIC_BYTES[mimetype]
+  if (!signatures) return false
+  return signatures.some(sig => {
+    if (buffer.length < sig.length) return false
+    return sig.every((byte, i) => buffer[i] === byte)
+  })
+}
+
 const fileFilter = (_req: Request, file: Express.Multer.File, cb: FileFilterCallback): void => {
-  const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp']
-  if (allowedTypes.includes(file.mimetype)) {
+  if (ALLOWED_MIMES.includes(file.mimetype)) {
     return cb(null, true)
   }
   cb(new Error('Solo se permiten imágenes (jpeg, jpg, png, gif, webp)'))
@@ -37,6 +54,11 @@ router.post('/imagen', authMiddleware, adminMiddleware, (req: Request, res: Resp
 }, async (req: Request, res: Response) => {
   if (!req.file) {
     res.status(400).json({ message: 'No se ha subido ninguna imagen' })
+    return
+  }
+
+  if (!validateMagicBytes(req.file.buffer, req.file.mimetype)) {
+    res.status(400).json({ message: 'El archivo no es una imagen válida' })
     return
   }
 

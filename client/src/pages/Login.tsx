@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { useNavigate, useLocation } from 'react-router-dom'
+import { useNavigate, useLocation, Link } from 'react-router-dom'
 import { Helmet } from 'react-helmet-async'
 import { useAuth } from '../context/AuthContext'
 import { ArrowRight, UserPlus } from 'lucide-react'
@@ -15,6 +15,7 @@ export default function Login() {
   const [regEmail, setRegEmail] = useState('')
   const [regPassword, setRegPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
+  const [aceptaTerminos, setAceptaTerminos] = useState(false)
   const [error, setError] = useState('')
   const [successMessage, setSuccessMessage] = useState('')
   const [loading, setLoading] = useState(false)
@@ -55,6 +56,10 @@ export default function Login() {
       setError('La contraseña debe tener al menos 8 caracteres')
       return
     }
+    if (!aceptaTerminos) {
+      setError('Debes aceptar los términos y condiciones y la política de privacidad')
+      return
+    }
     setLoading(true)
     const result = await register(nombre, apellidos, regEmail, regPassword)
     setLoading(false)
@@ -65,6 +70,7 @@ export default function Login() {
       setRegEmail('')
       setRegPassword('')
       setConfirmPassword('')
+      setAceptaTerminos(false)
     } else if (result.success) {
       navigate(from, { replace: true })
     } else {
@@ -225,9 +231,23 @@ export default function Login() {
                     required
                   />
                   </div>
+                  <label className="flex items-start gap-3 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={aceptaTerminos}
+                      onChange={(e) => setAceptaTerminos(e.target.checked)}
+                      className="mt-1 h-4 w-4 rounded border-border text-accent focus:ring-accent/20 cursor-pointer"
+                    />
+                    <span className="text-sm text-text-muted leading-relaxed">
+                      He leído y acepto los{' '}
+                      <Link to="/terminos" className="text-accent hover:underline font-medium">términos y condiciones</Link>
+                      {' '}y la{' '}
+                      <Link to="/privacidad" className="text-accent hover:underline font-medium">política de privacidad</Link>
+                    </span>
+                  </label>
                   <button
                     type="submit"
-                    disabled={loading}
+                    disabled={loading || !aceptaTerminos}
                     className="w-full bg-accent text-carbon py-3 rounded-lg font-semibold hover:opacity-90 transition disabled:opacity-50 flex items-center justify-center gap-2"
                   >
                     {loading ? (
@@ -255,7 +275,7 @@ export default function Login() {
               ) : (
                 <button
                   type="button"
-                  onClick={() => { setIsRegisterMode(false); setError(''); setSuccessMessage('') }}
+                  onClick={() => { setIsRegisterMode(false); setError(''); setSuccessMessage(''); setAceptaTerminos(false) }}
                   className="w-full text-carbon font-medium hover:underline text-sm text-center"
                 >
                   ¿Ya tienes cuenta? Inicia sesión

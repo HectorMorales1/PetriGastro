@@ -25,7 +25,7 @@ interface User {
 
 const generateToken = (user: User): string => {
   return jwt.sign(
-    { id: user.id, email: user.email, nombre: user.nombre, apellidos: user.apellidos, rol: user.rol, estado_solicitud: user.estado_solicitud, token_version: user.token_version || 0 },
+    { id: user.id, rol: user.rol, estado_solicitud: user.estado_solicitud, token_version: user.token_version || 0 },
     process.env.JWT_SECRET as string,
     { expiresIn: '15m' as any }
   )
@@ -143,7 +143,7 @@ const login = asyncHandler(async (req: Request, res: Response) => {
   }
 
   if (user.estado_solicitud === 'rechazado') {
-    const motivo = user.motivo_rechazo ? ` Motivo: ${user.motivo_rechazo}` : ''
+    const motivo = user.motivo_rechazo ? ` Motivo: ${user.motivo_rechazo.replace(/[<>"'&]/g, '')}` : ''
     throw new AppError(`Tu solicitud de acceso ha sido rechazada.${motivo}`, 403)
   }
 
@@ -171,7 +171,7 @@ const me = asyncHandler(async (req: Request, res: Response) => {
 })
 
 const verificarEmail = asyncHandler(async (req: Request, res: Response) => {
-  const token = req.query.token as string
+  const { token } = req.body
 
   if (!token) {
     throw new AppError('Token de verificación requerido', 400)

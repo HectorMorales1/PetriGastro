@@ -9,7 +9,9 @@ if (!process.env.DATABASE_URL && !process.env.DB_PASSWORD) {
 
 const sslConfig = process.env.DB_CA_CERT
   ? { rejectUnauthorized: true, ca: process.env.DB_CA_CERT }
-  : { rejectUnauthorized: false }
+  : process.env.NODE_ENV === 'production'
+    ? { rejectUnauthorized: true }
+    : { rejectUnauthorized: false }
 
 const poolMax = parseInt(process.env.DB_POOL_MAX || '20', 10)
 
