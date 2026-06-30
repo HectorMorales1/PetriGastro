@@ -14,7 +14,7 @@ function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           <div>
             <Link to="/" className="flex items-center gap-2 text-xl font-bold font-heading mb-4">
-              <img src="/logo.png" alt="PetriGastro" className="w-8 h-8 rounded-full object-cover flex-shrink-0" />
+              <img src="/logo.png" alt="PetriGastro" className="w-12 h-12 rounded-full object-cover flex-shrink-0" />
               <span>PetriGastro</span>
             </Link>
             <p className="text-text-muted mb-4">

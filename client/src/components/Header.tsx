@@ -54,7 +54,7 @@ export default function Header() {
     >
       <div className="max-w-7xl mx-auto px-4 flex items-center justify-between">
         <Link to="/" className="flex items-center gap-2 text-2xl font-bold font-heading text-white">
-          <img src="/logo.png" alt="PetriGastro" className="w-8 h-8 rounded-full object-cover flex-shrink-0" />
+          <img src="/logo.png" alt="PetriGastro" className="w-12 h-12 rounded-full object-cover flex-shrink-0" />
           <span>PetriGastro</span>
         </Link>
 
