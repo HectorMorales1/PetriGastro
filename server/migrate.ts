@@ -1,3 +1,5 @@
+import dns from 'dns'
+dns.setDefaultResultOrder('ipv4first')
 import fs from 'fs'
 import path from 'path'
 import { Pool, PoolConfig } from 'pg'
