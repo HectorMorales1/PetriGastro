@@ -125,8 +125,8 @@ export default function Legal() {
         <meta name="robots" content="index, follow" />
       </Helmet>
 
-      <div className="max-w-4xl mx-auto px-4 py-8">
-        <h1 className="text-3xl font-bold font-heading mb-8">{section.title}</h1>
+      <div className="max-w-4xl mx-auto px-4 py-8" style={{ fontFamily: 'Helvetica, Arial, sans-serif' }}>
+        <h1 className="text-3xl font-bold mb-8">{section.title}</h1>
 
         <div className="flex gap-2 mb-8 overflow-x-auto" role="tablist">
           <button
@@ -154,7 +154,7 @@ export default function Legal() {
         <div className="space-y-8">
           {section.content.map((block, i) => (
             <div key={i}>
-              <h2 className="text-xl font-bold mb-3">{block.title}</h2>
+              <h2 className="text-xl font-bold mb-3" style={{ fontFamily: 'Helvetica, Arial, sans-serif' }}>{block.title}</h2>
               {block.text.split('\n').map((line, j) => (
                 line.startsWith('• ') ? (
                   <li key={j} className="text-text-muted leading-relaxed ml-4 mb-1 list-disc">{line}</li>
